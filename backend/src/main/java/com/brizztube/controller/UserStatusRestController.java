@@ -25,7 +25,7 @@ public class UserStatusRestController {
 	 * @return
 	 */
 	@GetMapping("/user-status")
-	public ResponseEntity<UserStatusResponseRest> searchCategories() {
+	public ResponseEntity<UserStatusResponseRest> searchUserStatus() {
 		
 		ResponseEntity<UserStatusResponseRest> response = service.search();
 		return response;

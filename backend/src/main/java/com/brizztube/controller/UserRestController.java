@@ -8,39 +8,38 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import com.brizztube.response.UserStatusResponseRest;
-import com.brizztube.services.IUserStatusService;
+import com.brizztube.response.UserResponseRest;
+import com.brizztube.services.IUserService;
 
 @CrossOrigin(origins = {"http://localhost:4200"}) // angular
 @RestController
 @RequestMapping("/api/")
-public class UserStatusRestController {
-	
+public class UserRestController {
+
 	@Autowired
-	private IUserStatusService service;
+	private IUserService service;
 	
 	/**
-	 *  get all user-status
+	 *  get all users
 	 * @return
 	 */
-	@GetMapping("/user-status")
-	public ResponseEntity<UserStatusResponseRest> searchCategories() {
+	@GetMapping("/users")
+	public ResponseEntity<UserResponseRest> searchCategories() {
 		
-		ResponseEntity<UserStatusResponseRest> response = service.search();
+		ResponseEntity<UserResponseRest> response = service.search();
 		return response;
 	}
 	
 	/**
-	 * get user status by id
+	 * get user by id
 	 * @param id
 	 * @return
 	 */
 	
-	@GetMapping("/user-status/{id}")
-	public ResponseEntity<UserStatusResponseRest> searchUserStatusById(@PathVariable Long id) {
+	@GetMapping("/users/{id}")
+	public ResponseEntity<UserResponseRest> searchUserStatusById(@PathVariable Long id) {
 		
-		ResponseEntity<UserStatusResponseRest> response = service.searchById(id);
+		ResponseEntity<UserResponseRest> response = service.searchById(id);
 		return response;
 	}
 }

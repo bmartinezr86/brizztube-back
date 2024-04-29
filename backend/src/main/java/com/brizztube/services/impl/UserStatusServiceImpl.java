@@ -49,11 +49,11 @@ public class UserStatusServiceImpl implements IUserStatusService {
 		
 		try {
 			
-			Optional<UserStatus> UserStatus = UserStatusDao.findById(id); // Es opcional por si no existiera poder validar con los metodos que trae
+			Optional<UserStatus> userStatus = UserStatusDao.findById(id); // Es opcional por si no existiera poder validar con los metodos que trae
 			
 			// Si la categoria existe
-			if (UserStatus.isPresent()) {
-				list.add(UserStatus.get());
+			if (userStatus.isPresent()) {
+				list.add(userStatus.get());
 				response.getUserStatusResponse().setUserStatus(list);
 				response.setMetadata("Respuesta OK", "00", "Estado de usuario encontrado");
 			} else {

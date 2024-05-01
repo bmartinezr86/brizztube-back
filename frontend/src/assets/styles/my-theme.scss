@@ -1,0 +1,111 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$primary-color: (
+  100 : #baebe1,
+  200 : #8ddece,
+  300 : #5fd0ba,
+  400 : #3cc6ab,
+  500 : #1abc9c,
+  600 : #17b694,
+  700 : #13ad8a,
+  800 : #0fa580,
+  900 : #08976e,
+  A100 : #c3ffec,
+  A200 : #90ffdc,
+  A400 : #5dffcc,
+  A700 : #44ffc4,
+  contrast: (
+      50 : #000000,
+      100 : #000000,
+      200 : #000000,
+      300 : #000000,
+      400 : #000000,
+      500 : #000000,
+      600 : #000000,
+      700 : #ffffff,
+      800 : #ffffff,
+      900 : #ffffff,
+      A100 : #000000,
+      A200 : #000000,
+      A400 : #000000,
+      A700 : #000000,
+  )
+);
+
+$secondary-color: (
+    50 : #e7e7e7,
+    100 : #c2c2c2,
+    200 : #999999,
+    300 : #707070,
+    400 : #525252,
+    500 : #333333,
+    600 : #2e2e2e,
+    700 : #272727,
+    800 : #202020,
+    900 : #141414,
+    A100 : #ef6e6e,
+    A200 : #ea4040,
+    A400 : #f60000,
+    A700 : #dd0000,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #ffffff,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+$warn-color: (
+  50: #ffebef,
+  100: #ffcdc5,
+  200: #f0999f,
+  300: #e77179,
+  400: #f24e58,
+  500: #f83a40,
+  600: #e9313e,
+  700: #d72638,
+  800: #ca1e30,
+  900: #bb0d24,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  )
+);
+
+
+$palette-primary: mat.define-palette($primary-color, 500, 700, 300, 900);
+$secondary-palette: mat.define-palette($secondary-color, 500, 300, 100, 500);
+$warn-palette: mat.define-palette($warn-color, 700);
+
+
+$custom-theme: mat.define-light-theme((
+  color: (
+    primary: $palette-primary,
+    accent: $secondary-palette,
+    warn: $warn-palette,
+  )
+));
+
+@include mat.all-component-themes($custom-theme);
+html, body { height: 100%; }
+body { margin: 0; font-family: Poppins, "Helvetica Neue", sans-serif; }

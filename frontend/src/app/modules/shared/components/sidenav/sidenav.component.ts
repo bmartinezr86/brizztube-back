@@ -1,5 +1,5 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-sidenav',
@@ -8,6 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidenavComponent implements OnInit {
   mobileQuery: MediaQueryList;
+  mostrarEnMovil = false;
+  mostrarFormularioBusqueda = false;
+  mostrarEnDesktop = false;
   menuNav = [
     {
       type: 'option', // Indica que este elemento es una opción del menú
@@ -61,6 +64,13 @@ export class SidenavComponent implements OnInit {
 
   constructor(media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
+    this.mostrarEnMovil = window.innerWidth <= 870;
+    this.mostrarEnDesktop = !this.mostrarEnMovil;
   }
+
+  toggleFormularioBusqueda() {
+    this.mostrarFormularioBusqueda = !this.mostrarFormularioBusqueda;
+  }
+
   ngOnInit(): void {}
 }

@@ -1,83 +1,112 @@
-<div class="dashboard-container">
-    <!-- Empieza toolbar -->
-    <mat-toolbar class="bg-white box-shadow">
-        <div class="d-flex flex-align-center flex-content-center">
-            <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
-            <!-- Empieza el logo -->
-            <div class="logo">
-                <a href="#">
-                    <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 367.000000 65.000000"
-                        preserveAspectRatio="xMidYMid meet">
+<div class="dashboard-container" [class.is-mobile]="mobileQuery.matches">
+    <!-- Empieza toolbar Modo desktop-->
+    <mat-toolbar class="bg-white box-shadow flex-justify-center" [class.search-form-active]="mostrarFormularioBusqueda">
+        <div class="d-flex flex-align-center ">
+            <div class="d-flex flex-align-center" *ngIf="!mostrarFormularioBusqueda">
+                <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+                <!-- Empieza el logo -->
+                <div class="logo">
+                    <a href="#">
+                        <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 367.000000 65.000000"
+                            preserveAspectRatio="xMidYMid meet">
 
-                        <g transform="translate(0.000000,65.000000) scale(0.100000,-0.100000)" stroke="none">
-                            <path d="M99 614 c-7 -9 -15 -47 -17 -84 l-4 -68 97 -57 c116 -69 120 -84 34
-                       -130 -136 -73 -129 -66 -129 -142 0 -123 35 -147 137 -94 145 75 399 230 417
-                       254 l20 27 -21 27 c-27 37 -457 283 -493 283 -15 0 -34 -7 -41 -16z" />
-                            <path d="M1528 548 c-9 -7 -19 -23 -23 -35 -8 -28 25 -63 60 -63 28 0 65 32
-                       65 55 0 41 -68 70 -102 43z" />
-                            <path d="M2976 518 c-13 -18 -16 -56 -16 -200 0 -165 2 -180 20 -198 25 -25
-                       55 -26 77 0 15 17 19 18 34 4 27 -24 82 -28 123 -9 91 43 104 208 21 273 -33
-                       26 -92 29 -135 7 l-30 -16 0 69 c0 39 -5 73 -12 80 -20 20 -65 14 -82 -10z
-                       m186 -205 c21 -19 24 -81 5 -107 -15 -21 -62 -25 -80 -7 -16 16 -15 94 2 114
-                       17 22 49 22 73 0z" />
-                            <path d="M852 518 c-17 -17 -17 -379 0 -396 8 -8 52 -12 134 -12 109 0 124 2
-                       155 23 18 12 40 34 47 47 20 38 8 101 -24 128 l-26 23 21 23 c46 49 32 129
-                       -29 161 -37 19 -259 22 -278 3z m222 -90 c20 -33 -4 -53 -68 -56 l-56 -3 0 41
-                       0 41 56 -3 c41 -2 60 -8 68 -20z m4 -160 c7 -7 12 -22 12 -35 0 -29 -32 -43
-                       -96 -43 l-44 0 0 45 0 45 58 0 c32 0 63 -5 70 -12z" />
-                            <path d="M2242 518 c-17 -17 -15 -44 4 -62 10 -11 34 -16 70 -16 l54 0 0 -150
-                       c0 -137 2 -152 20 -170 24 -24 49 -25 76 -6 17 13 19 30 22 170 l3 155 56 3
-                       c64 3 88 25 72 66 -8 22 -11 22 -187 22 -125 0 -182 -4 -190 -12z" />
-                            <path d="M37 434 c-11 -11 -8 -202 3 -209 11 -7 150 68 174 94 16 18 14 20
-                       -61 64 -91 53 -107 60 -116 51z" />
-                            <path d="M1260 391 c-5 -11 -10 -74 -10 -140 0 -113 1 -121 22 -135 57 -40 88
-                       -9 88 85 0 88 9 105 59 114 48 8 64 24 59 62 -2 23 -8 29 -35 31 -18 2 -43 -4
-                       -59 -14 -24 -17 -27 -17 -36 -1 -13 24 -74 23 -88 -2z" />
-                            <path d="M1526 394 c-13 -12 -16 -40 -16 -135 0 -106 2 -121 20 -139 24 -24
-                       38 -25 68 -4 21 14 22 22 22 135 0 66 -5 129 -10 140 -13 23 -62 26 -84 3z" />
-                            <path d="M1682 398 c-18 -18 -14 -56 7 -68 11 -5 38 -10 60 -10 23 0 41 -3 41
-                       -6 0 -3 -27 -36 -60 -72 -98 -109 -85 -132 77 -132 102 0 113 2 123 20 20 38
-                       -3 59 -70 62 l-60 3 65 74 c69 78 76 98 47 124 -15 14 -40 17 -118 17 -65 0
-                       -104 -4 -112 -12z" />
-                            <path d="M1975 397 c-13 -10 -16 -21 -12 -39 7 -28 30 -38 90 -38 l38 0 -66
-                       -75 c-68 -78 -73 -90 -52 -118 11 -15 28 -17 126 -15 96 3 116 6 125 20 20 33
-                       -4 52 -72 58 l-60 5 64 73 c66 75 75 99 48 126 -21 21 -201 23 -229 3z" />
-                            <path d="M2616 394 c-12 -12 -16 -37 -16 -107 0 -103 17 -152 60 -175 31 -16
-                       95 -9 119 12 15 14 19 14 34 -4 20 -24 46 -26 73 -6 16 13 19 29 22 131 4 138
-                       -7 168 -61 163 -42 -4 -57 -35 -57 -123 0 -76 -10 -95 -46 -95 -29 0 -34 16
-                       -34 114 0 50 -5 87 -12 94 -17 17 -64 15 -82 -4z" />
-                            <path d="M3392 390 c-36 -22 -71 -88 -72 -133 0 -66 46 -125 114 -147 74 -24
-                       186 6 186 49 0 34 -24 44 -81 32 -53 -12 -98 -1 -107 27 -3 9 19 12 86 12 65
-                       0 93 4 101 14 19 23 2 85 -34 125 -30 32 -38 35 -96 38 -52 3 -70 0 -97 -17z
-                       m126 -62 c26 -26 13 -38 -38 -38 -52 0 -60 8 -34 34 18 19 55 21 72 4z" />
-                        </g>
-                    </svg>
-                </a>
+                            <g transform="translate(0.000000,65.000000) scale(0.100000,-0.100000)" stroke="none">
+                                <path d="M99 614 c-7 -9 -15 -47 -17 -84 l-4 -68 97 -57 c116 -69 120 -84 34
+                           -130 -136 -73 -129 -66 -129 -142 0 -123 35 -147 137 -94 145 75 399 230 417
+                           254 l20 27 -21 27 c-27 37 -457 283 -493 283 -15 0 -34 -7 -41 -16z" />
+                                <path d="M1528 548 c-9 -7 -19 -23 -23 -35 -8 -28 25 -63 60 -63 28 0 65 32
+                           65 55 0 41 -68 70 -102 43z" />
+                                <path d="M2976 518 c-13 -18 -16 -56 -16 -200 0 -165 2 -180 20 -198 25 -25
+                           55 -26 77 0 15 17 19 18 34 4 27 -24 82 -28 123 -9 91 43 104 208 21 273 -33
+                           26 -92 29 -135 7 l-30 -16 0 69 c0 39 -5 73 -12 80 -20 20 -65 14 -82 -10z
+                           m186 -205 c21 -19 24 -81 5 -107 -15 -21 -62 -25 -80 -7 -16 16 -15 94 2 114
+                           17 22 49 22 73 0z" />
+                                <path d="M852 518 c-17 -17 -17 -379 0 -396 8 -8 52 -12 134 -12 109 0 124 2
+                           155 23 18 12 40 34 47 47 20 38 8 101 -24 128 l-26 23 21 23 c46 49 32 129
+                           -29 161 -37 19 -259 22 -278 3z m222 -90 c20 -33 -4 -53 -68 -56 l-56 -3 0 41
+                           0 41 56 -3 c41 -2 60 -8 68 -20z m4 -160 c7 -7 12 -22 12 -35 0 -29 -32 -43
+                           -96 -43 l-44 0 0 45 0 45 58 0 c32 0 63 -5 70 -12z" />
+                                <path d="M2242 518 c-17 -17 -15 -44 4 -62 10 -11 34 -16 70 -16 l54 0 0 -150
+                           c0 -137 2 -152 20 -170 24 -24 49 -25 76 -6 17 13 19 30 22 170 l3 155 56 3
+                           c64 3 88 25 72 66 -8 22 -11 22 -187 22 -125 0 -182 -4 -190 -12z" />
+                                <path d="M37 434 c-11 -11 -8 -202 3 -209 11 -7 150 68 174 94 16 18 14 20
+                           -61 64 -91 53 -107 60 -116 51z" />
+                                <path d="M1260 391 c-5 -11 -10 -74 -10 -140 0 -113 1 -121 22 -135 57 -40 88
+                           -9 88 85 0 88 9 105 59 114 48 8 64 24 59 62 -2 23 -8 29 -35 31 -18 2 -43 -4
+                           -59 -14 -24 -17 -27 -17 -36 -1 -13 24 -74 23 -88 -2z" />
+                                <path d="M1526 394 c-13 -12 -16 -40 -16 -135 0 -106 2 -121 20 -139 24 -24
+                           38 -25 68 -4 21 14 22 22 22 135 0 66 -5 129 -10 140 -13 23 -62 26 -84 3z" />
+                                <path d="M1682 398 c-18 -18 -14 -56 7 -68 11 -5 38 -10 60 -10 23 0 41 -3 41
+                           -6 0 -3 -27 -36 -60 -72 -98 -109 -85 -132 77 -132 102 0 113 2 123 20 20 38
+                           -3 59 -70 62 l-60 3 65 74 c69 78 76 98 47 124 -15 14 -40 17 -118 17 -65 0
+                           -104 -4 -112 -12z" />
+                                <path d="M1975 397 c-13 -10 -16 -21 -12 -39 7 -28 30 -38 90 -38 l38 0 -66
+                           -75 c-68 -78 -73 -90 -52 -118 11 -15 28 -17 126 -15 96 3 116 6 125 20 20 33
+                           -4 52 -72 58 l-60 5 64 73 c66 75 75 99 48 126 -21 21 -201 23 -229 3z" />
+                                <path d="M2616 394 c-12 -12 -16 -37 -16 -107 0 -103 17 -152 60 -175 31 -16
+                           95 -9 119 12 15 14 19 14 34 -4 20 -24 46 -26 73 -6 16 13 19 29 22 131 4 138
+                           -7 168 -61 163 -42 -4 -57 -35 -57 -123 0 -76 -10 -95 -46 -95 -29 0 -34 16
+                           -34 114 0 50 -5 87 -12 94 -17 17 -64 15 -82 -4z" />
+                                <path d="M3392 390 c-36 -22 -71 -88 -72 -133 0 -66 46 -125 114 -147 74 -24
+                           186 6 186 49 0 34 -24 44 -81 32 -53 -12 -98 -1 -107 27 -3 9 19 12 86 12 65
+                           0 93 4 101 14 19 23 2 85 -34 125 -30 32 -38 35 -96 38 -52 3 -70 0 -97 -17z
+                           m126 -62 c26 -26 13 -38 -38 -38 -52 0 -60 8 -34 34 18 19 55 21 72 4z" />
+                            </g>
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+            <div *ngIf="mostrarFormularioBusqueda">
+                <button mat-icon-button (click)="toggleFormularioBusqueda()">
+                    <ng-container>
+                        <mat-icon>keyboard_backspace</mat-icon>
+                    </ng-container>
+                </button>
+
             </div>
         </div>
+
         <div>
-            <form class="search-form">
-                <div class="input-container">
-                    <input type="text" name="buscarVideo" placeholder="Buscar...">
-                    <button type="submit" title="Buscar videos" class="search-button">
-                        <mat-icon class="search-icon">search</mat-icon>
-                    </button>
-                </div>
-            </form>
+            <div *ngIf="mostrarEnDesktop || mostrarFormularioBusqueda">
+                <form class="search-form" #searchForm>
+                    <div class="input-container">
+                        <input type="text" name="buscarVideo" placeholder="Buscar...">
+                        <button type="submit" title="Buscar videos" class="search-button">
+                            <mat-icon class="search-icon">search</mat-icon>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
         </div>
-        <div>
-            <button mat-flat-button color="accent" class="btn">
-                <mat-icon class="user-icon">account_circle</mat-icon>
-                Iniciar Sesión
-            </button>
+
+        <div class="buttons-container" *ngIf="!mostrarFormularioBusqueda">
+            <div *ngIf="mostrarEnMovil">
+                <button mat-icon-button (click)="toggleFormularioBusqueda()">
+                    <ng-container *ngIf="!mostrarFormularioBusqueda">
+                        <mat-icon>search</mat-icon>
+                    </ng-container>
+                </button>
+
+            </div>
+
+            <div class="login-button-container">
+                <button mat-flat-button color="accent" class="btn">
+                    <mat-icon class="user-icon">account_circle</mat-icon>
+                    Iniciar Sesión
+                </button>
+            </div>
         </div>
+
 
     </mat-toolbar>
 
 
     <!-- Empieza el sidenav -->
     <mat-sidenav-container class="sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56: 0">
-        <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'">
+        <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
+            fixedTopGap="56">
 
             <!-- Aqui empiezan las opciones del menu -->
             <mat-nav-list>

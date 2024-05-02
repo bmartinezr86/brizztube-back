@@ -34,7 +34,7 @@ public class UserRestController {
 	 * @return
 	 */
 	@GetMapping("/users")
-	public ResponseEntity<UserResponseRest> searchCategories() {
+	public ResponseEntity<UserResponseRest> searchUsers() {
 
 		ResponseEntity<UserResponseRest> response = service.search();
 		return response;

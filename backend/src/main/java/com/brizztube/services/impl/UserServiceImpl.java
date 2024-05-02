@@ -36,22 +36,45 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	@Transactional(readOnly = true)
 	public ResponseEntity<UserResponseRest> search() {
-		UserResponseRest response = new UserResponseRest();
+	    UserResponseRest response = new UserResponseRest();
+	    List<User> list = new ArrayList<>();
+	    List<User> listAux = new ArrayList<>();
 
-		try {
-			List<User> User = (List<User>) userDao.findAll();
+	    try {
 
-			response.getUserResponse().setUser(User);
-			response.setMetadata("Respuesta OK", "00", "Respuesta exitosa");
+	        // search users
+	        listAux = (List<User>) userDao.findAll();
+	        if(listAux.size() > 0) {
+	            listAux.forEach((u) -> {
+	                try {
+	                	byte[] imageDescompressed = null;
+	                	if (u.getPicture() != null) {
+	                	    imageDescompressed = Util.decompressZLib(u.getPicture());
+	                	}
+	                    u.setPicture(imageDescompressed);
+	                    list.add(u);
+	                } catch (Exception e) {
+	                    // Manejar la excepción de descompresión de la imagen
+	                	response.setMetadata("Respuesta NOK", "-1", "Error al descomprimir la imagen");
+	                    e.printStackTrace();
+	                    // Puedes optar por omitir este usuario con problemas de imagen o manejarlo de otra manera
+	                }
+	            });
+	        }
 
-		} catch (Exception e) {
-			response.setMetadata("Respuesta NOK", "-1", "Error al consultar");
-			e.getStackTrace();
-			return new ResponseEntity<UserResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	        response.getUserResponse().setUser(list);
+	        response.setMetadata("Respuesta OK", "00", "Respuesta exitosa");
 
-		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
+	    } catch (Exception e) {
+	        // Manejar cualquier excepción general
+	        response.setMetadata("Respuesta NOK", "-1", "Error al consultar");
+	        e.printStackTrace();
+	        return new ResponseEntity<UserResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+
+	    return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
 	}
+
 
 	@Override
 	@Transactional(readOnly = true)
@@ -104,7 +127,8 @@ public class UserServiceImpl implements IUserService {
 					u.setPicture(imageDescompressed);
 					list.add(u);
 				});
-								
+				
+				
 				response.getUserResponse().setUser(list);
 				response.setMetadata("Respuesta OK", "00", "Usuarios encontrado");
 			} else {

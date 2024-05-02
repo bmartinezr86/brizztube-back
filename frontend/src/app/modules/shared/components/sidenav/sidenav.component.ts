@@ -60,6 +60,23 @@ export class SidenavComponent implements OnInit {
       route: 'help',
       icon: 'help',
     },
+    {
+      type: 'separator', // Indica que este elemento es un separador
+    },
+    {
+      type: 'option',
+      name: 'Registro',
+      route: 'register',
+      icon: 'add_circle',
+    },
+
+    {
+      type: 'option',
+      name: 'Usuarios',
+      route: 'users/list',
+      // route: 'users/list',
+      icon: 'people',
+    },
   ];
 
   constructor(media: MediaMatcher) {

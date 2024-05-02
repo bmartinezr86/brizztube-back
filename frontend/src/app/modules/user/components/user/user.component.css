@@ -1,0 +1,27 @@
+ul {
+    margin: 0px;
+    padding: 0px;
+
+}
+
+ul li {
+    list-style: none;
+    margin: 0px;
+}
+
+.title-page {
+    margin-top: 25px;
+    margin-left: 4%;
+}
+
+mat-card-header {
+    margin-left: 4%;
+}
+
+.btn {
+    color: #fff;
+}
+
+.right {
+    margin-left: auto;
+}

@@ -1,4 +1,4 @@
-<h2 class="titulo-modal" mat-dialog-title>Crear nuevo usuario</h2>
+<h2 class="titulo-modal" mat-dialog-title>{{ estadoFormulario }} nuevo usuario</h2>
 <mat-dialog-content>
     <form [formGroup]="userForm">
         <div class="user-container">
@@ -41,10 +41,17 @@
                     <mat-option *ngFor="let status of statuses" [value]="status.id">{{ status.name }}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field>
-                <mat-label>Imagen</mat-label>
-                <input type="file" (change)="onFileSelected($event)" accept="image/*" formControlName="picture">
-            </mat-form-field>
+
+            <div class="input-file-conteiner">
+                <label for="file-upload" class="subir">
+                    <mat-icon>file_upload</mat-icon>
+                    Subir imagen
+                </label>
+                <input id="file-upload" accept="image/png, image/jpeg, image/jpg" (change)="onFileChanged($event)"
+                    type="file" formControlName="picture" class="input-file">
+                <span>{{ nameImg }}</span>
+            </div>
+
 
         </div>
     </form>

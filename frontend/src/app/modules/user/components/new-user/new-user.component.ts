@@ -11,14 +11,17 @@ import { UserService } from 'src/app/modules/shared/services/user/user.service';
 export class NewUserComponent implements OnInit {
   private userService = inject(UserService);
   private fb = inject(FormBuilder);
-  public selectedFile!: File;
   private dialogRef = inject(MatDialogRef);
   public userForm!: FormGroup;
   public roles: RolElement[] = [];
   public statuses: StatusElement[] = [];
   public hidePassword: boolean = true;
+  public estadoFormulario: string = '';
+  public selectedFile: any;
+  public nameImg: string = '';
 
   ngOnInit(): void {
+    this.estadoFormulario = 'Crear';
     this.userForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
@@ -113,9 +116,11 @@ export class NewUserComponent implements OnInit {
     this.hidePassword = !this.hidePassword;
   }
 
-  onFileSelected(event: any) {
+  onFileChanged(event: any) {
     this.selectedFile = event.target.files[0];
-    // Aquí puedes hacer lo que necesites con el archivo seleccionado, como subirlo a un servidor o previsualizarlo
+    this.nameImg = event.target.files[0].name;
+    console.log(this.selectedFile);
+    console.log(this.nameImg);
   }
   onSave() {
     let data = {
@@ -125,9 +130,20 @@ export class NewUserComponent implements OnInit {
       password: this.userForm.get('password')?.value,
       rol: this.userForm.get('rol')?.value,
       status: this.userForm.get('status')?.value,
+      picture: this.selectedFile,
     };
 
-    this.userService.saveUser(data).subscribe(
+    const uploadImageData = new FormData();
+    uploadImageData.append('picture', data.picture, data.picture.name);
+    uploadImageData.append('name', data.name);
+    uploadImageData.append('description', data.description);
+    uploadImageData.append('email', data.email);
+    uploadImageData.append('password', data.password);
+    uploadImageData.append('rol', data.rol);
+    uploadImageData.append('status', data.status);
+
+    // call the service to save a user
+    this.userService.saveUser(uploadImageData).subscribe(
       (data: any) => {
         console.log(data);
         this.dialogRef.close(1);

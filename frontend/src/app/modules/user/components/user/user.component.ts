@@ -64,26 +64,6 @@ export class UserComponent implements OnInit {
     console.log('User response:', resp.userResponse.user);
   }
 
-  generateImageUrl(base64Data: string, format: string): string {
-    let prefix: string;
-    switch (format) {
-      case 'jpg':
-        prefix = 'data:image/jpeg;base64,';
-        break;
-      case 'png':
-        prefix = 'data:image/png;base64,';
-        break;
-      case 'gif':
-        prefix = 'data:image/gif;base64,';
-        break;
-      default:
-        // Si el tipo de imagen no es reconocido, manejarlo de acuerdo a tus necesidades
-        prefix = '';
-        break;
-    }
-    return prefix + base64Data;
-  }
-
   openUserDialog() {
     const dialogRef = this.dialog.open(NewUserComponent, {
       width: '600px',

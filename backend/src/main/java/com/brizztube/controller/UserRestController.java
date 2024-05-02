@@ -53,6 +53,21 @@ public class UserRestController {
 		ResponseEntity<UserResponseRest> response = service.searchById(id);
 		return response;
 	}
+	
+	/**
+	 * get user by name
+	 * 
+	 * @param name
+	 * @return
+	 */
+
+	@GetMapping("/users/filter/{name}")
+	public ResponseEntity<UserResponseRest> searchByName(@PathVariable String name) {
+
+		ResponseEntity<UserResponseRest> response = service.searchByName(name);
+		return response;
+	}
+
 
 	/**
 	 * save user

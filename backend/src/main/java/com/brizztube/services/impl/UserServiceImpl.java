@@ -19,6 +19,7 @@ import com.brizztube.model.UserStatus;
 import com.brizztube.response.UserResponseRest;
 
 import com.brizztube.services.IUserService;
+import com.brizztube.utils.Util;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -65,6 +66,8 @@ public class UserServiceImpl implements IUserService {
 
 			// Si la categoria existe
 			if (user.isPresent()) {
+				byte[] imageDescompressed = Util.decompressZLib(user.get().getPicture());
+				user.get().setPicture(imageDescompressed);
 				list.add(user.get());
 				response.getUserResponse().setUser(list);
 				response.setMetadata("Respuesta OK", "00", "Usuario encontrado");
@@ -81,6 +84,43 @@ public class UserServiceImpl implements IUserService {
 
 		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ResponseEntity<UserResponseRest> searchByName(String name) {
+		UserResponseRest response = new UserResponseRest();
+		List<User> list = new ArrayList<>();
+		List<User> listAux= new ArrayList<>();
+
+		try {
+			// search user by name
+			listAux = userDao.findByNameContainingIgnoreCase(name);
+			
+
+			// Descomprime picture in all users
+			if (listAux.size() > 0) {
+				listAux.stream().forEach((u) -> {
+					byte[] imageDescompressed = Util.decompressZLib(u.getPicture());
+					u.setPicture(imageDescompressed);
+					list.add(u);
+				});
+								
+				response.getUserResponse().setUser(list);
+				response.setMetadata("Respuesta OK", "00", "Usuarios encontrado");
+			} else {
+				response.setMetadata("Respuesta NOK", "-1", "Usuarios no encontrado");
+				return new ResponseEntity<UserResponseRest>(response, HttpStatus.NOT_FOUND);
+			}
+
+		} catch (Exception e) {
+			response.setMetadata("Respuesta NOK", "-1", "Error al buscar usuario por nombre");
+			e.getStackTrace();
+			return new ResponseEntity<UserResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
+	}
+
 
 	@Override
 	@Transactional
@@ -224,5 +264,6 @@ public class UserServiceImpl implements IUserService {
 
 		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
 	}
+
 
 }

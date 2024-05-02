@@ -16,14 +16,52 @@ ul li {
 
 mat-card-header,
 mat-card-content {
-    margin-left: 4%;
-    margin-right: 4%;
+    margin-left: 3.5%;
+    margin-right: 3.5%;
+}
+
+mat-form-field {
+    width: 140%;
+}
+
+.mat-cell:nth-child(1),
+.mat-header-cell:nth-child(1) {
+    flex: 0 0 6%;
 }
 
 .btn {
     color: #fff;
 }
 
+.btn-action {
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    box-shadow: none;
+
+    &:hover {
+        box-shadow: none;
+    }
+}
+
 .right {
     margin-left: auto;
+}
+
+.img-profile-user {
+    margin: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+.user-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }

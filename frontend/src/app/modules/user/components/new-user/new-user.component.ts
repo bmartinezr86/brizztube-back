@@ -1,0 +1,154 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { UserService } from 'src/app/modules/shared/services/user/user.service';
+
+@Component({
+  selector: 'app-new-user',
+  templateUrl: './new-user.component.html',
+  styleUrls: ['./new-user.component.css'],
+})
+export class NewUserComponent implements OnInit {
+  private userService = inject(UserService);
+  private fb = inject(FormBuilder);
+  public selectedFile!: File;
+  private dialogRef = inject(MatDialogRef);
+  public userForm!: FormGroup;
+  public roles: RolElement[] = [];
+  public statuses: StatusElement[] = [];
+  public hidePassword: boolean = true;
+
+  ngOnInit(): void {
+    this.userForm = this.fb.group({
+      name: ['', Validators.required],
+      description: [''],
+      email: ['', [Validators.required, Validators.email]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}$/),
+        ],
+      ],
+      image: [''],
+      rol: [3, Validators.required],
+      status: [4, Validators.required],
+    });
+    this.getRoles();
+    this.getStatus();
+  }
+
+  getRoles(): void {
+    this.userService.getRoles().subscribe(
+      (data: any) => {
+        console.log('respuesta roles: ', data);
+        this.processRolesResponse(data);
+      },
+      (error: any) => {
+        console.log('error: ', error);
+      }
+    );
+  }
+
+  processRolesResponse(resp: any) {
+    const dataRol: RolElement[] = [];
+
+    if (
+      resp.metadata[0].code == '00' &&
+      resp.rolResponse &&
+      resp.rolResponse.rol
+    ) {
+      let listRoles = resp.rolResponse.rol;
+      console.log('Roles response:', listRoles); // Agregar esta línea para imprimir resp.rolResponse.rol
+      listRoles.forEach((element: RolElement) => {
+        dataRol.push(element);
+      });
+      this.roles = dataRol;
+      // Aquí puedes hacer lo que necesites con los roles obtenidos
+      console.log('Roles procesados:', dataRol);
+    } else {
+      console.error(
+        'La respuesta no contiene la estructura esperada para los roles.'
+      );
+    }
+  }
+  getStatus(): void {
+    this.userService.getStatus().subscribe(
+      (data: any) => {
+        console.log('respuesta estados: ', data);
+        this.processStatusResponse(data);
+      },
+      (error: any) => {
+        console.log('error: ', error);
+      }
+    );
+  }
+
+  processStatusResponse(resp: any) {
+    const dataStatus: StatusElement[] = [];
+
+    if (
+      resp.metadata[0].code == '00' &&
+      resp.userStatusResponse &&
+      resp.userStatusResponse.userStatus
+    ) {
+      let listStatus = resp.userStatusResponse.userStatus;
+      console.log('Status response:', listStatus); // Agregar esta línea para imprimir resp.userStatusResponse.userStatus
+      listStatus.forEach((element: StatusElement) => {
+        dataStatus.push(element);
+      });
+
+      this.statuses = dataStatus;
+      // Aquí puedes hacer lo que necesites con los estados obtenidos
+      console.log('Estados procesados:', dataStatus);
+    } else {
+      console.error(
+        'La respuesta no contiene la estructura esperada para los estados.'
+      );
+    }
+  }
+
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+    // Aquí puedes hacer lo que necesites con el archivo seleccionado, como subirlo a un servidor o previsualizarlo
+  }
+  onSave() {
+    let data = {
+      name: this.userForm.get('name')?.value,
+      description: this.userForm.get('description')?.value,
+      email: this.userForm.get('email')?.value,
+      password: this.userForm.get('password')?.value,
+      rol: this.userForm.get('rol')?.value,
+      status: this.userForm.get('status')?.value,
+    };
+
+    this.userService.saveUser(data).subscribe(
+      (data: any) => {
+        console.log(data);
+        this.dialogRef.close(1);
+      },
+      (error: any) => {
+        this.dialogRef.close(2);
+      }
+    );
+  }
+
+  onCancel() {}
+}
+
+export interface RolElement {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface StatusElement {
+  id: number;
+  name: string;
+  description: string;
+}

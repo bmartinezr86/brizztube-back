@@ -74,7 +74,6 @@ export class SidenavComponent implements OnInit {
       type: 'option',
       name: 'Usuarios',
       route: 'users/list',
-      // route: 'users/list',
       icon: 'people',
     },
   ];

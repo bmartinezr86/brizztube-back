@@ -1,8 +1,12 @@
 package com.brizztube.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,7 +57,7 @@ public class UserRestController {
 		ResponseEntity<UserResponseRest> response = service.searchById(id);
 		return response;
 	}
-	
+
 	/**
 	 * get user by name
 	 * 
@@ -67,7 +71,6 @@ public class UserRestController {
 		ResponseEntity<UserResponseRest> response = service.searchByName(name);
 		return response;
 	}
-
 
 	/**
 	 * save user
@@ -83,7 +86,7 @@ public class UserRestController {
 	 * @throws IOException
 	 */
 	@PostMapping("/users")
-	public ResponseEntity<UserResponseRest> save(@RequestParam("picture") MultipartFile picture,
+	public ResponseEntity<UserResponseRest> save(@RequestParam(value="picture", required = false) MultipartFile picture,
 			@RequestParam("name") String name, @RequestParam("description") String description,
 			@RequestParam("email") String email, @RequestParam("password") String password,
 			@RequestParam("rol") Long rolId, @RequestParam("status") Long userStatusId) throws IOException {
@@ -93,7 +96,22 @@ public class UserRestController {
 		user.setDescription(description);
 		user.setEmail(email);
 		user.setPassword(password);
-		user.setPicture(Util.compressZLib(picture.getBytes()));
+
+		 try {
+	            if (picture != null && !picture.isEmpty()) {
+	                user.setPicture(Util.compressZLib(picture.getBytes()));
+	            } else {
+	                // Si no se proporciona una imagen, cargar la imagen por defecto
+	                ClassPathResource resource = new ClassPathResource("assets/img/default-profile.png");
+	                InputStream inputStream = resource.getInputStream();
+	                byte[] defaultPicture = inputStream.readAllBytes();
+	                user.setPicture(Util.compressZLib(defaultPicture));
+	            }
+	        } catch (IOException e) {
+	            // Manejar la excepción adecuadamente
+	            e.printStackTrace(); // O cualquier otro método de manejo de errores
+	            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
 
 		ResponseEntity<UserResponseRest> response = service.save(user, rolId, userStatusId);
 		return response;
@@ -129,10 +147,10 @@ public class UserRestController {
 		ResponseEntity<UserResponseRest> response = service.update(user, userId, rolId, userStatusId);
 		return response;
 	}
-	
-	
+
 	/**
-	 *  delete user
+	 * delete user
+	 * 
 	 * @param id
 	 * @return
 	 * @throws IOException

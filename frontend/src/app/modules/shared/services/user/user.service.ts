@@ -43,4 +43,20 @@ export class UserService {
     const endpoint = `${base_url}/users`;
     return this.http.post(endpoint, body);
   }
+
+  /**
+   * update the user
+   */
+  updateUser(body: any, id: any) {
+    const endpoint = `${base_url}/users/ ${id}`;
+    return this.http.put(endpoint, body);
+  }
+
+  /**
+   * delete the users
+   */
+  deleteUser(id: any) {
+    const endpoint = `${base_url}/users/ ${id}`;
+    return this.http.delete(endpoint);
+  }
 }

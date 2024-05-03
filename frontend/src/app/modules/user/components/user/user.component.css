@@ -40,7 +40,9 @@ mat-form-field {
     margin-right: 10px;
     box-shadow: none;
 
-    &:hover {
+    &:hover,
+    &:active,
+    &:focus {
         box-shadow: none;
     }
 }
@@ -64,4 +66,8 @@ mat-form-field {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+th {
+    font-weight: bold;
 }

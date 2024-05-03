@@ -70,13 +70,14 @@
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>Acciones</th>
                 <td mat-cell *matCellDef="let element; let i=index;">
-                    <button mat-fab class="btn btn-action" color="primary">
+                    <button mat-fab class="btn btn-action" color="primary"
+                        (click)="edit(element.id, element.name, element.description, element.email, element.password, element.rol, element.status)">
                         <mat-icon aria-label="Edit">edit</mat-icon>
                     </button>
                     <button mat-fab class="btn btn-action" color="primary">
                         <mat-icon aria-label="Reset Password">lock</mat-icon>
                     </button>
-                    <button mat-fab class="btn btn-action" color="warn">
+                    <button mat-fab class="btn btn-action" color="warn" (click)="delete(element.id)">
                         <mat-icon aria-label="Delete">delete</mat-icon>
                     </button>
                 </td>

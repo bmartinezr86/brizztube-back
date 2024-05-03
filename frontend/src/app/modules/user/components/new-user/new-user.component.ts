@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
 
 @Component({
@@ -19,6 +19,7 @@ export class NewUserComponent implements OnInit {
   public estadoFormulario: string = '';
   public selectedFile: any;
   public nameImg: string = '';
+  public data = inject(MAT_DIALOG_DATA);
 
   ngOnInit(): void {
     this.estadoFormulario = 'Crear';
@@ -40,6 +41,13 @@ export class NewUserComponent implements OnInit {
     });
     this.getRoles();
     this.getStatus();
+
+    console.log(this.data);
+
+    if (this.data != null) {
+      this.updateForm(this.data);
+      this.estadoFormulario = 'Actualizar';
+    }
   }
 
   getRoles(): void {
@@ -142,19 +150,53 @@ export class NewUserComponent implements OnInit {
     uploadImageData.append('rol', data.rol);
     uploadImageData.append('status', data.status);
 
-    // call the service to save a user
-    this.userService.saveUser(uploadImageData).subscribe(
-      (data: any) => {
-        console.log(data);
-        this.dialogRef.close(1);
-      },
-      (error: any) => {
-        this.dialogRef.close(2);
-      }
-    );
+    if (this.data != null) {
+      // update user
+      this.userService.updateUser(uploadImageData, this.data.id).subscribe(
+        (data: any) => {
+          console.log(data);
+          this.dialogRef.close(1);
+        },
+        (error: any) => {
+          this.dialogRef.close(2);
+        }
+      );
+    } else {
+      // create user
+      this.userService.saveUser(uploadImageData).subscribe(
+        (data: any) => {
+          console.log(data);
+          this.dialogRef.close(1);
+        },
+        (error: any) => {
+          this.dialogRef.close(2);
+        }
+      );
+    }
   }
 
-  onCancel() {}
+  onCancel() {
+    this.dialogRef.close(3);
+  }
+
+  updateForm(data: any) {
+    this.userForm = this.fb.group({
+      name: [data.name, Validators.required],
+      description: [data.description],
+      email: [data.email, [Validators.required, Validators.email]],
+      password: [
+        data.password,
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}$/),
+        ],
+      ],
+      image: [''],
+      rol: [data.rol.id, Validators.required],
+      status: [data.status.id, Validators.required],
+    });
+  }
 }
 
 export interface RolElement {

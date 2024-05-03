@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
@@ -8,6 +8,8 @@ import {
   MatSnackBarRef,
   SimpleSnackBar,
 } from '@angular/material/snack-bar';
+import { ConfirmComponent } from 'src/app/modules/shared/components/confirm/confirm.component';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-user',
@@ -33,6 +35,9 @@ export class UserComponent implements OnInit {
     'actions',
   ];
   dataSource = new MatTableDataSource<UserElement>();
+  @ViewChild(MatPaginator)
+  public paginator!: MatPaginator;
+
   getUsers(): void {
     this.userService.getUsers().subscribe(
       (data: any) => {
@@ -59,7 +64,7 @@ export class UserComponent implements OnInit {
       this.dataSource = new MatTableDataSource<UserElement>(dataUser);
       console.log(this.dataSource);
       console.log('User response:', resp.userResponse.user);
-      // this.dataSource.paginator = this.paginator;
+      this.dataSource.paginator = this.paginator;
     }
     console.log('User response:', resp.userResponse.user);
   }
@@ -88,16 +93,58 @@ export class UserComponent implements OnInit {
     });
   }
 
-  delete(id: any) {}
+  delete(id: any) {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: '20%',
+      data: { id: id },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == 1) {
+        this.openSnackBar('Usuario eliminado', 'Exitosa');
+        this.getUsers();
+      } else if (result == 2) {
+        this.openSnackBar(
+          'Se ha producido un error al eliminar el usuario',
+          'Error'
+        );
+      }
+    });
+  }
 
   edit(
     id: number,
     name: string,
     description: string,
     email: string,
-    rolId: number,
-    statusId: number
-  ) {}
+    password: string,
+    rol: any,
+    status: any
+    // picture: any
+  ) {
+    const dialogRef = this.dialog.open(NewUserComponent, {
+      width: '600px',
+      data: {
+        id: id,
+        name: name,
+        description: description,
+        email: email,
+        password: password,
+        rol: rol,
+        status: status,
+        // picture: picture,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == 1) {
+        this.openSnackBar('Usuario creado', 'Exitosa');
+        this.getUsers();
+      } else if (result == 2) {
+        this.openSnackBar('Error al guardar el usuario', 'Error');
+      }
+    });
+  }
 }
 
 export interface UserElement {

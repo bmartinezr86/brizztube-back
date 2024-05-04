@@ -47,3 +47,14 @@ body {
 
 
 /* .btn-form {} */
+
+.title-page {
+    margin-top: 25px;
+    margin-left: 4%;
+}
+
+mat-card-header,
+mat-card-content {
+    margin-left: 3.5%;
+    margin-right: 3.5%;
+}

@@ -1,0 +1,82 @@
+<mat-card>
+    <div class="container-singup">
+        <div class="column">
+            <div>
+                <span><a href="#"><img class="logo" src="../../../../../assets/img/brizztube-logo-3.svg"
+                            alt="logo-brizztube"></a></span>
+            </div>
+            <div>
+                <img class="register-banner" src="../../../../../assets/img/undraw_lives_matter_38lv.svg" alt="">
+            </div>
+        </div>
+        <div class="column">
+            <div class="form-container">
+                <h2 class="form-title">Registro de usuarios</h2>
+                <mat-dialog-content>
+                    <form [formGroup]="registroForm" class="form">
+                        <div class="user-container">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Nombre</mat-label>
+                                <input matInput placeholder="Nombre" formControlName="name" required>
+                            </mat-form-field>
+
+
+                            <mat-form-field appearance="fill">
+                                <mat-label>Email</mat-label>
+                                <input type="email" matInput placeholder="Ex. pat@example.com" formControlName="email">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="fill">
+                                <mat-label>Contraseña</mat-label>
+                                <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="********"
+                                    formControlName="password">
+                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
+                                    [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
+                                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                </button>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Confirmación contraseña</mat-label>
+                                <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="********"
+                                    formControlName="passwordConfirm">
+                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
+                                    [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
+                                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                </button>
+                            </mat-form-field>
+
+                            <div *ngIf="registroForm.hasError('confirmPassword')" class="error-message">
+                                Las contraseñas no coinciden
+                            </div>
+
+
+                            <div class="input-file-conteiner">
+                                <label for="file-upload" class="subir">
+                                    <mat-icon>file_upload</mat-icon>
+                                    Subir imagen
+                                </label>
+                                <input id="file-upload" accept="image/png, image/jpeg, image/jpg"
+                                    (change)="onFileChanged($event)" type="file" formControlName="picture"
+                                    class="input-file">
+                                <span>{{ nameImg }}</span>
+                            </div>
+                            <mat-checkbox [(ngModel)]="acceptTerms" color="primary" required>
+                                Acepto los <a href="/terminos-y-condiciones">términos y condiciones</a>
+                            </mat-checkbox>
+
+
+                        </div>
+                    </form>
+                    <mat-dialog-actions>
+                        <button mat-flat-button color="primary" class="btn-long" (click)="onSave()"
+                            [disabled]="registroForm.invalid">
+                            Registrarse
+                        </button>
+                    </mat-dialog-actions>
+                </mat-dialog-content>
+            </div>
+
+        </div>
+
+    </div>
+</mat-card>

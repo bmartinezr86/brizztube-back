@@ -1,5 +1,5 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-sidenav',
@@ -11,6 +11,7 @@ export class SidenavComponent implements OnInit {
   mostrarEnMovil = false;
   mostrarFormularioBusqueda = false;
   mostrarEnDesktop = false;
+  urlFrontBase = 'http://localhost:4200/dashboard';
   menuNav = [
     {
       type: 'option', // Indica que este elemento es una opción del menú
@@ -66,7 +67,7 @@ export class SidenavComponent implements OnInit {
     {
       type: 'option',
       name: 'Registro',
-      route: 'register',
+      route: 'singup',
       icon: 'add_circle',
     },
 
@@ -86,6 +87,11 @@ export class SidenavComponent implements OnInit {
 
   toggleFormularioBusqueda() {
     this.mostrarFormularioBusqueda = !this.mostrarFormularioBusqueda;
+  }
+
+  redirectToLogin() {
+    let url = this.urlFrontBase + '/login';
+    window.location.href = url;
   }
 
   ngOnInit(): void {}

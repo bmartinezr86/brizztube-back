@@ -45,6 +45,7 @@ export class NewUserComponent implements OnInit {
     console.log(this.data);
 
     if (this.data != null) {
+      console.log(this.data.picture);
       this.updateForm(this.data);
       this.estadoFormulario = 'Actualizar';
     }
@@ -142,6 +143,7 @@ export class NewUserComponent implements OnInit {
     };
 
     const uploadImageData = new FormData();
+
     uploadImageData.append('picture', data.picture, data.picture.name);
     uploadImageData.append('name', data.name);
     uploadImageData.append('description', data.description);

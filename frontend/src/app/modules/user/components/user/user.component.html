@@ -4,7 +4,7 @@
         <div>
             <mat-form-field appearance="fill">
                 <mat-label>Buscar Usuarios</mat-label>
-                <input matInput>
+                <input matInput #input (keyup)="search(input.value)">
             </mat-form-field>
         </div>
     </mat-card-header>

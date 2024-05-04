@@ -5,6 +5,7 @@ import { UserService } from 'src/app/modules/shared/services/user/user.service';
 import { NewUserComponent } from '../new-user/new-user.component';
 import {
   MatSnackBar,
+  MatSnackBarConfig,
   MatSnackBarRef,
   SimpleSnackBar,
 } from '@angular/material/snack-bar';
@@ -120,7 +121,6 @@ export class UserComponent implements OnInit {
     password: string,
     rol: any,
     status: any
-    // picture: any
   ) {
     const dialogRef = this.dialog.open(NewUserComponent, {
       width: '600px',
@@ -144,6 +144,16 @@ export class UserComponent implements OnInit {
         this.openSnackBar('Error al guardar el usuario', 'Error');
       }
     });
+  }
+
+  search(name: any) {
+    if (name.length === 0) {
+      return this.getUsers();
+    } else {
+      this.userService.getUserByName(name).subscribe((resp: any) => {
+        this.processUsersResponse(resp);
+      });
+    }
   }
 }
 

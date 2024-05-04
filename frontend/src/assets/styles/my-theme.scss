@@ -92,6 +92,35 @@ $warn-color: (
   )
 );
 
+// Define el nuevo color para el Snackbar
+$new-snackbar-color: (
+  50: #f3e5f5, // Define diferentes tonos de color según sea necesario
+  100: #e1bee7,
+  200: #ce93d8,
+  300: #ba68c8,
+  400: #ab47bc,
+  500: #9c27b0, // Este será el color principal del Snackbar
+  600: #8e24aa,
+  700: #7b1fa2,
+  800: #6a1b9a,
+  900: #4a148c,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  )
+);
+
+// Define la paleta de colores para el nuevo color del Snackbar
+$new-snackbar-palette: mat.define-palette($new-snackbar-color, 500);
+
 
 $palette-primary: mat.define-palette($primary-color, 500, 700, 300, 900);
 $secondary-palette: mat.define-palette($secondary-color, 500, 300, 100, 500);
@@ -103,6 +132,7 @@ $custom-theme: mat.define-light-theme((
     primary: $palette-primary,
     accent: $secondary-palette,
     warn: $warn-palette,
+    mat-snack-bar-background: $new-snackbar-palette
   )
 ));
 

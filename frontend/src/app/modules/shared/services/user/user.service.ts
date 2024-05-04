@@ -37,6 +37,15 @@ export class UserService {
   }
 
   /**
+   * search user by name
+   * @param name
+   */
+  getUserByName(name: any) {
+    const endpoint = `${base_url}/users/filter/${name}`;
+    return this.http.get(endpoint);
+  }
+
+  /**
    * save the users
    */
   saveUser(body: any) {

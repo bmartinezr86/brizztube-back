@@ -71,3 +71,7 @@ mat-form-field {
 th {
     font-weight: bold;
 }
+
+.mdc-button__label {
+    color: var(--color-primario);
+}

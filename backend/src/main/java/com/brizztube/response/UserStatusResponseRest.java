@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 
 public class UserStatusResponseRest extends ResponseRest{
-	private UserStatusResponse userStatus= new UserStatusResponse();
+	private UserStatusResponse userStatusResponse = new UserStatusResponse();
 }
 

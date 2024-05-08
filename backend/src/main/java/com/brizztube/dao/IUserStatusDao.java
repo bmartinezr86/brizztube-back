@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.brizztube.model.UserStatus;
 
-public interface IUserStatus extends CrudRepository<UserStatus, Long>{
+public interface IUserStatusDao extends CrudRepository<UserStatus, Long>{
 
 }

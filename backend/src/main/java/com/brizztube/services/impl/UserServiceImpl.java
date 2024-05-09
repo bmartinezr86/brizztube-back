@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,48 +34,51 @@ public class UserServiceImpl implements IUserService {
 	@Autowired // instancia el objeto
 	private IRolDao rolDao;
 
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
 	@Override
 	@Transactional(readOnly = true)
 	public ResponseEntity<UserResponseRest> search() {
-	    UserResponseRest response = new UserResponseRest();
-	    List<User> list = new ArrayList<>();
-	    List<User> listAux = new ArrayList<>();
+		UserResponseRest response = new UserResponseRest();
+		List<User> list = new ArrayList<>();
+		List<User> listAux = new ArrayList<>();
 
-	    try {
+		try {
 
-	        // search users
-	        listAux = (List<User>) userDao.findAll();
-	        if(listAux.size() > 0) {
-	            listAux.forEach((u) -> {
-	                try {
-	                	byte[] imageDescompressed = null;
-	                	if (u.getPicture() != null) {
-	                	    imageDescompressed = Util.decompressZLib(u.getPicture());
-	                	}
-	                    u.setPicture(imageDescompressed);
-	                    list.add(u);
-	                } catch (Exception e) {
-	                    // Manejar la excepción de descompresión de la imagen
-	                	response.setMetadata("Respuesta NOK", "-1", "Error al descomprimir la imagen");
-	                    e.printStackTrace();
-	                    // Puedes optar por omitir este usuario con problemas de imagen o manejarlo de otra manera
-	                }
-	            });
-	        }
+			// search users
+			listAux = (List<User>) userDao.findAll();
+			if (listAux.size() > 0) {
+				listAux.forEach((u) -> {
+					try {
+						byte[] imageDescompressed = null;
+						if (u.getPicture() != null) {
+							imageDescompressed = Util.decompressZLib(u.getPicture());
+						}
+						u.setPicture(imageDescompressed);
+						list.add(u);
+					} catch (Exception e) {
+						// Manejar la excepción de descompresión de la imagen
+						response.setMetadata("Respuesta NOK", "-1", "Error al descomprimir la imagen");
+						e.printStackTrace();
+						// Puedes optar por omitir este usuario con problemas de imagen o manejarlo de
+						// otra manera
+					}
+				});
+			}
 
-	        response.getUserResponse().setUser(list);
-	        response.setMetadata("Respuesta OK", "00", "Respuesta exitosa");
+			response.getUserResponse().setUser(list);
+			response.setMetadata("Respuesta OK", "00", "Respuesta exitosa");
 
-	    } catch (Exception e) {
-	        // Manejar cualquier excepción general
-	        response.setMetadata("Respuesta NOK", "-1", "Error al consultar");
-	        e.printStackTrace();
-	        return new ResponseEntity<UserResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
+		} catch (Exception e) {
+			// Manejar cualquier excepción general
+			response.setMetadata("Respuesta NOK", "-1", "Error al consultar");
+			e.printStackTrace();
+			return new ResponseEntity<UserResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
-	    return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
+		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
 	}
-
 
 	@Override
 	@Transactional(readOnly = true)
@@ -107,18 +111,17 @@ public class UserServiceImpl implements IUserService {
 
 		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public ResponseEntity<UserResponseRest> searchByName(String name) {
 		UserResponseRest response = new UserResponseRest();
 		List<User> list = new ArrayList<>();
-		List<User> listAux= new ArrayList<>();
+		List<User> listAux = new ArrayList<>();
 
 		try {
 			// search user by name
 			listAux = userDao.findByNameContainingIgnoreCase(name);
-			
 
 			// Descomprime picture in all users
 			if (listAux.size() > 0) {
@@ -127,8 +130,7 @@ public class UserServiceImpl implements IUserService {
 					u.setPicture(imageDescompressed);
 					list.add(u);
 				});
-				
-				
+
 				response.getUserResponse().setUser(list);
 				response.setMetadata("Respuesta OK", "00", "Usuarios encontrado");
 			} else {
@@ -144,7 +146,6 @@ public class UserServiceImpl implements IUserService {
 
 		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
 	}
-
 
 	@Override
 	@Transactional
@@ -182,6 +183,10 @@ public class UserServiceImpl implements IUserService {
 				return new ResponseEntity<UserResponseRest>(response, HttpStatus.BAD_REQUEST);
 			}
 
+			// Encrypt user password
+			String encryptedPassword = passwordEncoder.encode(user.getPassword());
+			user.setPassword(encryptedPassword);
+
 			// save user
 			User userSaved = userDao.save(user);
 
@@ -204,26 +209,25 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	@Transactional
-	public ResponseEntity<UserResponseRest> update(User user,Long userId, Long rolId, Long userStatusId) {
+	public ResponseEntity<UserResponseRest> update(User user, Long userId, Long rolId, Long userStatusId) {
 		UserResponseRest response = new UserResponseRest();
 		List<User> list = new ArrayList<>();
 
 		try {
-			
+
 			Optional<User> userSearch = userDao.findById(userId);
-			
+
 			if (userSearch.isPresent()) {
-				
-				
+
 				userSearch.get().setName(user.getName());
 				userSearch.get().setDescription(user.getDescription());
 				userSearch.get().setEmail(user.getEmail());
 				userSearch.get().setPassword(user.getPassword());
 				userSearch.get().setPicture(user.getPicture());
 
-				
 				// search rol to set in the user
-				Optional<Rol> rol = rolDao.findById(rolId); // Es opcional por si no existiera poder validar con los metodos
+				Optional<Rol> rol = rolDao.findById(rolId); // Es opcional por si no existiera poder validar con los
+															// metodos
 															// que trae
 
 				if (rol.isPresent()) {
@@ -234,7 +238,8 @@ public class UserServiceImpl implements IUserService {
 				}
 
 				// search user-status to set in the user
-				Optional<UserStatus> userStatus = userStatusDao.findById(userStatusId); // Es opcional por si no existiera
+				Optional<UserStatus> userStatus = userStatusDao.findById(userStatusId); // Es opcional por si no
+																						// existiera
 																						// poder validar con los metodos
 				if (userStatus.isPresent()) {
 					userSearch.get().setStatus(userStatus.get());
@@ -242,15 +247,17 @@ public class UserServiceImpl implements IUserService {
 					response.setMetadata("Respuesta NOK", "-1", "No existe el estado asociado al usuario");
 					return new ResponseEntity<UserResponseRest>(response, HttpStatus.NOT_FOUND);
 				}
-				
-				// Check if the email is already in use by another user (excluding the user being updated)
+
+				// Check if the email is already in use by another user (excluding the user
+				// being updated)
 				if (userDao.existsByEmailAndIdNot(userSearch.get().getEmail(), userId)) {
-	                response.setMetadata("Respuesta NOK", "-1", "El correo electrónico ya está en uso por otro usuario");
-	                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+					response.setMetadata("Respuesta NOK", "-1",
+							"El correo electrónico ya está en uso por otro usuario");
+					return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 				}
-				
+
 				User userToUpdate = userDao.save(userSearch.get());
-			
+
 				if (userToUpdate != null) {
 					list.add(userToUpdate);
 					response.getUserResponse().setUser(list);
@@ -289,5 +296,35 @@ public class UserServiceImpl implements IUserService {
 		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
 	}
 
+	@Override
+	public ResponseEntity<UserResponseRest> login(String email, String password) {
+		UserResponseRest response = new UserResponseRest();
+		List<User> list = new ArrayList<>();
+
+		try {
+			// Buscar usuario por email
+			Optional<User> user = userDao.findByEmail(email);
+
+			if (user.isPresent()) {
+				// Verificar la contraseña
+				if (passwordEncoder.matches(password, user.get().getPassword())) {
+					list.add(user.get());
+					response.getUserResponse().setUser(list);
+					response.setMetadata("Respuesta OK", "00", "Inicio de sesión exitoso");
+					return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
+				} else {
+					response.setMetadata("Respuesta NOK", "-1", "Credenciales inválidas");
+					return new ResponseEntity<UserResponseRest>(response, HttpStatus.UNAUTHORIZED);
+				}
+			} else {
+				response.setMetadata("Respuesta NOK", "-1", "Credenciales inválidas");
+				return new ResponseEntity<UserResponseRest>(response, HttpStatus.UNAUTHORIZED);
+			}
+		} catch (Exception e) {
+			response.setMetadata("Respuesta NOK", "-1", "Error al iniciar sesión");
+			e.printStackTrace();
+			return new ResponseEntity<UserResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 }

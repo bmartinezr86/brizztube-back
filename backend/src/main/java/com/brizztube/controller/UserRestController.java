@@ -3,7 +3,6 @@ package com.brizztube.controller;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -160,5 +159,20 @@ public class UserRestController {
 		ResponseEntity<UserResponseRest> response = service.delete(id);
 		return response;
 	}
-
+	
+	/**
+	 * login user
+	 * @param email
+	 * @param password
+	 * @return
+	 * @throws IOException
+	 */
+	
+	@PostMapping("/login")
+	public ResponseEntity<UserResponseRest> login(@RequestParam("email") String email, @RequestParam("password") String password) throws IOException {
+		ResponseEntity<UserResponseRest> response = service.login(email, password);
+		return response;
+	}
+	
+	
 }

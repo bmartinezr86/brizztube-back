@@ -1,6 +1,7 @@
 package com.brizztube.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 
@@ -11,4 +12,5 @@ public interface IUserDao extends CrudRepository<User, Long>{
 	boolean existsByEmailAndIdNot(String email, Long id);
 	List<User> findByEmailContainingIgnoreCase(String email);
 	List<User> findByNameContainingIgnoreCase(String name);
+	Optional<User> findByEmail(String email);
 }

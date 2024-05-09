@@ -18,7 +18,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "users")
-public class User {
+public class User{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -49,5 +49,4 @@ public class User {
 
 	@Column(name = "fecha", nullable = false)
 	private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-
 }

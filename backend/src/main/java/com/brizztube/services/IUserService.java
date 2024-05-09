@@ -12,4 +12,5 @@ public interface IUserService {
 	public ResponseEntity<UserResponseRest> save (User user,Long rolId,Long userStatusId);
 	public ResponseEntity<UserResponseRest> update (User user,Long userId, Long rolId, Long userStatusId);
 	public ResponseEntity<UserResponseRest> delete (Long id);
+	public ResponseEntity<UserResponseRest> login (String email, String password);
 }

@@ -187,6 +187,68 @@ div ul {
     align-items: center;
 }
 
+.logged-profile-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.txt-white {
+    color: #fff;
+}
+
+.btn-upload-video:hover {
+    background-color: #0fa580;
+}
+
+
+.profile-image-button {
+    background: transparent;
+    border: none;
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    /* Hacer que se comporte como un elemento en línea */
+    margin-right: 10px;
+    /* Espacio a la derecha del botón */
+
+    &:hover {
+        cursor: pointer;
+
+        & .img-profile {
+            opacity: 0.6;
+        }
+    }
+}
+
+.img-profile {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+.submenu-user {
+    /*position: absolute;
+    */
+    display: flex;
+    width: 300px;
+    justify-content: flex-end;
+    position: sticky;
+    z-index: 10;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    -ms-border-radius: 25px;
+    -o-border-radius: 25px;
+}
 
 @media (max-width: 900px) {
     .input-container {

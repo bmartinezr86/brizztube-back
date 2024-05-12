@@ -90,17 +90,47 @@
                 </button>
 
             </div>
+            <div *ngIf="userService.isLoggedIn()">
+                <div class="logged-profile-container">
+                    <div>
+                        <button mat-flat-button color="primary" class="btn btn-upload-video"
+                            (click)="openUploadVideosForm()">
+                            <mat-icon class="user-icon txt-white">video_call</mat-icon>
+                            <span class="txt-white">
+                                Subir videos
+                            </span>
+                        </button>
+                    </div>
+                    <div>
+                        <button mat-icon-button>
+                            <mat-icon>notifications</mat-icon>
+                        </button>
+                    </div>
+                    <div class="profile">
+                        <button class="profile-image-button" (click)="toggleSubmenu()">
+                            <img class="img-profile" [src]="profileImage" alt="Profile Image">
+                        </button>
 
-            <div class="login-button-container">
-                <button mat-flat-button color="accent" class="btn" (click)="redirectToLogin()">
-                    <mat-icon class="user-icon">account_circle</mat-icon>
-                    Iniciar Sesión
-                </button>
+                    </div>
+                </div>
+
+            </div>
+            <div *ngIf=" !userService.isLoggedIn()">
+                <div class="login-button-container">
+                    <button mat-flat-button color="accent" class="btn" (click)="redirectToLogin()">
+                        <mat-icon class="user-icon">account_circle</mat-icon>
+                        Iniciar Sesión
+                    </button>
+                </div>
             </div>
         </div>
 
 
     </mat-toolbar>
+    <!-- Empieza menu del perfil del usuario -->
+    <app-submenu *ngIf="showSubmenu" [showSubmenu]="showSubmenu" (onOptionClick)="handleSubmenuOptionClick($event)"
+        class="submenu-user"></app-submenu>
+
 
 
     <!-- Empieza el sidenav -->
@@ -128,6 +158,8 @@
                 </ng-container>
             </mat-nav-list>
         </mat-sidenav>
+
+
 
         <!-- Aqui empieza el contenido de la página -->
         <mat-sidenav-content>

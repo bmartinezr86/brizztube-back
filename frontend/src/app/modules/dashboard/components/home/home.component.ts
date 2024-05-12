@@ -12,7 +12,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
-
     if (this.currentUser) {
       console.log('Current User:', this.currentUser);
     }

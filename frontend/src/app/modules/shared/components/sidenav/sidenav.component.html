@@ -107,9 +107,34 @@
                         </button>
                     </div>
                     <div class="profile">
-                        <button class="profile-image-button" (click)="toggleSubmenu()">
+                        <button class="profile-image-button" [matMenuTriggerFor]="menu">
                             <img class="img-profile" [src]="profileImage" alt="Profile Image">
                         </button>
+
+                        <!-- Empieza el menu que sale al dar click en la imagen de perfil del usuario -->
+                        <mat-menu #menu="matMenu">
+                            <ng-container *ngFor="let nav of menuUser">
+                                <div>
+                                    <div class="menu-content" *ngIf="nav.click">
+                                        <a mat-list-item [ngClass]="['enlace-personalizado']" (click)="nav.click()">
+                                            <div class="list-item">
+                                                <mat-icon class="icono">{{ nav.icon }}</mat-icon>
+                                                <span class="links-sidenav-name">{{ nav.name }}</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="menu-content" *ngIf="!nav.click">
+                                        <a mat-list-item [routerLink]="nav.route" [ngClass]="['enlace-personalizado']">
+                                            <div class="list-item">
+                                                <mat-icon class="icono">{{ nav.icon }}</mat-icon>
+                                                <span class="links-sidenav-name">{{ nav.name }}</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </mat-menu>
+
 
                     </div>
                 </div>
@@ -127,9 +152,6 @@
 
 
     </mat-toolbar>
-    <!-- Empieza menu del perfil del usuario -->
-    <app-submenu *ngIf="showSubmenu" [showSubmenu]="showSubmenu" (onOptionClick)="handleSubmenuOptionClick($event)"
-        class="submenu-user"></app-submenu>
 
 
 

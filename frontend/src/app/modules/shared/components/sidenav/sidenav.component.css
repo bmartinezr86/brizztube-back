@@ -234,20 +234,21 @@ div ul {
     -o-border-radius: 100%;
 }
 
-.submenu-user {
-    /*position: absolute;
-    */
+.menu-content {
+    width: 200px;
+    height: auto;
     display: flex;
-    width: 300px;
-    justify-content: flex-end;
-    position: sticky;
-    z-index: 10;
-    border: 1px solid #ccc;
-    border-radius: 25px;
-    -webkit-border-radius: 25px;
-    -moz-border-radius: 25px;
-    -ms-border-radius: 25px;
-    -o-border-radius: 25px;
+    align-items: center;
+    padding: 10px;
+
+    &:hover {
+        background-color: #f0f0f0;
+        cursor: pointer;
+    }
+}
+
+.menu-content a {
+    cursor: pointer;
 }
 
 @media (max-width: 900px) {

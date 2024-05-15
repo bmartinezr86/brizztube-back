@@ -31,7 +31,7 @@ mat-card {
 .column {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     gap: 40px;
     width: 100%;
 }
@@ -110,4 +110,8 @@ mat-dialog-actions {
 
 mat-dialog-content {
     width: 100%;
+}
+
+.error-message {
+    color: red;
 }

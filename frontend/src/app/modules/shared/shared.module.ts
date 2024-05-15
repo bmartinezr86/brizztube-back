@@ -5,10 +5,9 @@ import { MaterialModule } from './material.module';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ConfirmComponent } from './components/confirm/confirm.component';
-import { SubmenuComponent } from './components/submenu/submenu.component';
 
 @NgModule({
-  declarations: [SidenavComponent, ConfirmComponent, SubmenuComponent],
+  declarations: [SidenavComponent, ConfirmComponent],
   exports: [SidenavComponent],
   imports: [CommonModule, RouterModule, MaterialModule, HttpClientModule],
 })

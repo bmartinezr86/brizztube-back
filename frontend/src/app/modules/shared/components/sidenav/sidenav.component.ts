@@ -15,8 +15,6 @@ import { UserService } from '../../services/user/user.service';
   styleUrls: ['./sidenav.component.css'],
 })
 export class SidenavComponent implements OnInit {
-  showSubmenu: boolean = false;
-
   public userService = inject(UserService);
   currentUser: any;
   profileImage: string | undefined;
@@ -92,6 +90,24 @@ export class SidenavComponent implements OnInit {
     },
   ];
 
+  menuUser = [
+    {
+      name: 'Mi perfil',
+      route: 'my-profile',
+      icon: 'person',
+    },
+    {
+      name: 'Preferencias',
+      route: 'settings',
+      icon: 'settings',
+    },
+    {
+      name: 'Cerrar sesión',
+      click: this.logout.bind(this),
+      icon: 'exit_to_app',
+    },
+  ];
+
   constructor(media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this.mostrarEnMovil = window.innerWidth <= 870;
@@ -142,13 +158,9 @@ export class SidenavComponent implements OnInit {
     }
   }
 
-  toggleSubmenu() {
-    this.showSubmenu = !this.showSubmenu;
-  }
-
-  handleSubmenuOptionClick(option: string) {
-    console.log('Selected option:', option);
-    // this.onSubmenuOptionClick.emit(option);
+  logout() {
+    this.userService.logoutUser();
+    window.location.href = this.urlFrontBase;
   }
 }
 

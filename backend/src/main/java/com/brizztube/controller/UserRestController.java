@@ -51,7 +51,7 @@ public class UserRestController {
 	 */
 
 	@GetMapping("/users/{id}")
-	public ResponseEntity<UserResponseRest> searchUserStatusById(@PathVariable Long id) {
+	public ResponseEntity<UserResponseRest> searchUserById(@PathVariable Long id) {
 
 		ResponseEntity<UserResponseRest> response = service.searchById(id);
 		return response;

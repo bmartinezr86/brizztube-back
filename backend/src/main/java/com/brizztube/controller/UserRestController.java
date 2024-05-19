@@ -23,7 +23,7 @@ import com.brizztube.response.UserResponseRest;
 import com.brizztube.services.IUserService;
 import com.brizztube.utils.Util;
 
-@CrossOrigin(origins = { "http://localhost:4200" }) // angular
+@CrossOrigin(origins = {"http://localhost:4200"}) // angular
 @RestController
 @RequestMapping("/api/")
 public class UserRestController {

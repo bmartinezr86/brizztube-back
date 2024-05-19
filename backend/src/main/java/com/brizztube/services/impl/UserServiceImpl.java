@@ -36,6 +36,9 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired // instancia el objeto
 	private IRolDao rolDao;
+	
+	@Autowired
+    private SuscriptionServiceImpl suscriptionService;
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -290,6 +293,8 @@ public class UserServiceImpl implements IUserService {
 	public ResponseEntity<UserResponseRest> delete(Long id) {
 		UserResponseRest response = new UserResponseRest();
 		try {
+			// Eliminar las suscripciones relacionadas con el usuario
+	        suscriptionService.deleteSubscriptionsByUserId(id);
 			userDao.deleteById(id);
 			response.setMetadata("Respuesta OK", "00", "El usuario se ha eliminado correctamente");
 

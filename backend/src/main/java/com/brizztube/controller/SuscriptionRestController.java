@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.brizztube.response.SuscriptionResponseRest;
 import com.brizztube.services.ISuscriptionService;
 
-@CrossOrigin(origins = { "http://localhost:4200" }) // angular
+@CrossOrigin(origins = {"http://localhost:4200"}) // angular
 @RestController
 @RequestMapping("/api/suscriptions")
 public class SuscriptionRestController {

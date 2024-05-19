@@ -2,7 +2,6 @@ package com.brizztube.services;
 
 import org.springframework.http.ResponseEntity;
 
-import com.brizztube.model.User;
 import com.brizztube.response.SuscriptionResponseRest;
 
 public interface ISuscriptionService {
@@ -10,4 +9,5 @@ public interface ISuscriptionService {
 	public ResponseEntity<SuscriptionResponseRest>unsubscribe(Long subscriberId, Long subscribedToId);
 	// public ResponseEntity<SuscriptionResponseRest>getAllSuscriptionByUserId(Long subscribedToId);
 	public ResponseEntity<SuscriptionResponseRest> getSuscriptionCountByUserId(Long userId);
+	public ResponseEntity<SuscriptionResponseRest> deleteSubscriptionsByUserId(Long userId);
 }

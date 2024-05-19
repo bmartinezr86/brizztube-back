@@ -14,5 +14,6 @@ public interface ISuscriptionDao extends CrudRepository<Suscription, Long>{
     boolean existsBySubscriberAndSubscribedTo(User subscriber, User subscribedTo);
     Optional<Suscription> findBySubscriberIdAndSubscribedToId(Long subscriberId, Long subscribedToId);
     Long countBySubscribedToId(Long userId);
+    List<Suscription> findBySubscribedToId(Long userId);
     
 }

@@ -47,7 +47,8 @@ export class LoginComponent implements OnInit {
     this.userService.loginUser(credentials).subscribe(
       (data: any) => {
         console.log(data);
-        this.userService.setCurrentUser(data.userResponse.user[0]);
+        this.userService.setCurrentUser(data.userResponse.user[0]); // Set current user in service
+
         window.location.href = this.urlFrontBase;
         console.log(data.userResponse.user[0]);
       },

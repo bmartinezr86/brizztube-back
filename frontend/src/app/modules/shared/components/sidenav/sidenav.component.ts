@@ -1,5 +1,13 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
+import { UserService } from '../../services/user/user.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -7,6 +15,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sidenav.component.css'],
 })
 export class SidenavComponent implements OnInit {
+  public userService = inject(UserService);
+  currentUser: any;
+  profileImage: string | undefined;
   mobileQuery: MediaQueryList;
   mostrarEnMovil = false;
   mostrarFormularioBusqueda = false;
@@ -26,7 +37,7 @@ export class SidenavComponent implements OnInit {
       icon: 'subscriptions',
     },
     {
-      type: 'separator', // Indica que este elemento es un separador
+      type: 'separator',
     },
     {
       type: 'option',
@@ -62,7 +73,7 @@ export class SidenavComponent implements OnInit {
       icon: 'help',
     },
     {
-      type: 'separator', // Indica que este elemento es un separador
+      type: 'separator',
     },
     {
       type: 'option',
@@ -79,12 +90,34 @@ export class SidenavComponent implements OnInit {
     },
   ];
 
+  menuUser = [
+    {
+      name: 'Mi perfil',
+      route: 'my-profile',
+      icon: 'person',
+    },
+    {
+      name: 'Preferencias',
+      route: 'settings',
+      icon: 'settings',
+    },
+    {
+      name: 'Cerrar sesión',
+      click: this.logout.bind(this),
+      icon: 'exit_to_app',
+    },
+  ];
+
   constructor(media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this.mostrarEnMovil = window.innerWidth <= 870;
     this.mostrarEnDesktop = !this.mostrarEnMovil;
   }
 
+  ngOnInit(): void {
+    this.currentUser = this.userService.getCurrentUser();
+    this.getUserProfile();
+  }
   toggleFormularioBusqueda() {
     this.mostrarFormularioBusqueda = !this.mostrarFormularioBusqueda;
   }
@@ -94,5 +127,57 @@ export class SidenavComponent implements OnInit {
     window.location.href = url;
   }
 
-  ngOnInit(): void {}
+  openUploadVideosForm() {}
+
+  handleProfileImage(pictureUser: any) {
+    if (pictureUser) {
+      this.profileImage = 'data:image/jpeg;base64,' + pictureUser; // Establecer datos Base64 si están disponibles
+    } else {
+      this.profileImage = '../../../../../assets/img/default-profile.png';
+    }
+  }
+
+  getUserProfile() {
+    this.userService.getUserById(this.currentUser.id).subscribe((resp: any) => {
+      this.processUserResponse(resp);
+    });
+  }
+
+  processUserResponse(resp: any) {
+    const dataCategory: UserElement[] = [];
+
+    if (resp.metadata[0].code == '00') {
+      const userData = resp.userResponse.user[0]; // Assuming single user
+
+      // Extract profile image URL from userData
+      const profileImageUrl = userData.picture;
+      console.log(profileImageUrl);
+
+      // Pass profile image URL to handleProfileImage
+      this.handleProfileImage(profileImageUrl);
+    }
+  }
+
+  logout() {
+    this.userService.logoutUser();
+    window.location.href = this.urlFrontBase;
+  }
+}
+
+export interface UserElement {
+  id: number;
+  name: string;
+  description: string;
+  email: string;
+  picture: any;
+  rol: {
+    id: number;
+    name: string;
+    description: string;
+  };
+  status: {
+    id: number;
+    name: string;
+    description: string;
+  };
 }

@@ -7,8 +7,7 @@ const base_url = 'http://localhost:8080/api';
   providedIn: 'root',
 })
 export class UserService {
-  private currentUserKey = 'currentUser';
-  private currentPictureUserKey = 'currentPictureUser';
+  private currentUser = null;
   constructor(private http: HttpClient) {}
 
   /**
@@ -17,6 +16,16 @@ export class UserService {
    */
   getUsers() {
     const endpoint = `${base_url}/users`;
+    return this.http.get(endpoint);
+  }
+
+  /**
+   * get user by id
+   * @param id
+   * @returns
+   */
+  getUserById(id: any) {
+    const endpoint = `${base_url}/users/ ${id}`;
     return this.http.get(endpoint);
   }
 
@@ -79,65 +88,36 @@ export class UserService {
     return this.http.post(endpoint, body);
   }
 
-  /**
-   * cookie
-   */
-  getCurrentUser(): any {
-    const cookieValue = this.getCookie(this.currentUserKey);
-    return cookieValue ? JSON.parse(cookieValue) : null;
-  }
-
-  setCurrentUser(user: any): void {
-    const userData = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      // picture: user.picture,
-      password: user.password,
-      rol: user.rol,
-      status: user.status,
-    };
-
-    const pictureData = {
-      picture: user.picture,
-    };
-    console.log('User to set:', userData);
-    this.setCookie(this.currentUserKey, JSON.stringify(userData), 365); // Caduca en 1 año
-    // this.setCookie(
-    //   this.currentPictureUserKey,
-    //   JSON.stringify(pictureData),
-    //   365
-    // ); // Caduca en 1 año
-  }
-
   logoutUser(): void {
-    this.deleteCookie(this.currentUserKey);
+    sessionStorage.removeItem('currentUser');
+    this.currentUser = null;
   }
 
-  // Methods to work with cookies
-  private setCookie(name: string, value: string, expireDays: number): void {
-    const date = new Date();
-    date.setTime(date.getTime() + expireDays * 24 * 60 * 60 * 1000);
-    const expires = `expires=${date.toUTCString()}`;
-    document.cookie = `${name}=${value};${expires};path=/`;
-  }
-
-  private getCookie(name: string): string | null {
-    const cookieName = `${name}=`;
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      let cookie = cookies[i];
-      while (cookie.charAt(0) === ' ') {
-        cookie = cookie.substring(1);
-      }
-      if (cookie.indexOf(cookieName) === 0) {
-        return cookie.substring(cookieName.length, cookie.length);
-      }
+  setCurrentUser(usuario: any): void {
+    this.currentUser = usuario;
+    if (usuario) {
+      sessionStorage.setItem('currentUser', JSON.stringify(usuario));
+    } else {
+      sessionStorage.removeItem('currentUser');
     }
-    return null;
   }
 
-  private deleteCookie(name: string): void {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/`;
+  getCurrentUser(): any {
+    const storedUser = sessionStorage.getItem('currentUser');
+    return storedUser ? JSON.parse(storedUser) : null;
+  }
+
+  isLoggedIn(): boolean {
+    // Verifica si la sesión existe
+    return sessionStorage.getItem('currentUser') !== null;
+  }
+
+  getUserRole(): string {
+    // Obtiene el rol del usuario desde el sessionStorage
+    const userData = sessionStorage.getItem('currentUser');
+    if (userData) {
+      return JSON.parse(userData).role;
+    }
+    return '';
   }
 }

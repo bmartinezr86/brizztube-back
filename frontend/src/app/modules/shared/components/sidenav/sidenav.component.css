@@ -187,6 +187,69 @@ div ul {
     align-items: center;
 }
 
+.logged-profile-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.txt-white {
+    color: #fff;
+}
+
+.btn-upload-video:hover {
+    background-color: #0fa580;
+}
+
+
+.profile-image-button {
+    background: transparent;
+    border: none;
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    /* Hacer que se comporte como un elemento en línea */
+    margin-right: 10px;
+    /* Espacio a la derecha del botón */
+
+    &:hover {
+        cursor: pointer;
+
+        & .img-profile {
+            opacity: 0.6;
+        }
+    }
+}
+
+.img-profile {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+.menu-content {
+    width: 200px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    &:hover {
+        background-color: #f0f0f0;
+        cursor: pointer;
+    }
+}
+
+.menu-content a {
+    cursor: pointer;
+}
 
 @media (max-width: 900px) {
     .input-container {

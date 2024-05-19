@@ -22,6 +22,9 @@ import com.brizztube.response.UserResponseRest;
 import com.brizztube.services.IUserService;
 import com.brizztube.utils.Util;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 @Service
 public class UserServiceImpl implements IUserService {
 
@@ -33,9 +36,15 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired // instancia el objeto
 	private IRolDao rolDao;
+	
+	@Autowired
+    private SuscriptionServiceImpl suscriptionService;
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+
+	@Autowired
+	private HttpServletRequest httpServletRequest;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -284,6 +293,8 @@ public class UserServiceImpl implements IUserService {
 	public ResponseEntity<UserResponseRest> delete(Long id) {
 		UserResponseRest response = new UserResponseRest();
 		try {
+			// Eliminar las suscripciones relacionadas con el usuario
+	        suscriptionService.deleteSubscriptionsByUserId(id);
 			userDao.deleteById(id);
 			response.setMetadata("Respuesta OK", "00", "El usuario se ha eliminado correctamente");
 
@@ -308,6 +319,9 @@ public class UserServiceImpl implements IUserService {
 			if (user.isPresent()) {
 				// Verificar la contraseña
 				if (passwordEncoder.matches(password, user.get().getPassword())) {
+					HttpSession session = httpServletRequest.getSession();
+					session.setAttribute("user", user.get()); // establece la sesión del usuario
+
 					list.add(user.get());
 					response.getUserResponse().setUser(list);
 					response.setMetadata("Respuesta OK", "00", "Inicio de sesión exitoso");

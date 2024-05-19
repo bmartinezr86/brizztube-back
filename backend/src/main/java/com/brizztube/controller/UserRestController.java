@@ -23,7 +23,7 @@ import com.brizztube.response.UserResponseRest;
 import com.brizztube.services.IUserService;
 import com.brizztube.utils.Util;
 
-@CrossOrigin(origins = { "http://localhost:4200" }) // angular
+@CrossOrigin(origins = {"http://localhost:4200"}) // angular
 @RestController
 @RequestMapping("/api/")
 public class UserRestController {
@@ -51,7 +51,7 @@ public class UserRestController {
 	 */
 
 	@GetMapping("/users/{id}")
-	public ResponseEntity<UserResponseRest> searchUserStatusById(@PathVariable Long id) {
+	public ResponseEntity<UserResponseRest> searchUserById(@PathVariable Long id) {
 
 		ResponseEntity<UserResponseRest> response = service.searchById(id);
 		return response;

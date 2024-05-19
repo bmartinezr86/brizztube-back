@@ -9,16 +9,30 @@
                 {{ currentUser.name }}
             </h2>
             <div class="estadisticas-user">
-                500 suscripciones
+                {{ suscriberCount }} suscripciones
                 ·
                 2 videos
             </div>
             <div *ngIf="currentUser.description != ''">
                 {{ currentUser.description }}
             </div>
-            <div>
-                <button mat-flat-button color="accent" class="btn btn-seguir">
+            <div class="btn-actions">
+                <button mat-flat-button color="accent" class="btn btn-seguir" *ngIf="!isSubscribed()"
+                    (click)="subscribe()">
                     Seguir
+                </button>
+                <button mat-flat-button color="accent" class="btn btn-seguir" *ngIf="isSubscribed()"
+                    (click)="unsubscribe()">
+                    Dejar de seguir
+                </button>
+                <button mat-flat-button color="primary" class="btn btn-seguir"
+                    (click)="editProfile(currentUser.id, currentUser.name, currentUser.description, currentUser.email, currentUser.password, currentUser.rol, currentUser.status)">
+                    <div class="btn-edit">
+                        <mat-icon class="icon">edit</mat-icon>
+                        <span>
+                            Editar perfil
+                        </span>
+                    </div>
                 </button>
             </div>
         </div>

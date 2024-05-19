@@ -26,6 +26,22 @@ mat-card {
     -o-border-radius: 100%;
 }
 
+.btn-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    & .icon {
+        font-size: 19px;
+    }
+}
+
 .btn-seguir {
     border-radius: 25px;
     -webkit-border-radius: 25px;

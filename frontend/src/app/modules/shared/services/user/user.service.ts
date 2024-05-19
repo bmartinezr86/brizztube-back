@@ -83,9 +83,6 @@ export class UserService {
   /**
    * login the users
    */
-  /**
-   * login the users
-   */
   loginUser(body: any) {
     const endpoint = `${base_url}/login`;
     return this.http.post(endpoint, body);

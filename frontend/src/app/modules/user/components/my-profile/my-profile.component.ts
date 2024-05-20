@@ -8,6 +8,7 @@ import {
   MatSnackBarRef,
   SimpleSnackBar,
 } from '@angular/material/snack-bar';
+import { VideoService } from 'src/app/modules/shared/services/video/video.service';
 
 @Component({
   selector: 'app-my-profile',
@@ -17,17 +18,21 @@ import {
 export class MyProfileComponent implements OnInit {
   public userService = inject(UserService);
   public suscriptionService = inject(SuscriptionService);
+  public videoService = inject(VideoService);
   public dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   currentUser: any;
   profileImage: string | undefined;
   suscriberCount: number = 0;
   isUserSubscribed: boolean = false;
+  videos: any[] = []; // Array para almacenar los videos
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
     this.getUserProfile();
     this.getSuscriberCount();
+    this.getMyVideos(this.currentUser.id);
+    console.log(this.currentUser.id);
   }
 
   getUserProfile() {
@@ -138,6 +143,26 @@ export class MyProfileComponent implements OnInit {
     return this.snackBar.open(message, action, {
       duration: 2000,
     });
+  }
+
+  getMyVideos(userId: number) {
+    this.videoService.searchVideoByUserId(userId).subscribe(
+      (response: any) => {
+        if (
+          response &&
+          response.videoResponse &&
+          response.videoResponse.video
+        ) {
+          this.videos = response.videoResponse.video;
+          console.log(this.videos);
+        } else {
+          console.log('No videos found');
+        }
+      },
+      (error) => {
+        console.error('Error fetching videos:', error);
+      }
+    );
   }
 }
 

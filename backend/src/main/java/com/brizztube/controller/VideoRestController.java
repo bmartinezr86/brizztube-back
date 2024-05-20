@@ -93,6 +93,22 @@ public class VideoRestController {
 		ResponseEntity<VideoResponseRest> response = service.searchByCategoryId(categoryId);
 		return response;
 	}
+	
+
+	/**
+	 * get video by userId
+	 * 
+	 * @param userId
+	 * @return
+	 */
+
+	@GetMapping("/filter/user/{userId}")
+	public ResponseEntity<VideoResponseRest> searchByUserId(@PathVariable Long userId) {
+
+		ResponseEntity<VideoResponseRest> response = service.searchByUserId(userId);
+		return response;
+	}
+
 
 	/**
 	 * delete video

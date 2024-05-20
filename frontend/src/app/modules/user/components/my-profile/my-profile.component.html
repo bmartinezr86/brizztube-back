@@ -39,121 +39,21 @@
     </mat-card-header>
 
 
-    <mat-card-content class="container-videos">
-        <h3>Últimos vídeos</h3>
-        <div class="card-container">
-            <div class="card">
-                <img [src]="profileImage" alt="Furret walking" class="thumnail">
-                <div class="card-content">
-                    <h4>Furret Walking</h4>
-                    <div class="card-stadistic-video">
-                        <span>
-                            1M visualizaciones
-                        </span>
-                        ·
-                        <span>
-                            hace 2 días
-                        </span>
+    <mat-card>
+        <mat-card-content class="container-videos">
+            <h3>Últimos vídeos</h3>
+            <div class="card-container">
+                <div *ngFor="let video of videos" class="card">
+                    <img [src]="video.thumbnailLocation" alt="{{ video.title }}" class="thumbnail">
+                    <div class="card-content">
+                        <h4>{{ video.title }}</h4>
+                        <div class="card-statistic-video">
+                            <!-- <span>{{ video.views }} visualizaciones</span> -->
+                            ·
+                            <!-- <span>{{ video.uploadDate | date:'short' }}</span> -->
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="card">
-                <img [src]="profileImage" alt="League of Legends Worlds 2023" class="thumnail">
-                <div class="card-content">
-                    <h4>League of Legends Worlds 2023</h4>
-                    <div class="card-stadistic-video">
-                        <span>
-                            1M visualizaciones
-                        </span>
-                        ·
-                        <span>
-                            hace 2 días
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <img [src]="profileImage" alt="K/DA Evelynn Prestige visual update" class="thumnail">
-                <div class="card-content">
-                    <h4>K/DA Evelynn Prestige Visual Update</h4>
-                    <div class="card-stadistic-video">
-                        <span>
-                            1M visualizaciones
-                        </span>
-                        ·
-                        <span>
-                            hace 2 días
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <img [src]="profileImage" alt="T1 vs. Fnatic" class="thumnail">
-                <div class="card-content">
-                    <h4>T1 vs. Fnatic / 2022 World Championship - Group A / Post-Match Discussion</h4>
-                    <div class="card-stadistic-video">
-                        <span>
-                            1M visualizaciones
-                        </span>
-                        ·
-                        <span>
-                            hace 2 días
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <img [src]="profileImage" alt="T1 vs. Fnatic" class="thumnail">
-                <div class="card-content">
-                    <h4>T1 vs. Fnatic / 2022 World Championship - Group A / Post-Match Discussion</h4>
-                    <div class="card-stadistic-video">
-                        <span>
-                            1M visualizaciones
-                        </span>
-                        ·
-                        <span>
-                            hace 2 días
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <img [src]="profileImage" alt="T1 vs. Fnatic" class="thumnail">
-                <div class="card-content">
-                    <h4>T1 vs. Fnatic / 2022 World Championship - Group A / Post-Match Discussion</h4>
-                    <div class="card-stadistic-video">
-                        <span>
-                            1M visualizaciones
-                        </span>
-                        ·
-                        <span>
-                            hace 2 días
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <img [src]="profileImage" alt="T1 vs. Fnatic" class="thumnail">
-                <div class="card-content">
-                    <h4>T1 vs. Fnatic / 2022 World Championship - Group A / Post-Match Discussion</h4>
-                    <div class="card-stadistic-video">
-                        <span>
-                            1M visualizaciones
-                        </span>
-                        ·
-                        <span>
-                            hace 2 días
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-
-    </mat-card-content>
-</mat-card>
+        </mat-card-content>
+    </mat-card>

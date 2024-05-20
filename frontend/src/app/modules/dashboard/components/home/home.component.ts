@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
+import { VideoComponent } from 'src/app/modules/video/video/video.component';
 
 @Component({
   selector: 'app-home',

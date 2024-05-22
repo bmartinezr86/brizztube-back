@@ -42,15 +42,17 @@
     <mat-card>
         <mat-card-content class="container-videos">
             <h3>Últimos vídeos</h3>
+
             <div class="card-container">
                 <div *ngFor="let video of videos" class="card">
-                    <img [src]="video.thumbnailLocation" alt="{{ video.title }}" class="thumbnail">
+                    <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)" alt="{{ video.title }}">
                     <div class="card-content">
                         <h4>{{ video.title }}</h4>
                         <div class="card-statistic-video">
                             <!-- <span>{{ video.views }} visualizaciones</span> -->
                             ·
-                            <!-- <span>{{ video.uploadDate | date:'short' }}</span> -->
+                            <span>{{ formatDistanceToNow(video.date) }}</span>
+
                         </div>
                     </div>
                 </div>

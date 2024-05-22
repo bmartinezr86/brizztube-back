@@ -1,4 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { formatDistanceToNow as distanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { SuscriptionService } from 'src/app/modules/shared/services/suscription/suscription.service';
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
 import { EditProfileComponent } from '../edit-profile/edit-profile.component';
@@ -163,6 +165,22 @@ export class MyProfileComponent implements OnInit {
         console.error('Error fetching videos:', error);
       }
     );
+  }
+
+  getVideoThumbnailUrl(thumbnailLocation: string): string {
+    return `http://localhost:8080${thumbnailLocation}`;
+  }
+  formatDistanceToNow(date: any): string {
+    const distance = distanceToNow(date, {
+      locale: es,
+      includeSeconds: true,
+    });
+    if (distance) {
+      // Eliminar "alrededor de" de la cadena y devolver solo "hace X tiempo"
+      return distance.replace('alrededor de', 'hace');
+    } else {
+      return '';
+    }
   }
 }
 

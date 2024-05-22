@@ -4,6 +4,7 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import com.brizztube.response.VideoResponseRest;
 import com.brizztube.services.IVideoService;
 import com.brizztube.utils.Util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -50,10 +52,10 @@ public class VideoServiceImpl implements IVideoService {
 	private IVideoDao videoDao;
 
 	@Value("${upload.video.path}")
-    private String videoUploadPath; // obtenemos la ruta del properties
+	private String videoUploadPath; // obtenemos la ruta del properties
 
-    @Value("${upload.thumbnail.path}")
-    private String thumbnailUploadPath; // obtenemos la ruta del properties
+	@Value("${upload.thumbnail.path}")
+	private String thumbnailUploadPath; // obtenemos la ruta del properties
 
 	private Path rootLocation;
 
@@ -62,152 +64,196 @@ public class VideoServiceImpl implements IVideoService {
 	public ResponseEntity<VideoResponseRest> save(Video video, MultipartFile videoFile, MultipartFile thumbnailFile,
 			Long categoryId, Long userId) {
 		VideoResponseRest response = new VideoResponseRest();
-        List<Video> list = new ArrayList<>();
+		List<Video> list = new ArrayList<>();
 
-        try {
-            Optional<User> user = userDao.findById(userId);
-            if (user.isPresent()) {
-                video.setUser(user.get());
-            } else {
-                response.setMetadata("Respuesta NOK", "-1", "El usuario no existe");
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            }
+		try {
+			Optional<User> user = userDao.findById(userId);
+			if (user.isPresent()) {
+				video.setUser(user.get());
+			} else {
+				response.setMetadata("Respuesta NOK", "-1", "El usuario no existe");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			}
 
-            Optional<Category> category = categoryDao.findById(categoryId);
-            if (category.isPresent()) {
-                video.setCategory(category.get());
-            } else {
-                response.setMetadata("Respuesta NOK", "-1", "La categoria no existe");
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            }
+			Optional<Category> category = categoryDao.findById(categoryId);
+			if (category.isPresent()) {
+				video.setCategory(category.get());
+			} else {
+				response.setMetadata("Respuesta NOK", "-1", "La categoria no existe");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			}
 
-            String videoFileName = saveFile(videoFile, videoUploadPath);
-            String thumbnailFileName = saveFile(thumbnailFile, thumbnailUploadPath);
+			// Guardar archivo de video
+			String videoUri = saveFile(videoFile, videoUploadPath);
+			video.setVideoLocation(videoUri);
 
-            video.setVideoLocation(constructFileUrl(videoFileName, "/files/videos/"));
-            video.setThumbnailLocation(constructFileUrl(thumbnailFileName, "/files/thumbnails/"));
+			// Guardar archivo de miniatura
+			String thumbnailUri = saveFile(thumbnailFile, thumbnailUploadPath);
+			video.setThumbnailLocation(thumbnailUri);
 
-            Video videoSaved = videoDao.save(video);
+			// Guardar el objeto Video con la miniatura
+			Video videoSaved = videoDao.save(video);
 
-            if (videoSaved != null) {
-                list.add(videoSaved);
-                response.getVideoResponse().setVideo(list);
-                response.setMetadata("Respuesta OK", "00", "Video subido con exito");
-            } else {
-                response.setMetadata("Respuesta NOK", "-1", "El video no se ha podido subir debido a un error");
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception e) {
-            response.setMetadata("Respuesta NOK", "-1", "Error al guardar el video");
-            e.printStackTrace();
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+			if (videoSaved != null) {
+				list.add(videoSaved);
+				response.getVideoResponse().setVideo(list);
+				response.setMetadata("Respuesta OK", "00", "Video subido con exito");
+			} else {
+				response.setMetadata("Respuesta NOK", "-1", "El video no se ha podido subir debido a un error");
+				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			response.setMetadata("Respuesta NOK", "-1", "Error al guardar el video");
+			e.printStackTrace();
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	 @Override
-	    @Transactional(readOnly = true)
-	    public ResponseEntity<VideoResponseRest> search() {
-	        VideoResponseRest response = new VideoResponseRest();
-	        List<Video> list = new ArrayList<>();
-	        List<Video> listAux = new ArrayList<>();
 
-	        try {
-	            listAux = (List<Video>) videoDao.findAll();
-	            if (listAux.size() > 0) {
-	                listAux.forEach((u) -> {
-	                    Hibernate.initialize(u.getCategory());
-	                    Hibernate.initialize(u.getUser());
-	                    u.setVideoLocation(constructFileUrl(u.getVideoLocation(), "/files/videos/"));
-	                    u.setThumbnailLocation(constructFileUrl(u.getThumbnailLocation(), "/files/thumbnails/"));
-	                    list.add(u);
-	                });
-	            }
-	            response.getVideoResponse().setVideo(list);
-	            response.setMetadata("Respuesta OK", "00", "Respuesta exitosa");
+	@Override
+	@Transactional(readOnly = true)
+	public ResponseEntity<VideoResponseRest> search() {
+		VideoResponseRest response = new VideoResponseRest();
+		List<Video> list = new ArrayList<>();
+		List<Video> listAux = new ArrayList<>();
 
-	        } catch (Exception e) {
-	            response.setMetadata("Respuesta NOK", "-1", "Error al consultar");
-	            e.printStackTrace();
-	            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-	        }
+		try {
+			listAux = (List<Video>) videoDao.findAll();
+			if (!listAux.isEmpty()) {
+				listAux.forEach(u -> {
+					Hibernate.initialize(u.getCategory());
+					Hibernate.initialize(u.getUser());
 
-	        return new ResponseEntity<>(response, HttpStatus.OK);
-	    }
+					// Obtener las URL de los archivos (videos y miniaturas) utilizando getFileUrl
+					u.setVideoLocation(getFileUrl(u.getId(), videoUploadPath));
+					u.setThumbnailLocation(getFileUrl(u.getId(), thumbnailUploadPath));
+
+					list.add(u);
+				});
+			}
+			response.getVideoResponse().setVideo(list);
+			response.setMetadata("Respuesta OK", "00", "Respuesta exitosa");
+
+		} catch (Exception e) {
+			response.setMetadata("Respuesta NOK", "-1", "Error al consultar");
+			e.printStackTrace();
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public ResponseEntity<VideoResponseRest> searchByTitle(String title) {
+		VideoResponseRest response = new VideoResponseRest();
+		List<Video> list = new ArrayList<>();
+
+		try {
+			// Buscar videos por título (ignorando mayúsculas y minúsculas)
+			List<Video> listAux = videoDao.findByTitleContainingIgnoreCase(title);
+
+			if (!listAux.isEmpty()) {
+				listAux.forEach(u -> {
+					Hibernate.initialize(u.getCategory());
+					Hibernate.initialize(u.getUser());
+
+					// Obtener las URL de los archivos (videos y miniaturas) utilizando getFileUrl
+					u.setVideoLocation(getFileUrl(u.getId(), videoUploadPath));
+					u.setThumbnailLocation(getFileUrl(u.getId(), thumbnailUploadPath));
+
+					list.add(u);
+				});
+
+				response.getVideoResponse().setVideo(list);
+				response.setMetadata("Respuesta OK", "00", "Videos encontrados");
+			} else {
+				response.setMetadata("Respuesta NOK", "-1", "Video no encontrado");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			response.setMetadata("Respuesta NOK", "-1", "Error al buscar el video por nombre");
+			e.printStackTrace();
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ResponseEntity<VideoResponseRest> searchByCategoryId(Long categoryId) {
+		VideoResponseRest response = new VideoResponseRest();
+		List<Video> list = new ArrayList<>();
+
+		try {
+			// Buscar videos por ID de categoría
+			List<Video> listAux = videoDao.findByCategoryId(categoryId);
+
+			if (!listAux.isEmpty()) {
+				listAux.forEach(u -> {
+					Hibernate.initialize(u.getCategory());
+					Hibernate.initialize(u.getUser());
+
+					// Obtener las URL de los archivos (videos y miniaturas) utilizando getFileUrl
+					u.setVideoLocation(getFileUrl(u.getId(), videoUploadPath));
+					u.setThumbnailLocation(getFileUrl(u.getId(), thumbnailUploadPath));
+
+					list.add(u);
+				});
+
+				response.getVideoResponse().setVideo(list);
+				response.setMetadata("Respuesta OK", "00", "Videos encontrados");
+			} else {
+				response.setMetadata("Respuesta NOK", "-1", "Videos no encontrados en esta categoría");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			response.setMetadata("Respuesta NOK", "-1", "Error al buscar el video por categoría");
+			e.printStackTrace();
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ResponseEntity<VideoResponseRest> searchByUserId(Long userId) {
 	    VideoResponseRest response = new VideoResponseRest();
 	    List<Video> list = new ArrayList<>();
-	    
+	    List<Video> listAux = new ArrayList<>();
+
 	    try {
-	        // Buscar videos por título (ignorando mayúsculas y minúsculas)
-	        List<Video> listAux = videoDao.findByTitleContainingIgnoreCase(title);
+	        // Buscar videos por ID de usuario
+	        listAux = videoDao.findByUserId(userId);
 
-	        if (!listAux.isEmpty()) {
-	            for (Video video : listAux) {
-	                // Inicializar relaciones cargadas de forma perezosa
-	                Hibernate.initialize(video.getCategory());
-	                Hibernate.initialize(video.getUser());
+	        // Descomprime picture in all users
+	        if (listAux.size() > 0) {
+	            listAux.forEach((u) -> {
+	                // Initialize lazy-loaded relationships
+	                Hibernate.initialize(u.getCategory());
+	                Hibernate.initialize(u.getUser());
 
-	             // Construir las URLs completas para el video y la miniatura
-	                String videoUrl = constructFileUrl(video.getVideoLocation(), "/files/");
-	                String thumbnailUrl = constructFileUrl(video.getThumbnailLocation(), "/files/");
-	                video.setVideoLocation(videoUrl);
-	                video.setThumbnailLocation(thumbnailUrl);
+	                // Obtener las URLs de los archivos (video y miniatura) utilizando getFileUrl
+	                String videoUrl = getFileUrl(u.getId(), videoUploadPath);
+	                String thumbnailUrl = getFileUrl(u.getId(), thumbnailUploadPath);
+	                u.setVideoLocation(videoUrl);
+	                u.setThumbnailLocation(thumbnailUrl);
 
-	                list.add(video);
-	            }
-	            
+	                list.add(u);
+	            });
+
 	            response.getVideoResponse().setVideo(list);
 	            response.setMetadata("Respuesta OK", "00", "Videos encontrados");
 	        } else {
 	            response.setMetadata("Respuesta NOK", "-1", "Video no encontrado");
 	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	        }
+
 	    } catch (Exception e) {
 	        response.setMetadata("Respuesta NOK", "-1", "Error al buscar el video por nombre");
-	        e.printStackTrace();
-	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
-
-	    return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public ResponseEntity<VideoResponseRest> searchByCategoryId(Long categoryId) {
-	    VideoResponseRest response = new VideoResponseRest();
-	    List<Video> list = new ArrayList<>();
-	    
-	    try {
-	        // Buscar videos por ID de categoría
-	        List<Video> listAux = videoDao.findByCategoryId(categoryId);
-
-	        if (!listAux.isEmpty()) {
-	            for (Video video : listAux) {
-	                // Inicializar relaciones cargadas de forma perezosa
-	                Hibernate.initialize(video.getCategory());
-	                Hibernate.initialize(video.getUser());
-
-	                // Construir las URLs completas para el video y la miniatura
-	                String videoUrl = constructFileUrl(video.getVideoLocation(), "/files/");
-	                String thumbnailUrl = constructFileUrl(video.getThumbnailLocation(), "/files/");
-	                video.setVideoLocation(videoUrl);
-	                video.setThumbnailLocation(thumbnailUrl);
-
-	                list.add(video);
-	            }
-	            
-	            response.getVideoResponse().setVideo(list);
-	            response.setMetadata("Respuesta OK", "00", "Videos encontrados");
-	        } else {
-	            response.setMetadata("Respuesta NOK", "-1", "Videos no encontrados en esta categoría");
-	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-	        }
-	    } catch (Exception e) {
-	        response.setMetadata("Respuesta NOK", "-1", "Error al buscar el video por categoría");
 	        e.printStackTrace();
 	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
@@ -265,7 +311,7 @@ public class VideoServiceImpl implements IVideoService {
 
 	            // Si se proporciona una nueva miniatura, guardarla
 	            if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-	                String thumbnailFileName = saveFile(thumbnailFile, "/ruta/de/carga/thumbnails/");
+	                String thumbnailFileName = saveFile(thumbnailFile, thumbnailUploadPath);
 	                existingVideo.setThumbnailLocation(thumbnailFileName);
 	            }
 
@@ -294,9 +340,9 @@ public class VideoServiceImpl implements IVideoService {
 	            // Guardar los cambios en la base de datos
 	            Video updatedVideo = videoDao.save(existingVideo);
 
-	            // Construir las URLs completas para el video y la miniatura
-	            String videoUrl = constructFileUrl(updatedVideo.getVideoLocation(), "/files/");
-	            String thumbnailUrl = constructFileUrl(updatedVideo.getThumbnailLocation(), "/files/");
+	            // Obtener las URLs de los archivos (video y miniatura) utilizando getFileUrl
+	            String videoUrl = getFileUrl(updatedVideo.getId(), videoUploadPath);
+	            String thumbnailUrl = getFileUrl(updatedVideo.getId(), thumbnailUploadPath);
 	            updatedVideo.setVideoLocation(videoUrl);
 	            updatedVideo.setThumbnailLocation(thumbnailUrl);
 
@@ -314,69 +360,10 @@ public class VideoServiceImpl implements IVideoService {
 	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-	
-	
-	@Override
-	@Transactional(readOnly = true)
-	public ResponseEntity<VideoResponseRest> searchByUserId(Long userId) {
-	    VideoResponseRest response = new VideoResponseRest();
-	    List<Video> list = new ArrayList<>();
-	    List<Video> listAux = new ArrayList<>();
 
-	    try {
-	        // Buscar videos por ID de usuario
-	        listAux = videoDao.findByUserId(userId);
-
-	        // Descomprime picture in all users
-	        if (listAux.size() > 0) {
-	            listAux.forEach((u) -> {
-	                // Initialize lazy-loaded relationships
-	                Hibernate.initialize(u.getCategory());
-	                Hibernate.initialize(u.getUser());
-
-	                // Construct the full URL for the video and thumbnail
-	                String videoUrl = constructFileUrl(u.getVideoLocation(), "/files/");
-	                String thumbnailUrl = constructFileUrl(u.getThumbnailLocation(), "/files/");
-	                u.setVideoLocation(videoUrl);
-	                u.setThumbnailLocation(thumbnailUrl);
-
-	                list.add(u);
-	            });
-
-	            response.getVideoResponse().setVideo(list);
-	            response.setMetadata("Respuesta OK", "00", "Videos encontrados");
-	        } else {
-	            response.setMetadata("Respuesta NOK", "-1", "Video no encontrado");
-	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-	        }
-
-	    } catch (Exception e) {
-	        response.setMetadata("Respuesta NOK", "-1", "Error al buscar el video por nombre");
-	        e.printStackTrace();
-	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
-
-	    return new ResponseEntity<>(response, HttpStatus.OK);
-	}
 
 	
-	
-	public Resource loadAsResource(String filename) {
-		try {
-			Path file = rootLocation.resolve(filename);
-			Resource resource = new UrlResource(file.toUri());
-			
-			if(resource.exists()|| resource.isReadable()) {
-				return resource;
-			} else {
-				throw new RuntimeException("Could not read file: "+filename);
-			}
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("Could not read file: "+filename);
-		}
-	}
 
-	
 
 	// Método auxiliar para borrar un archivo del sistema de archivos
 	private void deleteFile(String filePath) {
@@ -389,35 +376,41 @@ public class VideoServiceImpl implements IVideoService {
 	}
 
 	@Override
-	public String saveFile(MultipartFile file, String uploadPath) throws IOException {
-		if (file.isEmpty()) {
-            throw new RuntimeException("Error al guardar archivo vacío.");
-        }
+	public String saveFile(MultipartFile file, String uploadDir) throws IOException {
+		String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+		byte[] bytes = file.getBytes();
+		Path path = Paths.get(uploadDir).resolve(uniqueFileName);
+		Files.createDirectories(path.getParent()); // Asegurarse de que el directorio existe
+		Files.write(path, bytes);
 
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path destinationFile = Paths.get(uploadPath, uniqueFileName).normalize().toAbsolutePath();
+		String fileUri = uploadDir + "/" + uniqueFileName; // URL relativa
 
-        if (!destinationFile.getParent().equals(Paths.get(uploadPath).toAbsolutePath())) {
-            throw new RuntimeException("No se puede almacenar el archivo fuera del directorio actual.");
-        }
-
-        try {
-            Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
-        } catch (FileAlreadyExistsException e) {
-            throw new FileAlreadyExistsException("El archivo " + file.getOriginalFilename() + " ya existe.");
-        }
-
-        return uniqueFileName;
+		return fileUri;
 	}
 
 	@Override
-	public String constructFileUrl(String fileName, String basePath) {
-	    return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(basePath)
-                .path(fileName)
-                .toUriString();
-	}
+	public String getFileUrl(Long videoId, String uploadDir) {
+		Video video = videoDao.findById(videoId).orElse(null);
+		if (video == null) {
+			return null;
+		}
 
-	
+		String fileLocation;
+		if (uploadDir.equals(videoUploadPath)) {
+			fileLocation = video.getVideoLocation();
+		} else if (uploadDir.equals(thumbnailUploadPath)) {
+			fileLocation = video.getThumbnailLocation();
+		} else {
+			return null;
+		}
+
+		try {
+			Path path = Paths.get(fileLocation);
+			return path.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 }

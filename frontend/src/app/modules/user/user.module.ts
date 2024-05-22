@@ -10,7 +10,14 @@ import { MyProfileComponent } from './components/my-profile/my-profile.component
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 
 @NgModule({
-  declarations: [UserComponent, NewUserComponent, SingupComponent, LoginComponent, MyProfileComponent, EditProfileComponent],
+  declarations: [
+    UserComponent,
+    NewUserComponent,
+    SingupComponent,
+    LoginComponent,
+    MyProfileComponent,
+    EditProfileComponent,
+  ],
   imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule],
 })
 export class UserModule {}

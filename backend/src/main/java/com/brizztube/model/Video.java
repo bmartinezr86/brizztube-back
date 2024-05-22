@@ -37,6 +37,12 @@ public class Video {
     @Column(nullable = false, length = 255)
     private String thumbnailLocation;
     
+    @Column(name = "total_views", nullable = false)
+    private Long totalViews = 0L; // Inicializado a 0
+    
+    @Column(name = "total_likes", nullable = false)
+    private Long totalLikes = 0L; // Inicializado a 0
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

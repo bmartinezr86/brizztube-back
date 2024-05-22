@@ -78,7 +78,7 @@ mat-card {
     gap: 10px;
 }
 
-.card .thumnail {
+.card img {
     width: 100%;
     height: 180px;
     object-fit: cover;

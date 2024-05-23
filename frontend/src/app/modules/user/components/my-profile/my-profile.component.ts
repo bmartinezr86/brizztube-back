@@ -129,7 +129,8 @@ export class MyProfileComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
-      if (result == 1) {
+      if (result && result !== 2 && result !== 3) {
+        this.userService.setCurrentUser(result.userResponse.user[0]);
         this.openSnackBar('Perfil editado correctamente', 'Exitosa');
         window.location.reload();
       } else if (result == 2) {
@@ -177,7 +178,7 @@ export class MyProfileComponent implements OnInit {
     });
     if (distance) {
       // Eliminar "alrededor de" de la cadena y devolver solo "hace X tiempo"
-      return distance.replace('alrededor de', 'hace');
+      return distance.replace('alrededor de', '');
     } else {
       return '';
     }

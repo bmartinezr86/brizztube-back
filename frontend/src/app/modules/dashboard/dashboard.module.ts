@@ -9,6 +9,6 @@ import { VideoModule } from '../video/video.module';
 
 @NgModule({
   declarations: [DashboardComponent, HomeComponent],
-  imports: [CommonModule, RouterModule, SharedModule, UserModule, VideoModule],
+  imports: [CommonModule, SharedModule, UserModule, VideoModule],
 })
 export class DashboardModule {}

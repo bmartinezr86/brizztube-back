@@ -16,7 +16,7 @@ export class SuscriptionService {
    * @returns
    */
   countSuscribers(id: any) {
-    const endpoint = `${base_url}/countSubscribers/ ${id}`;
+    const endpoint = `${base_url}/countSubscribers/${id}`;
     return this.http.get(endpoint);
   }
 

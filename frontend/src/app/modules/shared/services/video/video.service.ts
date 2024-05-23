@@ -13,4 +13,9 @@ export class VideoService {
     const endpoint = `${base_url}/filter/user/${id}`;
     return this.http.get(endpoint);
   }
+
+  searchVideoById(id: any) {
+    const endpoint = `${base_url}/filter/id/${id}`;
+    return this.http.get(endpoint);
+  }
 }

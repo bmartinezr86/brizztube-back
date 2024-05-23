@@ -20,7 +20,7 @@ const childRoutes: Routes = [
   { path: 'singup', component: SingupComponent },
   { path: 'login', component: LoginComponent },
   { path: 'my-profile', component: MyProfileComponent },
-  { path: 'videos', component: VideoComponent },
+  { path: 'videos/:id', component: VideoComponent },
 ];
 
 @NgModule({

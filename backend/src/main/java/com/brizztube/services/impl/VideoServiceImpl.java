@@ -72,7 +72,7 @@ public class VideoServiceImpl implements IVideoService {
 				video.setUser(user.get());
 			} else {
 				response.setMetadata("Respuesta NOK", "-1", "El usuario no existe");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 
 			Optional<Category> category = categoryDao.findById(categoryId);
@@ -80,7 +80,7 @@ public class VideoServiceImpl implements IVideoService {
 				video.setCategory(category.get());
 			} else {
 				response.setMetadata("Respuesta NOK", "-1", "La categoria no existe");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 
 			// Guardar archivo de video
@@ -100,15 +100,15 @@ public class VideoServiceImpl implements IVideoService {
 				response.setMetadata("Respuesta OK", "00", "Video subido con exito");
 			} else {
 				response.setMetadata("Respuesta NOK", "-1", "El video no se ha podido subir debido a un error");
-				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception e) {
 			response.setMetadata("Respuesta NOK", "-1", "Error al guardar el video");
 			e.printStackTrace();
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 	}
 
 	@Override
@@ -138,10 +138,10 @@ public class VideoServiceImpl implements IVideoService {
 		} catch (Exception e) {
 			response.setMetadata("Respuesta NOK", "-1", "Error al consultar");
 			e.printStackTrace();
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 	}
 
 	@Override
@@ -170,15 +170,15 @@ public class VideoServiceImpl implements IVideoService {
 				response.setMetadata("Respuesta OK", "00", "Videos encontrados");
 			} else {
 				response.setMetadata("Respuesta NOK", "-1", "Video no encontrado");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
 			response.setMetadata("Respuesta NOK", "-1", "Error al buscar el video por nombre");
 			e.printStackTrace();
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 	}
 
 	@Override
@@ -207,15 +207,15 @@ public class VideoServiceImpl implements IVideoService {
 				response.setMetadata("Respuesta OK", "00", "Videos encontrados");
 			} else {
 				response.setMetadata("Respuesta NOK", "-1", "Videos no encontrados en esta categoría");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
 			response.setMetadata("Respuesta NOK", "-1", "Error al buscar el video por categoría");
 			e.printStackTrace();
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 	}
 	
 	@Override
@@ -249,16 +249,45 @@ public class VideoServiceImpl implements IVideoService {
 	            response.setMetadata("Respuesta OK", "00", "Videos encontrados");
 	        } else {
 	            response.setMetadata("Respuesta NOK", "-1", "Video no encontrado");
-	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	            return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 	        }
 
 	    } catch (Exception e) {
 	        response.setMetadata("Respuesta NOK", "-1", "Error al buscar el video por nombre");
 	        e.printStackTrace();
-	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	        return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 
-	    return new ResponseEntity<>(response, HttpStatus.OK);
+	    return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ResponseEntity<VideoResponseRest> searchById(Long videoId) {
+		VideoResponseRest response = new VideoResponseRest();
+		List<Video> list = new ArrayList<>();
+
+		try {
+
+			Optional<Video> video = videoDao.findById(videoId); // Es opcional por si no existiera poder validar con los metodos
+														// que trae
+
+			// Si el video existe
+			if (video.isPresent()) {
+				list.add(video.get());
+				response.getVideoResponse().setVideo(list);
+				response.setMetadata("Respuesta OK", "00", "Video encontrado");
+			} else {
+				response.setMetadata("Respuesta NOK", "-1", "Video no encontrado");
+				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			response.setMetadata("Respuesta NOK", "-1", "Error al consultar por id");
+			e.getStackTrace();
+			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 	}
 
 	@Transactional
@@ -278,15 +307,15 @@ public class VideoServiceImpl implements IVideoService {
 				videoDao.delete(video);
 
 				response.setMetadata("Respuesta OK", "00", "Video eliminado correctamente");
-				return new ResponseEntity<>(response, HttpStatus.OK);
+				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 			} else {
 				response.setMetadata("Respuesta NOK", "-1", "No se encontró ningún video con el ID proporcionado");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
 			response.setMetadata("Respuesta NOK", "-1", "Error al eliminar el video");
 			e.printStackTrace();
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -306,7 +335,7 @@ public class VideoServiceImpl implements IVideoService {
 	            // No se permite cambiar el archivo de video
 	            if (videoFile != null && !videoFile.isEmpty()) {
 	                response.setMetadata("Respuesta NOK", "-1", "No se permite cambiar el archivo de video");
-	                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	                return new ResponseEntity<VideoResponseRest>(response, HttpStatus.BAD_REQUEST);
 	            }
 
 	            // Si se proporciona una nueva miniatura, guardarla
@@ -325,7 +354,7 @@ public class VideoServiceImpl implements IVideoService {
 	                existingVideo.setCategory(optionalCategory.get());
 	            } else {
 	                response.setMetadata("Respuesta NOK", "-1", "La categoría no existe");
-	                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	                return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 	            }
 
 	            // Buscar el usuario por su ID y asignarlo al video
@@ -334,7 +363,7 @@ public class VideoServiceImpl implements IVideoService {
 	                existingVideo.setUser(optionalUser.get());
 	            } else {
 	                response.setMetadata("Respuesta NOK", "-1", "El usuario no existe");
-	                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	                return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 	            }
 
 	            // Guardar los cambios en la base de datos
@@ -349,15 +378,15 @@ public class VideoServiceImpl implements IVideoService {
 	            list.add(updatedVideo);
 	            response.getVideoResponse().setVideo(list);
 	            response.setMetadata("Respuesta OK", "00", "Video actualizado correctamente");
-	            return new ResponseEntity<>(response, HttpStatus.OK);
+	            return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 	        } else {
 	            response.setMetadata("Respuesta NOK", "-1", "No se encontró ningún video con el ID proporcionado");
-	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	            return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
 	        }
 	    } catch (Exception e) {
 	        response.setMetadata("Respuesta NOK", "-1", "Error al actualizar el video");
 	        e.printStackTrace();
-	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	        return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 

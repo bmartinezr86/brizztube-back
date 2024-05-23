@@ -13,6 +13,7 @@ public interface IVideoService {
 	public ResponseEntity<VideoResponseRest> searchByTitle(String title);
 	public ResponseEntity<VideoResponseRest> searchByCategoryId(Long categoryId);
 	public ResponseEntity<VideoResponseRest> searchByUserId(Long userId);
+	public ResponseEntity<VideoResponseRest> searchById(Long videoId);
 	public ResponseEntity<VideoResponseRest> save(Video video, MultipartFile videoFile, MultipartFile thumnailFile,
 			Long categoryId, Long userId);
 	public ResponseEntity<VideoResponseRest> update(MultipartFile videoFile, MultipartFile thumbnailFile,

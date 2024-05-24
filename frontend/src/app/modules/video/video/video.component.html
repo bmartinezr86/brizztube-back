@@ -2,7 +2,7 @@
     <mat-card-content class="container">
         <div class="general-content">
             <div *ngFor="let video of videos" class="video">
-                <video controls *ngIf="video && video.id === videoId">
+                <video controls >
                     <source [src]="getVideoUrl(video.videoLocation)" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>

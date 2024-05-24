@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
+import { VideoService } from 'src/app/modules/shared/services/video/video.service';
 import { VideoComponent } from 'src/app/modules/video/video/video.component';
 
 @Component({
@@ -11,10 +12,27 @@ export class HomeComponent implements OnInit {
   private userService = inject(UserService);
   public currentUser: any;
 
+  videosHome = inject(VideoService)
+
+  videos: any
+
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
     if (this.currentUser) {
       console.log('Current User:', this.currentUser);
     }
+
+
+    this.videosHome.getVideosHome().subscribe(e => {
+      console.log(e);
+      this.videos = e.videoResponse.video
+      
+    })
+
   }
+
+  getVideoThumbnailUrl(thumbnailLocation: string): string {
+    return `http://localhost:8080${thumbnailLocation}`;
+  }
+
 }

@@ -8,6 +8,7 @@ import {
   inject,
 } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
+import { VideoService } from '../../services/video/video.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -16,6 +17,7 @@ import { UserService } from '../../services/user/user.service';
 })
 export class SidenavComponent implements OnInit {
   public userService = inject(UserService);
+  public videoSrv = inject(VideoService);
   currentUser: any;
   profileImage: string | undefined;
   mobileQuery: MediaQueryList;
@@ -162,6 +164,20 @@ export class SidenavComponent implements OnInit {
     this.userService.logoutUser();
     window.location.href = this.urlFrontBase;
   }
+
+
+  filterVideos(filter: any){
+console.log(filter);
+
+    this.videoSrv.getVideosByFilter(filter.value).subscribe(
+      (resp) => {this.videoSrv.setVideosHome(resp)},
+      (error) => {},
+      () => {},
+    )
+
+
+  }
+
 }
 
 export interface UserElement {

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 const base_url = 'http://localhost:8080/api/videos';
 
@@ -10,6 +10,9 @@ const base_url_likes = 'http://localhost:8080/api/likes';
   providedIn: 'root',
 })
 export class VideoService {
+
+  videosHome: BehaviorSubject<any> = new BehaviorSubject([])
+
   constructor(private http: HttpClient) {}
 
   search() {
@@ -35,6 +38,22 @@ export class VideoService {
     const endpoint = `${base_url_likes}/unlike/${videoId}/${userId}`;
     return this.http.delete(endpoint);
   }
+
+  setVideosHome(videos: any){
+    this.videosHome.next(videos);
+  }
+
+  getVideosHome(){
+    return this.videosHome.asObservable();
+  }
+
+
+  getVideosByFilter(filter: string){
+    const endpoint = `${base_url}/filter/title/${filter}`;
+    return this.http.get(endpoint);
+  }
+
+
 }
 
 interface LikeRequest {

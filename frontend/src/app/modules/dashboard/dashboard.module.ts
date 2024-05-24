@@ -6,9 +6,10 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { UserModule } from '../user/user.module';
 import { VideoModule } from '../video/video.module';
+import { MaterialModule } from '../shared/material.module';
 
 @NgModule({
   declarations: [DashboardComponent, HomeComponent],
-  imports: [CommonModule, SharedModule, UserModule, VideoModule],
+  imports: [CommonModule, SharedModule, UserModule, VideoModule,MaterialModule],
 })
 export class DashboardModule {}

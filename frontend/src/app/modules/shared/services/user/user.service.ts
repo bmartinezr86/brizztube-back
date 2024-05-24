@@ -25,7 +25,7 @@ export class UserService {
    * @returns
    */
   getUserById(id: any) {
-    const endpoint = `${base_url}/users/ ${id}`;
+    const endpoint = `${base_url}/users/${id}`;
     return this.http.get(endpoint);
   }
 

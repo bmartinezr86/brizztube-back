@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,9 +28,9 @@ public class LikeRestController {
 		return response;
 	}
 	
-	@DeleteMapping("/unlike")
-	public ResponseEntity<LikeResponseRest> unLikeVideo(@RequestParam("videoId") Long videoId,
-			@RequestParam("userId") Long userId) {
+	@DeleteMapping("/unlike/{videoId}/{userId}")
+	public ResponseEntity<LikeResponseRest> unLikeVideo(@PathVariable("videoId") Long videoId,
+			@PathVariable("userId") Long userId) {
 
 		ResponseEntity<LikeResponseRest> response = service.unLikeVideo(videoId, userId);
 		return response;

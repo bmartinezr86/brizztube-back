@@ -1,7 +1,10 @@
 .container {
     display: flex;
     gap: 2%;
+    margin-top: 10px;
 }
+
+
 
 
 .general-content {
@@ -17,7 +20,7 @@
 }
 
 .video video {
-    margin-top: 10px;
+
     width: 100%;
     border-radius: 25px;
     -webkit-border-radius: 25px;
@@ -48,13 +51,20 @@ h2 {
     font-weight: bold;
 }
 
-.column {
+.column a {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    color: #333333;
+    text-decoration: none;
+
+    & .video-user-name:hover {
+        color: var(--color-primario);
+    }
 }
 
 .img-profile {
+    cursor: pointer;
     width: 55px;
     border-radius: 100%;
     -webkit-border-radius: 100%;
@@ -170,4 +180,18 @@ h2 {
     -moz-border-radius: 15px;
     -ms-border-radius: 15px;
     -o-border-radius: 15px;
+}
+
+.mostrar-desc {
+    display: block;
+    border: none;
+    cursor: pointer;
+    font-family: 'Poppins';
+    padding: 0px;
+    margin: 0px;
+    font-weight: 600;
+
+    &:hover {
+        color: var(--color-primario);
+    }
 }

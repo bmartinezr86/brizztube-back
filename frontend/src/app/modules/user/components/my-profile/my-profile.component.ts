@@ -76,21 +76,20 @@ export class MyProfileComponent implements OnInit {
       });
   }
 
-  subscribe() {
-    const subscriberId = this.currentUser.id; // Assumes current user is subscribing
-    const subscribedTo = this.currentUser.id; // Change this to the correct user ID being subscribed to
-    this.suscriptionService
-      .suscribe(subscriberId, subscribedTo)
-      .subscribe((resp: any) => {
-        if (resp.metadata[0].code == '00') {
-          this.getSuscriberCount();
-        }
-      });
+  subscribe(video: any) {
+    const suscribed = new FormData();
+    suscribed.append('subscriberId', this.currentUser.id);
+    suscribed.append('subscribedTo', video.user.id);
+    this.suscriptionService.suscribe(suscribed).subscribe((resp: any) => {
+      if (resp.metadata[0].code == '00') {
+        this.getSuscriberCount();
+      }
+    });
   }
 
-  unsubscribe() {
+  unsubscribe(video: any) {
     const subscriberId = this.currentUser.id; // Assumes current user is unsubscribing
-    const subscribedTo = this.currentUser.id; // Change this to the correct user ID being unsubscribed from
+    const subscribedTo = video.user.id; // Change this to the correct user ID being unsubscribed from
     this.suscriptionService
       .unsuscribe(subscriberId, subscribedTo)
       .subscribe((resp: any) => {

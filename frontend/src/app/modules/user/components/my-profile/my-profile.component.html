@@ -18,11 +18,11 @@
             </div>
             <div class="btn-actions">
                 <button mat-flat-button color="accent" class="btn btn-seguir" *ngIf="!isSubscribed()"
-                    (click)="subscribe()">
+                    (click)="subscribe(currentUser)">
                     Seguir
                 </button>
                 <button mat-flat-button color="accent" class="btn btn-seguir" *ngIf="isSubscribed()"
-                    (click)="unsubscribe()">
+                    (click)="unsubscribe(currentUser)">
                     Dejar de seguir
                 </button>
                 <button mat-flat-button color="primary" class="btn btn-seguir"

@@ -20,14 +20,13 @@ export class SuscriptionService {
     return this.http.get(endpoint);
   }
 
-  suscribe(suscriberId: any, suscribedTo: any) {
-    const body: SuscribeRequest = { suscriberId, suscribedTo };
+  suscribe(body: any) {
     const endpoint = `${base_url}/subscribe`;
-    return this.http.put(endpoint, body);
+    return this.http.post(endpoint, body);
   }
 
   unsuscribe(suscriberId: any, suscribedTo: any) {
-    const endpoint = `${base_url}/unsuscribe/ ${suscriberId}/${suscribedTo}`;
+    const endpoint = `${base_url}/unsuscribe/${suscriberId}/${suscribedTo}`;
     return this.http.delete(endpoint);
   }
 }

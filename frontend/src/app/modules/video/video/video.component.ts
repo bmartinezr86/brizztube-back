@@ -5,12 +5,14 @@ import { VideoService } from '../../shared/services/video/video.service';
 import { MatDialog } from '@angular/material/dialog';
 import { formatDistanceToNow as distanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { Subscription } from 'rxjs';
 
 import {
   MatSnackBar,
   MatSnackBarRef,
   SimpleSnackBar,
 } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-video',
@@ -19,17 +21,34 @@ import {
 })
 export class VideoComponent implements OnInit {
   public userService = inject(UserService);
-  public suscriptionService = inject(SuscriptionService);
   public videoService = inject(VideoService);
+  public suscriptionService = inject(SuscriptionService);
   public dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   currentUser: any;
   profileImage: string | undefined;
   suscriberCount: number = 0;
   isUserSubscribed: boolean = false;
   videos: any[] = []; // Array para almacenar los videos
+  likedVideos: Set<number> = new Set(); // Set to store liked video IDs
+  routeSubscription: Subscription | undefined;
+  video: any;
+  videoId: string = '';
 
   ngOnInit(): void {
+    this.routeSubscription = this.route.params.subscribe((params) => {
+      const videoId = +params['id']; // assuming your route is something like /videos/:id
+      this.loadVideo(videoId);
+    });
+
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      if (id) {
+        this.videoId = id;
+      }
+    });
     this.currentUser = this.userService.getCurrentUser();
     this.getUserProfile();
     this.getSuscriberCount();
@@ -37,6 +56,26 @@ export class VideoComponent implements OnInit {
     console.log(this.currentUser.id);
   }
 
+  ngOnDestroy(): void {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+
+  loadVideo(videoId: number) {
+    this.videoService.searchVideoById(videoId).subscribe(
+      (video) => {
+        this.video = video;
+      },
+      (error) => {
+        console.error('Error loading video:', error);
+      }
+    );
+  }
+
+  navigateToVideo(videoId: number) {
+    this.router.navigate(['/videos', videoId]);
+  }
   getUserProfile() {
     this.userService.getUserById(this.currentUser.id).subscribe((resp: any) => {
       this.processUserResponse(resp);
@@ -76,21 +115,20 @@ export class VideoComponent implements OnInit {
       });
   }
 
-  subscribe() {
-    const subscriberId = this.currentUser.id; // Assumes current user is subscribing
-    const subscribedTo = this.currentUser.id; // Change this to the correct user ID being subscribed to
-    this.suscriptionService
-      .suscribe(subscriberId, subscribedTo)
-      .subscribe((resp: any) => {
-        if (resp.metadata[0].code == '00') {
-          this.getSuscriberCount();
-        }
-      });
+  subscribe(video: any) {
+    const suscribed = new FormData();
+    suscribed.append('subscriberId', this.currentUser.id);
+    suscribed.append('subscribedTo', video.user.id);
+    this.suscriptionService.suscribe(suscribed).subscribe((resp: any) => {
+      if (resp.metadata[0].code == '00') {
+        this.getSuscriberCount();
+      }
+    });
   }
 
-  unsubscribe() {
+  unsubscribe(video: any) {
     const subscriberId = this.currentUser.id; // Assumes current user is unsubscribing
-    const subscribedTo = this.currentUser.id; // Change this to the correct user ID being unsubscribed from
+    const subscribedTo = video.user.id; // Change this to the correct user ID being unsubscribed from
     this.suscriptionService
       .unsuscribe(subscriberId, subscribedTo)
       .subscribe((resp: any) => {
@@ -157,6 +195,60 @@ export class VideoComponent implements OnInit {
     }
 
     return true;
+  }
+
+  toggleLike(video: any) {
+    if (this.likedVideos.has(video.id)) {
+      this.unlikeVideo(video);
+    } else {
+      this.likeVideo(video);
+    }
+  }
+
+  likeVideo(video: any) {
+    const like = new FormData();
+    like.append('videoId', video.id);
+    like.append('userId', this.currentUser.id);
+    this.videoService.like(like).subscribe((resp: any) => {
+      if (resp.metadata[0].code === '00') {
+        video.totalLikes++;
+        this.likedVideos.add(video.id); // Add to liked videos
+        this.openSnackBar('Liked the video', 'OK');
+      } else {
+        this.openSnackBar('Error liking the video', 'OK');
+      }
+    });
+  }
+
+  unlikeVideo(video: any) {
+    this.videoService
+      .unlike(video.id, this.currentUser.id)
+      .subscribe((resp: any) => {
+        if (resp.metadata[0].code === '00') {
+          video.totalLikes--;
+          this.likedVideos.delete(video.id); // Remove from liked videos
+          this.openSnackBar('Unliked the video', 'OK');
+        } else {
+          this.openSnackBar('Error unliking the video', 'OK');
+        }
+      });
+  }
+
+  shortenDescription(description: string, maxLength: number): string {
+    if (description.length > maxLength) {
+      return description.slice(0, maxLength) + '...';
+    }
+    return description;
+  }
+
+  toggleDescription(video: any): void {
+    video.showFullDescription = !video.showFullDescription;
+  }
+
+  getDescription(video: any, maxLength: number): string {
+    return video.showFullDescription
+      ? video.description
+      : this.shortenDescription(video.description, maxLength);
   }
 }
 

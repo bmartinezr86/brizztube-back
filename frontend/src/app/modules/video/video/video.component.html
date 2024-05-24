@@ -2,7 +2,7 @@
     <mat-card-content class="container">
         <div class="general-content">
             <div *ngFor="let video of videos" class="video">
-                <video controls>
+                <video controls *ngIf="video && video.id === videoId">
                     <source [src]="getVideoUrl(video.videoLocation)" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -15,21 +15,23 @@
 
                         </div>
                         <div class="column">
-                            <span class="video-user-name">
-                                {{ video.user.name }}
-                            </span>
-                            <span>
-                                {{ suscriberCount }} suscripciones
-                            </span>
+                            <a [routerLink]="['/dashboard/profile', video.user.id]">
+                                <span class="video-user-name">
+                                    {{ video.user.name }}
+                                </span>
+                                <span>
+                                    {{ suscriberCount }} suscripciones
+                                </span>
+                            </a>
 
                         </div>
                         <div class="btn-actions">
                             <button mat-flat-button color="accent" class="btn btn-seguir" *ngIf="!isSubscribed()"
-                                (click)="subscribe()">
+                                (click)="subscribe(video)">
                                 Seguir
                             </button>
                             <button mat-flat-button color="accent" class="btn btn-seguir" *ngIf="isSubscribed()"
-                                (click)="unsubscribe()">
+                                (click)="unsubscribe(video)">
                                 Dejar de seguir
                             </button>
                             <button mat-flat-button color="primary" class="btn btn-seguir"
@@ -46,7 +48,7 @@
                     </div>
                     <div class="btn-interact">
                         <!-- boton me gusta -->
-                        <button class="btn-action btn-like">
+                        <button class="btn-action btn-like" (click)="toggleLike(video)">
                             <mat-icon>
                                 <div class="icon">
                                     favorite
@@ -76,7 +78,12 @@
 
                 </div>
                 <div class="video-description">
-                    {{ video.description }}
+                    {{ getDescription(video, 343) }}
+                    <!-- Aquí 100 es el máximo número de caracteres permitidos en la descripción -->
+                    <button class="mostrar-desc" *ngIf="video.description.length > 100"
+                        (click)="toggleDescription(video)">
+                        {{ video.showFullDescription ? 'Mostrar menos' : 'Mostrar más' }}
+                    </button>
                 </div>
 
 

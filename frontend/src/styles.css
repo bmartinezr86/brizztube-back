@@ -58,3 +58,10 @@ mat-card-content {
     margin-left: 3.5%;
     margin-right: 3.5%;
 }
+
+.mat-drawer-content {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE y Edge */
+}

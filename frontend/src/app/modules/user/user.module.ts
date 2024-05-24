@@ -9,6 +9,7 @@ import { LoginComponent } from './components/login/login.component';
 import { MyProfileComponent } from './components/my-profile/my-profile.component';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 import { RouterModule } from '@angular/router';
+import { ProfileComponent } from './components/profile/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { RouterModule } from '@angular/router';
     LoginComponent,
     MyProfileComponent,
     EditProfileComponent,
+    ProfileComponent,
   ],
   imports: [
     CommonModule,

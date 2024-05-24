@@ -146,29 +146,16 @@ export class EditProfileComponent {
     uploadImageData.append('rol', data.rol);
     uploadImageData.append('status', data.status);
 
-    if (this.data != null) {
-      // update user
-      this.userService.updateUser(uploadImageData, this.data.id).subscribe(
-        (data: any) => {
-          console.log(data);
-          this.dialogRef.close(1);
-        },
-        (error: any) => {
-          this.dialogRef.close(2);
-        }
-      );
-    } else {
-      // create user
-      this.userService.saveUser(uploadImageData).subscribe(
-        (data: any) => {
-          console.log(data);
-          this.dialogRef.close(1);
-        },
-        (error: any) => {
-          this.dialogRef.close(2);
-        }
-      );
-    }
+    // update user
+    this.userService.updateUser(uploadImageData, this.data.id).subscribe(
+      (updateUser: any) => {
+        console.log(updateUser);
+        this.dialogRef.close(updateUser);
+      },
+      (error: any) => {
+        this.dialogRef.close(2);
+      }
+    );
   }
 
   onCancel() {

@@ -6,6 +6,7 @@ import { SingupComponent } from '../user/components/singup/singup.component';
 import { LoginComponent } from '../user/components/login/login.component';
 import { MyProfileComponent } from '../user/components/my-profile/my-profile.component';
 import { VideoComponent } from '../video/video/video.component';
+import { ProfileComponent } from '../user/components/profile/profile/profile.component';
 
 const childRoutes: Routes = [
   {
@@ -20,7 +21,8 @@ const childRoutes: Routes = [
   { path: 'singup', component: SingupComponent },
   { path: 'login', component: LoginComponent },
   { path: 'my-profile', component: MyProfileComponent },
-  { path: 'videos', component: VideoComponent },
+  { path: 'videos/:id', component: VideoComponent },
+  { path: 'profile/:id', component: ProfileComponent },
 ];
 
 @NgModule({

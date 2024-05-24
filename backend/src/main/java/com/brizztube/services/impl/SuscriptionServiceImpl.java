@@ -37,7 +37,7 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 			// Validamos que un usuario no se intente suscribir a si mismo
 			if (subscriberId == subscribedTo) {
 				response.setMetadata("Respuesta NOK", "-1", "No puedes suscribirte a tu propio canal");
-				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.BAD_REQUEST);
 			}
 
 			Optional<User> userSuscriber = userDao.findById(subscriberId);
@@ -45,7 +45,7 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 			// Validamos si el usuario que se quiere suscribir existe
 			if (!userSuscriber.isPresent()) {
 				response.setMetadata("Respuesta NOK", "-1", "No existe el usuario que desea suscribirse");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 
 			// Validamos que el usuario al que se quiere suscribir existe
@@ -53,13 +53,13 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 
 			if (!userSuscribedTo.isPresent()) {
 				response.setMetadata("Respuesta NOK", "-1", "No existe el usuario al que desea suscribirse");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 
 			// Check if subscriber is already subscribed to the same user
 			if (suscriptionDao.existsBySubscriberAndSubscribedTo(userSuscriber.get(), userSuscribedTo.get())) {
 				response.setMetadata("Respuesta NOK", "-1", "Ya estás suscrito al usuario");
-				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.BAD_REQUEST);
 			}
 
 			// Se suscribe
@@ -74,7 +74,7 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 				response.setMetadata("Respuesta OK", "00", "Usuario suscrito con éxito");
 			} else {
 				response.setMetadata("Respuesta NOK", "-1", "Error al suscribirse");
-				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.BAD_REQUEST);
 			}
 
 		} catch (Exception e) {
@@ -97,7 +97,7 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 			// Validamos si el usuario que se quiere desuscribir existe
 			if (!userSuscriber.isPresent()) {
 				response.setMetadata("Respuesta NOK", "-1", "No existe el usuario que desea suscribirse");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 
 			// Validamos que el usuario al que se quiere desuscribir existe
@@ -105,7 +105,7 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 
 			if (!userSuscribedTo.isPresent()) {
 				response.setMetadata("Respuesta NOK", "-1", "No existe el usuario al que desea suscribirse");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 
 			// Validamos si existia la suscripcion
@@ -118,7 +118,7 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 				response.setMetadata("Respuesta OK", "00", "Usuario desuscrito con éxito");
 			} else {
 				response.setMetadata("Respuesta NOK", "-1", "No existe la suscripcion");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 
 		} catch (Exception e) {
@@ -140,7 +140,7 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 			Optional<User> user = userDao.findById(userId);
 			if (!user.isPresent()) {
 				response.setMetadata("Respuesta NOK", "-1", "No existe el usuario");
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
 
 			// Contar suscriptores
@@ -151,10 +151,10 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 
 		} catch (Exception e) {
 			response.setMetadata("Respuesta NOK", "-1", "Error al obtener el número de suscriptores");
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.OK);
 	}
 
 	@Transactional
@@ -167,11 +167,11 @@ public class SuscriptionServiceImpl implements ISuscriptionService {
 			suscriptionDao.deleteAll(subscriptions);
 
 			response.setMetadata("Respuesta OK", "00", "Suscripciones eliminadas correctamente");
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			response.setMetadata("Respuesta NOK", "-1", "Error al eliminar las suscripciones");
 			e.printStackTrace();
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<SuscriptionResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

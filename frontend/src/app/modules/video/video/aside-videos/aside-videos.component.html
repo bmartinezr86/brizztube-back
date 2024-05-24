@@ -1,0 +1,32 @@
+<div class="video-list">
+    <div class="video">
+        <div *ngFor="let video of videos" class="card">
+            <a [routerLink]="['/dashboard/videos', video.id]">
+                <div class="card-container">
+                    <div class="thumbnail-container">
+                        <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)" alt="{{ video.title }}">
+                        <div class="overlay">
+                            <mat-icon>
+                                <div class="icon">
+                                    play_circle_fill
+                                </div>
+                            </mat-icon>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h4>{{ shortenTitle(video.title, 30) }}</h4>
+                        <span class="video-user">{{ video.user.name }}</span>
+                        <div class="video-stadistics">
+                            <span>{{ video.totalViews }} visualizaciones</span>
+                            ·
+                            <span>hace {{ formatDistanceToNow(video.date) }}</span>
+
+                        </div>
+                    </div>
+                </div>
+
+            </a>
+
+        </div>
+    </div>
+</div>

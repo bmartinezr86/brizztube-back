@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 const base_url = 'http://localhost:8080/api/videos';
+
+const base_url_likes = 'http://localhost:8080/api/likes';
 
 @Injectable({
   providedIn: 'root',
@@ -9,8 +12,32 @@ const base_url = 'http://localhost:8080/api/videos';
 export class VideoService {
   constructor(private http: HttpClient) {}
 
+  search() {
+    const endpoint = `${base_url}/`;
+    return this.http.get(endpoint);
+  }
   searchVideoByUserId(id: any) {
     const endpoint = `${base_url}/filter/user/${id}`;
     return this.http.get(endpoint);
   }
+
+  searchVideoById(id: any): Observable<any> {
+    const endpoint = `${base_url}/filter/id/${id}`;
+    return this.http.get(endpoint);
+  }
+
+  like(body: any) {
+    const endpoint = `${base_url_likes}/like`;
+    return this.http.post(endpoint, body);
+  }
+
+  unlike(videoId: any, userId: any) {
+    const endpoint = `${base_url_likes}/unlike/${videoId}/${userId}`;
+    return this.http.delete(endpoint);
+  }
+}
+
+interface LikeRequest {
+  videoId: number;
+  userId: number;
 }

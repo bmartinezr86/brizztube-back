@@ -1,4 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { formatDistanceToNow as distanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { SuscriptionService } from 'src/app/modules/shared/services/suscription/suscription.service';
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
 import { EditProfileComponent } from '../edit-profile/edit-profile.component';
@@ -74,21 +76,20 @@ export class MyProfileComponent implements OnInit {
       });
   }
 
-  subscribe() {
-    const subscriberId = this.currentUser.id; // Assumes current user is subscribing
-    const subscribedTo = this.currentUser.id; // Change this to the correct user ID being subscribed to
-    this.suscriptionService
-      .suscribe(subscriberId, subscribedTo)
-      .subscribe((resp: any) => {
-        if (resp.metadata[0].code == '00') {
-          this.getSuscriberCount();
-        }
-      });
+  subscribe(video: any) {
+    const suscribed = new FormData();
+    suscribed.append('subscriberId', this.currentUser.id);
+    suscribed.append('subscribedTo', video.user.id);
+    this.suscriptionService.suscribe(suscribed).subscribe((resp: any) => {
+      if (resp.metadata[0].code == '00') {
+        this.getSuscriberCount();
+      }
+    });
   }
 
-  unsubscribe() {
+  unsubscribe(video: any) {
     const subscriberId = this.currentUser.id; // Assumes current user is unsubscribing
-    const subscribedTo = this.currentUser.id; // Change this to the correct user ID being unsubscribed from
+    const subscribedTo = video.user.id; // Change this to the correct user ID being unsubscribed from
     this.suscriptionService
       .unsuscribe(subscriberId, subscribedTo)
       .subscribe((resp: any) => {
@@ -127,7 +128,8 @@ export class MyProfileComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
-      if (result == 1) {
+      if (result && result !== 2 && result !== 3) {
+        this.userService.setCurrentUser(result.userResponse.user[0]);
         this.openSnackBar('Perfil editado correctamente', 'Exitosa');
         window.location.reload();
       } else if (result == 2) {
@@ -163,6 +165,22 @@ export class MyProfileComponent implements OnInit {
         console.error('Error fetching videos:', error);
       }
     );
+  }
+
+  getVideoThumbnailUrl(thumbnailLocation: string): string {
+    return `http://localhost:8080${thumbnailLocation}`;
+  }
+  formatDistanceToNow(date: any): string {
+    const distance = distanceToNow(date, {
+      locale: es,
+      includeSeconds: true,
+    });
+    if (distance) {
+      // Eliminar "alrededor de" de la cadena y devolver solo "hace X tiempo"
+      return distance.replace('alrededor de', '');
+    } else {
+      return '';
+    }
   }
 }
 

@@ -18,11 +18,11 @@
             </div>
             <div class="btn-actions">
                 <button mat-flat-button color="accent" class="btn btn-seguir" *ngIf="!isSubscribed()"
-                    (click)="subscribe()">
+                    (click)="subscribe(currentUser)">
                     Seguir
                 </button>
                 <button mat-flat-button color="accent" class="btn btn-seguir" *ngIf="isSubscribed()"
-                    (click)="unsubscribe()">
+                    (click)="unsubscribe(currentUser)">
                     Dejar de seguir
                 </button>
                 <button mat-flat-button color="primary" class="btn btn-seguir"
@@ -42,17 +42,31 @@
     <mat-card>
         <mat-card-content class="container-videos">
             <h3>Últimos vídeos</h3>
+
             <div class="card-container">
                 <div *ngFor="let video of videos" class="card">
-                    <img [src]="video.thumbnailLocation" alt="{{ video.title }}" class="thumbnail">
-                    <div class="card-content">
-                        <h4>{{ video.title }}</h4>
-                        <div class="card-statistic-video">
-                            <!-- <span>{{ video.views }} visualizaciones</span> -->
-                            ·
-                            <!-- <span>{{ video.uploadDate | date:'short' }}</span> -->
+                    <a [routerLink]="['/dashboard/videos', video.id]">
+                        <div class="thumbnail-container">
+                            <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)" alt="{{ video.title }}">
+                            <div class="overlay">
+                                <mat-icon>
+                                    <div class="icon">
+                                        play_circle_fill
+                                    </div>
+                                </mat-icon>
+                            </div>
                         </div>
-                    </div>
+                        <div class="card-content">
+                            <h4>{{ video.title }}</h4>
+                            <div class="card-statistic-video">
+                                <span>{{ video.totalViews }} visualizaciones</span>
+                                ·
+                                <span>hace {{ formatDistanceToNow(video.date) }}</span>
+
+                            </div>
+                        </div>
+                    </a>
+
                 </div>
             </div>
         </mat-card-content>

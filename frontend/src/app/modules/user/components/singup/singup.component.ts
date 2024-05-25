@@ -35,7 +35,7 @@ export class SingupComponent implements OnInit {
         passwordConfirm: ['', [Validators.required]],
         image: [''],
         rol: [3],
-        status: [4],
+        status: [2],
         acceptTerms: [false, Validators.required],
       },
       { validator: this.confirmPasswordValidator }
@@ -59,7 +59,7 @@ export class SingupComponent implements OnInit {
       email: this.registroForm.get('email')?.value,
       password: this.registroForm.get('password')?.value,
       rol: 3,
-      status: 4,
+      status: 2,
       picture: this.selectedFile,
     };
 

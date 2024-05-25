@@ -71,8 +71,8 @@
             <div *ngIf="mostrarEnDesktop || mostrarFormularioBusqueda">
                 <form class="search-form" #searchForm>
                     <div class="input-container">
-                        <input type="text" name="buscarVideo" placeholder="Buscar...">
-                        <button type="submit" title="Buscar videos" class="search-button">
+                        <input type="text" name="buscarVideo" placeholder="Buscar..." #filtro>
+                        <button type="button" title="Buscar videos" class="search-button" (click)="filterVideos(filtro)">
                             <mat-icon class="search-icon">search</mat-icon>
                         </button>
                     </div>

@@ -22,7 +22,8 @@ export class SidenavComponent implements OnInit {
   mostrarEnMovil = false;
   mostrarFormularioBusqueda = false;
   mostrarEnDesktop = false;
-  urlFrontBase = 'http://localhost:4200/dashboard';
+  urlFrontBaseDashboard = 'http://localhost:4200/dashboard';
+  urlLogin = 'http://localhost:4200/login';
   menuNav = [
     {
       type: 'option', // Indica que este elemento es una opción del menú
@@ -123,7 +124,7 @@ export class SidenavComponent implements OnInit {
   }
 
   redirectToLogin() {
-    let url = this.urlFrontBase + '/login';
+    let url = this.urlLogin;
     window.location.href = url;
   }
 
@@ -160,7 +161,7 @@ export class SidenavComponent implements OnInit {
 
   logout() {
     this.userService.logoutUser();
-    window.location.href = this.urlFrontBase;
+    window.location.href = this.urlFrontBaseDashboard;
   }
 }
 

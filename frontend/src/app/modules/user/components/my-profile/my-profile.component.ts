@@ -34,7 +34,6 @@ export class MyProfileComponent implements OnInit {
     this.getUserProfile();
     this.getSuscriberCount();
     this.getMyVideos(this.currentUser.id);
-    console.log(this.currentUser.id);
   }
 
   getUserProfile() {

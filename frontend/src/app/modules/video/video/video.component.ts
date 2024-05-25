@@ -151,8 +151,8 @@ export class VideoComponent implements OnInit {
     });
   }
 
-  getMyVideo(userId: number) {
-    this.videoService.searchVideoByUserId(userId).subscribe(
+  getMyVideo(videoId: number) {
+    this.videoService.searchVideoById(videoId).subscribe(
       (response: any) => {
         if (
           response &&

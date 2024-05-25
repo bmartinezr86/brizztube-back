@@ -32,6 +32,9 @@
 
                         </div>
                     </form>
+                    <div>
+                        ¿No tienes cuenta todavía? <a href="http://localhost:4200/singup">Registrate</a>
+                    </div>
                     <p *ngIf="errorMessage || loginForm.invalid" class="error-message">{{ errorMessage }}</p>
                     <mat-dialog-actions>
                         <button mat-flat-button color="primary" class="btn-long" (click)="login()"

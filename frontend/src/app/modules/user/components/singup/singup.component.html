@@ -60,7 +60,8 @@
                                     class="input-file">
                                 <span>{{ nameImg }}</span>
                             </div>
-                            <mat-checkbox [(ngModel)]="acceptTerms" color="primary" required>
+                            <mat-checkbox [checked]="acceptTerms" formControlName="acceptTerms" color="primary"
+                                required>
                                 Acepto los <a href="/terminos-y-condiciones">términos y condiciones</a>
                             </mat-checkbox>
 

@@ -28,9 +28,23 @@ public class VideoRestController {
 
 	@Autowired
 	private IVideoService service;
-
+	
+	
 	/**
 	 * upload video
+	 * @param videoFile
+	 * @param userId
+	 * @return
+	 */
+	@PostMapping("/upload")
+	public ResponseEntity<VideoResponseRest> uploadVideo(@RequestParam("videoFile") MultipartFile videoFile,
+	                                                     @RequestParam("userId") Long userId) {
+	    ResponseEntity<VideoResponseRest> response = service.uploadVideo(videoFile, userId);
+	    return response;
+	}
+
+	/**
+	 * save details video
 	 * 
 	 * @param title
 	 * @param description
@@ -40,18 +54,14 @@ public class VideoRestController {
 	 * @param thumbnailFile
 	 * @return
 	 */
-	@PostMapping("/upload")
-	public ResponseEntity<VideoResponseRest> uploadVideo(@RequestParam("title") String title,
-			@RequestParam("description") String description, @RequestParam("categoryId") Long categoryId,
-			@RequestParam("userId") Long userId, @RequestParam("videoFile") MultipartFile videoFile,
-			@RequestParam("thumbnailFile") MultipartFile thumbnailFile) {
-
-		Video video = new Video();
-		video.setTitle(title);
-		video.setDescription(description);
-
-		ResponseEntity<VideoResponseRest> response = service.save(video, videoFile, thumbnailFile, categoryId, userId);
-		return response;
+	@PutMapping("/saveDetails/{videoId}")
+	public ResponseEntity<VideoResponseRest> saveDetails(@PathVariable Long videoId,
+	                                                     @RequestParam("title") String title,
+	                                                     @RequestParam("description") String description,
+	                                                     @RequestParam("categoryId") Long categoryId,
+	                                                     @RequestParam("thumbnailFile") MultipartFile thumbnailFile) {
+	    ResponseEntity<VideoResponseRest> response = service.saveDetails(videoId, title, description, thumbnailFile, categoryId);
+	    return response;
 	}
 
 	/**
@@ -130,8 +140,8 @@ public class VideoRestController {
 	 * @return
 	 * @throws IOException
 	 */
-	@DeleteMapping("/{id}")
-	public ResponseEntity<VideoResponseRest> update(@PathVariable("id") Long id) throws IOException {
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<VideoResponseRest> delete(@PathVariable("id") Long id) throws IOException {
 		ResponseEntity<VideoResponseRest> response = service.delete(id);
 		return response;
 	}

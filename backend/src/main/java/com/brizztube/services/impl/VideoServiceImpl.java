@@ -59,58 +59,113 @@ public class VideoServiceImpl implements IVideoService {
 
 	private Path rootLocation;
 
+	
 	@Transactional
 	@Override
-	public ResponseEntity<VideoResponseRest> save(Video video, MultipartFile videoFile, MultipartFile thumbnailFile,
-			Long categoryId, Long userId) {
-		VideoResponseRest response = new VideoResponseRest();
-		List<Video> list = new ArrayList<>();
+	public ResponseEntity<VideoResponseRest> uploadVideo(MultipartFile videoFile, Long userId) {
+	    VideoResponseRest response = new VideoResponseRest();
+	    List<Video> list = new ArrayList<>();
 
-		try {
-			Optional<User> user = userDao.findById(userId);
-			if (user.isPresent()) {
-				video.setUser(user.get());
-			} else {
-				response.setMetadata("Respuesta NOK", "-1", "El usuario no existe");
-				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
-			}
+	    try {
+	        // Crear instancia de Video
+	        Video video = new Video();
+	        
+	        // Configurar el ID del usuario
+	        Optional<User> userOpt = userDao.findById(userId);
+	        if (!userOpt.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "El usuario no existe");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+	        User user = userOpt.get();
+	        video.setUser(user);
 
-			Optional<Category> category = categoryDao.findById(categoryId);
-			if (category.isPresent()) {
-				video.setCategory(category.get());
-			} else {
-				response.setMetadata("Respuesta NOK", "-1", "La categoria no existe");
-				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
-			}
+	        // Configurar la categoría por su ID
+	        Long categoryId = 11L; // ID de la categoría
+	        Optional<Category> categoryOpt = categoryDao.findById(categoryId);
+	        if (!categoryOpt.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "La categoría no existe");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+	        Category category = categoryOpt.get();
+	        video.setCategory(category);
 
-			// Guardar archivo de video
-			String videoUri = saveFile(videoFile, videoUploadPath);
-			video.setVideoLocation(videoUri);
+	        // Guardar archivo de video
+	        String videoUri = saveFile(videoFile, videoUploadPath);
+	        video.setVideoLocation(videoUri);
 
-			// Guardar archivo de miniatura
-			String thumbnailUri = saveFile(thumbnailFile, thumbnailUploadPath);
-			video.setThumbnailLocation(thumbnailUri);
+	        // Guardar el objeto Video sin detalles adicionales
+	        Video videoSaved = videoDao.save(video);
 
-			// Guardar el objeto Video con la miniatura
-			Video videoSaved = videoDao.save(video);
+	        if (videoSaved != null) {
+	            list.add(videoSaved);
+	            response.getVideoResponse().setVideo(list);
+	            response.setMetadata("Respuesta OK", "00", "Video subido con éxito");
+	        } else {
+	            response.setMetadata("Respuesta NOK", "-1", "El video no se ha podido subir debido a un error");
+	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	        }
+	    } catch (Exception e) {
+	        response.setMetadata("Respuesta NOK", "-1", "Error al subir el video");
+	        e.printStackTrace();
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 
-			if (videoSaved != null) {
-				list.add(videoSaved);
-				response.getVideoResponse().setVideo(list);
-				response.setMetadata("Respuesta OK", "00", "Video subido con exito");
-			} else {
-				response.setMetadata("Respuesta NOK", "-1", "El video no se ha podido subir debido a un error");
-				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.BAD_REQUEST);
-			}
-		} catch (Exception e) {
-			response.setMetadata("Respuesta NOK", "-1", "Error al guardar el video");
-			e.printStackTrace();
-			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	    return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@Transactional
+	@Override
+	public ResponseEntity<VideoResponseRest> saveDetails(Long videoId, String title, String description, MultipartFile thumbnailFile, Long categoryId) {
+	    VideoResponseRest response = new VideoResponseRest();
+	    List<Video> list = new ArrayList<>();
 
-		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
+	    try {
+	        // Obtener el video por su ID
+	        Optional<Video> videoOpt = videoDao.findById(videoId);
+	        if (!videoOpt.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "El video no existe");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+	        Video video = videoOpt.get();
+
+	        // Actualizar los detalles del video
+	        video.setTitle(title);
+	        video.setDescription(description);
+
+	        // Configurar la categoría del video
+	        Optional<Category> categoryOpt = categoryDao.findById(categoryId);
+	        if (!categoryOpt.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "La categoría no existe");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+	        Category category = categoryOpt.get();
+	        video.setCategory(category);
+
+	        // Guardar el archivo de miniatura
+	        String thumbnailUri = saveFile(thumbnailFile, thumbnailUploadPath);
+	        video.setThumbnailLocation(thumbnailUri);
+
+	        // Guardar los cambios en el video
+	        Video videoSaved = videoDao.save(video);
+
+	        if (videoSaved != null) {
+	            list.add(videoSaved);
+	            response.getVideoResponse().setVideo(list);
+	            response.setMetadata("Respuesta OK", "00", "Detalles del video guardados con éxito");
+	        } else {
+	            response.setMetadata("Respuesta NOK", "-1", "No se pudieron guardar los detalles del video debido a un error");
+	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	        }
+	    } catch (Exception e) {
+	        response.setMetadata("Respuesta NOK", "-1", "Error al guardar los detalles del video");
+	        e.printStackTrace();
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+
+	    return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+    
 	@Override
 	@Transactional(readOnly = true)
 	public ResponseEntity<VideoResponseRest> search() {

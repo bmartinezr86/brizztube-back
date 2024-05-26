@@ -122,7 +122,9 @@ export class SidenavComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
-    this.getUserProfile();
+    if (this.currentUser) {
+      this.getUserProfile();
+    }
   }
   toggleFormularioBusqueda() {
     this.mostrarFormularioBusqueda = !this.mostrarFormularioBusqueda;
@@ -224,6 +226,10 @@ export class SidenavComponent implements OnInit {
     return this.snackBar.open(message, action, {
       duration: 2000,
     });
+  }
+
+  getAvatarUrl(avatarLocation: string): string {
+    return `http://localhost:8080${avatarLocation}`;
   }
 }
 

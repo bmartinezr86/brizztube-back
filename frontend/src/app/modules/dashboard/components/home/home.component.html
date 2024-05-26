@@ -27,7 +27,8 @@
                             <a [routerLink]="['/dashboard/profile', video.user.id]">
                                 <div class="video-user-data">
                                     <div>
-                                        <img class="img-profile" [src]="profileImage" alt="Profile Image">
+                                        <img [src]="getAvatarUrl(video.user.picture)" alt="{{ video.user.name }}"
+                                            class="img-profile">
                                     </div>
                                     <div class="video-user-name">{{ video.user.name }}</div>
                                 </div>

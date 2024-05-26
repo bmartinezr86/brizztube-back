@@ -13,6 +13,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Value("${upload.thumbnail.path}")
     private String thumbnailUploadPath;
+    
+    @Value("${upload.avatar.path}")
+    private String avatarUploadPath;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -21,5 +24,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler(thumbnailUploadPath+"/**")
                 .addResourceLocations("file:" + thumbnailUploadPath + "/");
+        
+        registry.addResourceHandler(avatarUploadPath+"/**")
+        .addResourceLocations("file:" + avatarUploadPath + "/");
     }
 }

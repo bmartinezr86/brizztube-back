@@ -22,8 +22,9 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
+    this.currentUser = this.userService.getCurrentUser();
     if (this.currentUser) {
-      console.log('Current User:', this.currentUser);
+      this.getUserProfile();
     }
 
     this.videoService.getVideosHome().subscribe((videos: any[]) => {
@@ -38,9 +39,6 @@ export class HomeComponent implements OnInit {
           this.noResultsFound = state.noResultsFound;
         }
       );
-
-    this.currentUser = this.userService.getCurrentUser();
-    this.getUserProfile();
   }
 
   getVideoThumbnailUrl(thumbnailLocation: string): string {
@@ -103,6 +101,10 @@ export class HomeComponent implements OnInit {
     return video.showFullDescription
       ? video.description
       : this.shortenDescription(video.description, maxLength);
+  }
+
+  getAvatarUrl(avatarLocation: string): string {
+    return `http://localhost:8080${avatarLocation}`;
   }
 }
 

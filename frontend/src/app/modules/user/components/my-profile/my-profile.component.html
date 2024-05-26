@@ -1,8 +1,8 @@
 <mat-card>
 
-    <mat-card-header class="profile-data">
+    <mat-card-header class="profile-data" *ngIf="currentUser">
         <div class="column">
-            <img class="img-profile" [src]="profileImage" alt="Profile Image">
+            <img [src]="getAvatarUrl(currentUser.picture)" alt="{{ currentUser.name }}" class="img-profile">
         </div>
         <div class="column">
             <h2 class="title-page">
@@ -39,7 +39,7 @@
     </mat-card-header>
 
 
-    <mat-card-content class="container-videos">
+    <mat-card-content class="container-videos" *ngIf="currentUser">
         <h3>Últimos vídeos</h3>
 
         <div class="card-container">

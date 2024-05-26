@@ -5,6 +5,7 @@ import { SuscriptionService } from 'src/app/modules/shared/services/suscription/
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
 import { EditProfileComponent } from '../edit-profile/edit-profile.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -28,12 +29,18 @@ export class MyProfileComponent implements OnInit {
   suscriberCount: number = 0;
   isUserSubscribed: boolean = false;
   videos: any[] = []; // Array para almacenar los videos
+  user: any;
+  router!: Router;
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
-    // this.getUserProfile();
-    this.getMyVideos(this.currentUser.id);
-    this.getUserProfile();
+
+    if (!this.currentUser) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.getMyVideos(this.currentUser.id);
+      this.getUserProfile();
+    }
   }
 
   getUserProfile() {
@@ -168,6 +175,14 @@ export class MyProfileComponent implements OnInit {
     } else {
       return '';
     }
+  }
+
+  getUserRole(): string {
+    return this.user.role;
+  }
+
+  getAvatarUrl(avatarLocation: string): string {
+    return `http://localhost:8080${avatarLocation}`;
   }
 }
 

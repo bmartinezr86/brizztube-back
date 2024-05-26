@@ -50,7 +50,6 @@ export class VideoComponent implements OnInit {
       }
     });
     this.currentUser = this.userService.getCurrentUser();
-    this.getUserProfile();
   }
 
   ngOnDestroy(): void {
@@ -209,11 +208,15 @@ export class VideoComponent implements OnInit {
   editVideo() {}
 
   belongsToCurrentUser(video: any): boolean {
-    if (video.user.id !== this.currentUser.id) {
+    if (
+      video.user &&
+      this.currentUser &&
+      video.user.id === this.currentUser.id
+    ) {
+      return true;
+    } else {
       return false;
     }
-
-    return true;
   }
 
   toggleLike(video: any) {
@@ -270,6 +273,10 @@ export class VideoComponent implements OnInit {
     return video.showFullDescription
       ? video.description
       : this.shortenDescription(video.description, maxLength);
+  }
+
+  getAvatarUrl(avatarLocation: string): string {
+    return `http://localhost:8080${avatarLocation}`;
   }
 }
 

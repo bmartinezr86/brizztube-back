@@ -58,7 +58,6 @@ export class UserComponent implements OnInit {
       let listUser = resp.userResponse.user;
       console.log('User response:', listUser); // Agregar esta línea para imprimir resp.userResponse.user
       listUser.forEach((element: UserElement) => {
-        element.picture = 'data:image/jpeg;base64,' + element.picture;
         dataUser.push(element);
       });
 
@@ -154,6 +153,10 @@ export class UserComponent implements OnInit {
         this.processUsersResponse(resp);
       });
     }
+  }
+
+  getAvatarUrl(avatarLocation: string): string {
+    return `http://localhost:8080${avatarLocation}`;
   }
 }
 

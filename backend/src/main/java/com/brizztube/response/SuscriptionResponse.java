@@ -8,5 +8,4 @@ import lombok.Data;
 @Data
 public class SuscriptionResponse {
 	private List<Suscription> suscription;
-	private long subscriberCount;
 }

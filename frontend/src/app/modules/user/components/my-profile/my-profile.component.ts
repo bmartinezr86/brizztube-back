@@ -31,9 +31,9 @@ export class MyProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
-    this.getUserProfile();
-    this.getSuscriberCount();
+    // this.getUserProfile();
     this.getMyVideos(this.currentUser.id);
+    this.getUserProfile();
   }
 
   getUserProfile() {
@@ -65,23 +65,12 @@ export class MyProfileComponent implements OnInit {
     }
   }
 
-  getSuscriberCount() {
-    this.suscriptionService
-      .countSuscribers(this.currentUser.id)
-      .subscribe((resp: any) => {
-        if (resp.metadata[0].code == '00') {
-          this.suscriberCount = resp.suscriptionResponse.subscriberCount;
-        }
-      });
-  }
-
   subscribe(video: any) {
     const suscribed = new FormData();
     suscribed.append('subscriberId', this.currentUser.id);
     suscribed.append('subscribedTo', video.user.id);
     this.suscriptionService.suscribe(suscribed).subscribe((resp: any) => {
       if (resp.metadata[0].code == '00') {
-        this.getSuscriberCount();
       }
     });
   }
@@ -93,7 +82,6 @@ export class MyProfileComponent implements OnInit {
       .unsuscribe(subscriberId, subscribedTo)
       .subscribe((resp: any) => {
         if (resp.metadata[0].code == '00') {
-          this.getSuscriberCount();
         }
       });
   }

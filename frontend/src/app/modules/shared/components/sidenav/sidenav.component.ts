@@ -9,6 +9,14 @@ import {
 } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
 import { VideoService } from '../../services/video/video.service';
+import {
+  MatSnackBar,
+  MatSnackBarRef,
+  SimpleSnackBar,
+} from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { NewUserComponent } from 'src/app/modules/user/components/new-user/new-user.component';
+import { UploadVideoComponent } from 'src/app/modules/video/upload-video/upload-video.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -18,6 +26,8 @@ import { VideoService } from '../../services/video/video.service';
 export class SidenavComponent implements OnInit {
   public userService = inject(UserService);
   public videoSrv = inject(VideoService);
+  private snackBar = inject(MatSnackBar);
+  public dialog = inject(MatDialog);
   currentUser: any;
   profileImage: string | undefined;
   mobileQuery: MediaQueryList;
@@ -63,12 +73,12 @@ export class SidenavComponent implements OnInit {
     {
       type: 'separator',
     },
-    {
-      type: 'option',
-      name: 'Configuración',
-      route: 'settings',
-      icon: 'settings',
-    },
+    // {
+    //   type: 'option',
+    //   name: 'Configuración',
+    //   route: 'settings',
+    //   icon: 'settings',
+    // },
     {
       type: 'option',
       name: 'Ayuda',
@@ -78,13 +88,6 @@ export class SidenavComponent implements OnInit {
     {
       type: 'separator',
     },
-    {
-      type: 'option',
-      name: 'Registro',
-      route: 'singup',
-      icon: 'add_circle',
-    },
-
     {
       type: 'option',
       name: 'Usuarios',
@@ -99,11 +102,11 @@ export class SidenavComponent implements OnInit {
       route: 'my-profile',
       icon: 'person',
     },
-    {
-      name: 'Preferencias',
-      route: 'settings',
-      icon: 'settings',
-    },
+    // {
+    //   name: 'Preferencias',
+    //   route: 'settings',
+    //   icon: 'settings',
+    // },
     {
       name: 'Cerrar sesión',
       click: this.logout.bind(this),
@@ -130,16 +133,6 @@ export class SidenavComponent implements OnInit {
     window.location.href = url;
   }
 
-  openUploadVideosForm() {}
-
-  handleProfileImage(pictureUser: any) {
-    if (pictureUser) {
-      this.profileImage = 'data:image/jpeg;base64,' + pictureUser; // Establecer datos Base64 si están disponibles
-    } else {
-      this.profileImage = '../../../../../assets/img/default-profile.png';
-    }
-  }
-
   getUserProfile() {
     this.userService.getUserById(this.currentUser.id).subscribe((resp: any) => {
       this.processUserResponse(resp);
@@ -161,24 +154,77 @@ export class SidenavComponent implements OnInit {
     }
   }
 
+  handleProfileImage(pictureUser: any) {
+    if (pictureUser) {
+      this.profileImage = 'data:image/jpeg;base64,' + pictureUser; // Establecer datos Base64 si están disponibles
+    } else {
+      this.profileImage = '../../../../../assets/img/default-profile.png';
+    }
+  }
+
   logout() {
     this.userService.logoutUser();
     window.location.href = this.urlFrontBaseDashboard;
   }
 
-
-  filterVideos(filter: any){
-console.log(filter);
-
+  filterVideos(filter: any) {
     this.videoSrv.getVideosByFilter(filter.value).subscribe(
-      (resp) => {this.videoSrv.setVideosHome(resp)},
-      (error) => {},
-      () => {},
-    )
-
-
+      (response: any) => {
+        if (
+          response &&
+          response.videoResponse &&
+          response.videoResponse.video.length > 0
+        ) {
+          this.videoSrv.setVideosHome(response.videoResponse.video);
+          this.videoSrv.setSearchState({
+            showSearchResults: true,
+            noResultsFound: false,
+          });
+        } else {
+          this.videoSrv.setVideosHome([]);
+          this.videoSrv.setSearchState({
+            showSearchResults: true,
+            noResultsFound: true,
+          });
+        }
+      },
+      (error) => {
+        this.videoSrv.setVideosHome([]);
+        this.videoSrv.setSearchState({
+          showSearchResults: true,
+          noResultsFound: true,
+        });
+      }
+    );
   }
 
+  onSubmit(filtro: any): void {
+    // Evitar el comportamiento por defecto de recargar la página
+    this.filterVideos(filtro);
+  }
+
+  openUploadVideosForm() {
+    const dialogRef = this.dialog.open(UploadVideoComponent, {
+      width: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == 1) {
+        this.openSnackBar('Usuario creado', 'Exitosa');
+      } else if (result == 2) {
+        this.openSnackBar('Error al guardar el usuario', 'Error');
+      }
+    });
+  }
+
+  openSnackBar(
+    message: string,
+    action: string
+  ): MatSnackBarRef<SimpleSnackBar> {
+    return this.snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
 }
 
 export interface UserElement {

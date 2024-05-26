@@ -69,10 +69,12 @@
 
         <div>
             <div *ngIf="mostrarEnDesktop || mostrarFormularioBusqueda">
-                <form class="search-form" #searchForm>
+                <form class="search-form" #searchForm (ngSubmit)="onSubmit(filtro)">
                     <div class="input-container">
-                        <input type="text" name="buscarVideo" placeholder="Buscar..." #filtro>
-                        <button type="button" title="Buscar videos" class="search-button" (click)="filterVideos(filtro)">
+                        <input type="text" name="buscarVideo" placeholder="Buscar..." #filtro
+                            (keyup.enter)="submitButton.focus(); onSubmit(filtro)">
+                        <button #submitButton type="button" title="Buscar videos" class="search-button"
+                            (click)="onSubmit(filtro)">
                             <mat-icon class="search-icon">search</mat-icon>
                         </button>
                     </div>

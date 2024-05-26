@@ -1,15 +1,83 @@
+mat-card {
+    height: auto;
+    display: flex;
+
+}
+
+h2 {
+    margin: 0px;
+}
+
+.profile-data {
+    margin-top: 15px;
+    display: flex;
+    gap: 20px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+}
+
+.img-profile {
+    width: 160px;
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+.btn-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    & .icon {
+        font-size: 19px;
+    }
+}
+
+.btn-seguir {
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    -ms-border-radius: 25px;
+    -o-border-radius: 25px;
+}
+
+.title-page {
+    margin: 0px;
+}
+
+.estadisticas-user {
+    color: #333;
+    font-size: 14px;
+}
+
+
 .card-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
     flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+
 }
 
 .card {
     display: flex;
-    flex-direction: row;
-    width: 100%;
+    flex-direction: column;
     gap: 10px;
+    cursor: pointer;
 }
 
 .card a {
@@ -23,8 +91,8 @@
 
 .card img {
     display: block;
-    width: 100%;
-    height: 80px;
+    width: 300px;
+    height: 180px;
     object-fit: cover;
     border-radius: 15px;
     -webkit-border-radius: 15px;
@@ -46,8 +114,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 300px;
+    height: 180px;
     background-color: rgba(0, 0, 0, 0.5);
     /* Fondo verde semi-transparente */
     opacity: 0;
@@ -68,7 +136,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         /* Ajusta el tamaño según tu ícono */
-        font-size: 50px;
+        font-size: 80px;
         height: auto;
     }
 }
@@ -78,9 +146,17 @@
     /* Mostrar el overlay al hacer hover */
 }
 
+.primary-container-videos {
+    margin-left: 10% !important;
+}
+
 .container-videos {
-    margin-left: 5%;
-    margin-right: 5%;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+
 }
 
 .card-content {
@@ -92,7 +168,7 @@
     font-size: 18px;
     font-weight: bold;
     margin-top: 0px;
-    margin-bottom: 0px;
+    margin-bottom: 5px;
 
 
 }
@@ -101,24 +177,8 @@
     line-height: 1.5;
 }
 
-.video-user {
-    font-size: 12px;
-}
 
-.video-stadistics {
+.card-stadistic-video {
     color: #333;
-    font-size: 12px;
-}
-
-.video {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
-.card-container {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-
+    font-size: 10px;
 }

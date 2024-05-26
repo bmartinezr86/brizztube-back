@@ -8,6 +8,7 @@ import { MyProfileComponent } from '../user/components/my-profile/my-profile.com
 import { VideoComponent } from '../video/video/video.component';
 import { ProfileComponent } from '../user/components/profile/profile/profile.component';
 import { NotFoundComponent } from './pages/not-found/not-found/not-found.component';
+import { UploadVideoDetailsComponent } from '../video/upload-video-details/upload-video-details.component';
 
 const childRoutes: Routes = [
   {
@@ -22,6 +23,7 @@ const childRoutes: Routes = [
   { path: 'my-profile', component: MyProfileComponent },
   { path: 'videos/:id', component: VideoComponent },
   { path: 'profile/:id', component: ProfileComponent },
+  { path: 'upload-video-details', component: UploadVideoDetailsComponent },
   { path: 'not-found', component: NotFoundComponent },
   { path: '**', component: NotFoundComponent },
 ];

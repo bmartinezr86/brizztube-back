@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, forkJoin, map } from 'rxjs';
 
@@ -75,9 +75,22 @@ export class VideoService {
     return this.http.get(endpoint);
   }
 
-  upload(body: any) {
+  uploadVideo(formData: FormData): Observable<any> {
     const endpoint = `${base_url}/upload`;
-    return this.http.post(endpoint, body);
+
+    const headers = new HttpHeaders();
+    headers.append('Accept', 'application/json');
+
+    return this.http.post(endpoint, formData, {
+      reportProgress: true, // Habilita la información de progreso
+      observe: 'events', // Observa los eventos de progreso
+      headers: headers, // Agrega los encabezados adecuados
+    });
+  }
+
+  saveDetailsVideo(body: any, id: any) {
+    const endpoint = `${base_url}/saveDetails/${id}`;
+    return this.http.put(endpoint, body);
   }
 
   /**

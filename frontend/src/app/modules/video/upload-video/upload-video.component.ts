@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, HostListener, ViewChild, inject } from '@angular/core';
 import { UserService } from '../../shared/services/user/user.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { VideoService } from '../../shared/services/video/video.service';
+import { HttpClient, HttpEventType } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-upload-video',
@@ -12,131 +12,150 @@ import { VideoService } from '../../shared/services/video/video.service';
 export class UploadVideoComponent {
   private userService = inject(UserService);
   private videoService = inject(VideoService);
-  private fb = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef);
-  public uploadForm!: FormGroup;
-  public categories: CategoryElement[] = [];
-  public hidePassword: boolean = true;
-  public estadoFormulario: string = '';
-  public selectedFile: any;
-  public nameImg: string = '';
-  public data = inject(MAT_DIALOG_DATA);
+  currentUser: any;
+  isDragOver = false;
+  selectedFile: File | null = null;
+  uploading: boolean = false; // Variable para rastrear el estado de carga
+  uploadProgress: number = 0; // Variable para rastrear el progreso de carga
+  http: any;
+  isFirstPhase: boolean = true;
 
-  ngOnInit(): void {
-    this.estadoFormulario = 'Subir';
-    this.uploadForm = this.fb.group({
-      name: ['', Validators.required],
-      description: [''],
-      category: ['', Validators.required],
-    });
-    this.getCategories();
+  constructor(private router: Router) {}
+  ngOnInit() {
+    // Verifica que router esté inicializado antes de usarlo
 
-    console.log(this.data);
+    this.currentUser = this.userService.getCurrentUser();
+  }
 
-    if (this.data != null) {
-      console.log(this.data.picture);
-      this.updateForm(this.data);
-      this.estadoFormulario = 'Editar';
+  @HostListener('dragover', ['$event'])
+  onDragOver(event: DragEvent) {
+    this.preventDefault(event);
+    this.isDragOver = true;
+  }
+
+  @HostListener('dragenter', ['$event'])
+  onDragEnter(event: DragEvent) {
+    this.preventDefault(event);
+    this.isDragOver = true;
+  }
+
+  @HostListener('dragleave', ['$event'])
+  onDragLeave(event: DragEvent) {
+    this.preventDefault(event);
+    this.isDragOver = false;
+  }
+
+  @HostListener('drop', ['$event'])
+  onDrop(event: DragEvent) {
+    this.preventDefault(event);
+    this.isDragOver = false;
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.selectedFile = files[0];
+      this.validateFile(this.selectedFile);
     }
   }
 
-  getCategories(): void {
-    this.videoService.getCategories().subscribe(
-      (data: any) => {
-        console.log('respuesta estados: ', data);
-        this.processCategoriesResponse(data);
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+    if (this.validateFile(this.selectedFile)) {
+      this.uploadVideo();
+    }
+  }
+
+  openFileInput() {
+    const inputElement: HTMLInputElement | null = document.getElementById(
+      'fileInput'
+    ) as HTMLInputElement;
+    if (inputElement) {
+      inputElement.click();
+    }
+  }
+
+  validateFile(file: File | null): boolean {
+    if (!file) {
+      console.error('No file selected');
+      return false;
+    }
+
+    const allowedExtensions = ['mp4', 'avi', 'mov'];
+    const extension = file.name.split('.').pop()?.toLowerCase() || '';
+    if (!allowedExtensions.includes(extension)) {
+      console.error('Invalid file format. Only MP4, AVI, or MOV allowed.');
+      this.selectedFile = null;
+      return false;
+    }
+
+    const maxSize = 200 * 1024 * 1024; // 200MB in bytes
+    if (file.size > maxSize) {
+      console.error('File size exceeds the maximum limit of 200MB.');
+      this.selectedFile = null;
+      return false;
+    }
+
+    return true;
+  }
+
+  preventDefault(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onFileDropped(event: DragEvent) {
+    this.preventDefault(event);
+    this.isDragOver = false;
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.selectedFile = files[0];
+      this.validateFile(this.selectedFile);
+    }
+  }
+
+  nextPhase() {
+    // Cambia a la siguiente fase del formulario
+    this.isFirstPhase = false;
+  }
+
+  previousPhase() {
+    // Cambia a la fase anterior del formulario
+    this.isFirstPhase = true;
+  }
+
+  uploadVideo() {
+    if (!this.selectedFile) {
+      console.error('No se ha seleccionado ningún archivo.');
+      return;
+    }
+
+    if (!this.currentUser) {
+      console.error('No hay un usuario actualmente autenticado.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('videoFile', this.selectedFile);
+    formData.append('userId', this.currentUser.id);
+
+    this.uploading = true; // Comienza la carga
+    this.videoService.uploadVideo(formData).subscribe(
+      (event) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          // Calcula el progreso de carga en porcentaje
+          this.uploadProgress = Math.round((100 * event.loaded) / event.total);
+        } else if (event.type === HttpEventType.Response) {
+          console.log('Video subido exitosamente:', event.body);
+          this.uploading = false; // Finaliza la carga
+
+          // Redirige internamente en la aplicación sin cerrar el diálogo
+          this.router.navigateByUrl('/dashboard/upload-video-details');
+        }
       },
-      (error: any) => {
-        console.log('error: ', error);
+      (error) => {
+        console.error('Error al subir el video:', error);
+        this.uploading = false; // Finaliza la carga en caso de error
       }
     );
-  }
-
-  processCategoriesResponse(resp: any) {
-    const dataCategories: CategoryElement[] = [];
-
-    if (
-      resp.metadata[0].code == '00' &&
-      resp.categoryResponse &&
-      resp.categoryResponse.category
-    ) {
-      let listCategories = resp.categoryResponse.category;
-      console.log('Categories response:', listCategories); // Agregar esta línea para imprimir resp.userStatusResponse.userStatus
-      listCategories.forEach((element: CategoryElement) => {
-        dataCategories.push(element);
-      });
-
-      this.categories = dataCategories;
-      // Aquí puedes hacer lo que necesites con los estados obtenidos
-      console.log('Estados procesados:', dataCategories);
-    } else {
-      console.error(
-        'La respuesta no contiene la estructura esperada para las categorias.'
-      );
-    }
-  }
-
-  togglePasswordVisibility() {
-    this.hidePassword = !this.hidePassword;
-  }
-
-  onFileChanged(event: any) {
-    this.selectedFile = event.target.files[0];
-    this.nameImg = event.target.files[0].name;
-    console.log(this.selectedFile);
-    console.log(this.nameImg);
-  }
-  onSave() {
-    let data = {
-      name: this.uploadForm.get('name')?.value,
-      description: this.uploadForm.get('description')?.value,
-      category: this.uploadForm.get('category')?.value,
-      picture: this.selectedFile,
-    };
-
-    const uploadImageData = new FormData();
-
-    uploadImageData.append('picture', data.picture, data.picture.name);
-    uploadImageData.append('name', data.name);
-    uploadImageData.append('description', data.description);
-    uploadImageData.append('category', data.category);
-
-    if (this.data != null) {
-      // update user
-      this.userService.updateUser(uploadImageData, this.data.id).subscribe(
-        (data: any) => {
-          console.log(data);
-          this.dialogRef.close(1);
-        },
-        (error: any) => {
-          this.dialogRef.close(2);
-        }
-      );
-    } else {
-      // create user
-      this.userService.saveUser(uploadImageData).subscribe(
-        (data: any) => {
-          console.log(data);
-          this.dialogRef.close(1);
-        },
-        (error: any) => {
-          this.dialogRef.close(2);
-        }
-      );
-    }
-  }
-
-  onCancel() {
-    this.dialogRef.close(3);
-  }
-
-  updateForm(data: any) {
-    this.uploadForm = this.fb.group({
-      name: [data.name, Validators.required],
-      description: [data.description],
-      image: [''],
-      category: [data.category.id, Validators.required],
-    });
   }
 }
 

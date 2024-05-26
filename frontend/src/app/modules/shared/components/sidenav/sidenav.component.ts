@@ -207,7 +207,7 @@ export class SidenavComponent implements OnInit {
 
   openUploadVideosForm() {
     const dialogRef = this.dialog.open(UploadVideoComponent, {
-      width: '80%',
+      width: '45%',
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {

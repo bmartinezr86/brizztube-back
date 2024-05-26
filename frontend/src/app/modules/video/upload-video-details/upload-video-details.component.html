@@ -1,0 +1,49 @@
+<h2 class="titulo-modal" mat-dialog-title>Subir vídeo</h2>
+<mat-dialog-content>
+    <form [formGroup]="uploadForm">
+        <div class="user-container">
+            <mat-form-field appearance="fill">
+                <mat-label>Título</mat-label>
+                <input matInput placeholder="Título" formControlName="titulo" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Descripción</mat-label>
+                <textarea matInput placeholder="Descripción" formControlName="description"></textarea>
+            </mat-form-field>
+
+
+            <mat-form-field>
+                <mat-label>Categoría</mat-label>
+                <mat-select formControlName="category">
+                    <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name
+                        }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+
+
+            <div class="input-file-conteiner">
+                <label for="file-upload" class="subir">
+                    <mat-icon>file_upload</mat-icon>
+                    Subir imagen
+                </label>
+                <input id="file-upload" accept="image/png, image/jpeg, image/jpg" (change)="onFileChanged($event)"
+                    type="file" formControlName="picture" class="input-file">
+                <span>{{ nameImg }}</span>
+            </div>
+
+
+        </div>
+    </form>
+    <mat-dialog-actions>
+        <button mat-flat-button color="primary" class="btn" (click)="onSave()" [disabled]="uploadForm.invalid">
+            <mat-icon>save</mat-icon>
+            Guardar
+        </button>
+        <button mat-flat-button color="warn" class="btn" (click)="onCancel()">
+            <mat-icon>cancel</mat-icon>
+            Cancelar
+        </button>
+    </mat-dialog-actions>
+</mat-dialog-content>

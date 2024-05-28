@@ -57,6 +57,8 @@ public class VideoServiceImpl implements IVideoService {
 	@Autowired
 	private ViewServiceImpl viewService;
 	
+	@Autowired
+	private PlayListServiceImpl playlistService;
 	
 	
 	@Value("${upload.video.path}")
@@ -369,6 +371,9 @@ public class VideoServiceImpl implements IVideoService {
 				// Eliminar los archivos de vídeo y miniatura del sistema de archivos
 				deleteFile(video.getVideoLocation());
 				deleteFile(video.getThumbnailLocation());
+				
+				 // Eliminar el video de las listas de reproducción
+	            playlistService.removeVideoFromPlayLists(id);
 
 				// Eliminar el video de la base de datos
 				videoDao.delete(video);

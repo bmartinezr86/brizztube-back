@@ -53,6 +53,9 @@ public class UserServiceImpl implements IUserService {
 	private VideoServiceImpl videoService;
 
 	@Autowired
+	private PlayListServiceImpl playlistService;
+	
+	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@Autowired
@@ -325,6 +328,9 @@ public class UserServiceImpl implements IUserService {
 
 	            // Eliminar los videos relacionados con el usuario
 	            videoService.deleteVideosByUserId(id);
+	            
+	         // Eliminar las listas de reproducción relacionadas con el usuario
+	            playlistService.deletePlayListsByUserId(id);
 
 	            // Eliminar los archivos de la foto del usuario del sistema de archivos
 	            deleteFile(user.getPicture());

@@ -21,7 +21,7 @@ import com.brizztube.response.UserResponseRest;
 import com.brizztube.response.VideoResponseRest;
 import com.brizztube.services.IVideoService;
 
-@CrossOrigin(origins = { "http://localhost:4200" }) // angular
+@CrossOrigin(origins = { "*" }) // angular
 @RestController
 @RequestMapping("/api/videos")
 public class VideoRestController {

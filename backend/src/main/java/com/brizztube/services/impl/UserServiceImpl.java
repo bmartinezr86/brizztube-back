@@ -233,7 +233,7 @@ public class UserServiceImpl implements IUserService {
 		return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
 	}
 
-	@Transactional
+	//@Transactional
 	@Override
 	public ResponseEntity<UserResponseRest> update(User user, Long userId, MultipartFile avatarFile, Long rolId,
 			Long userStatusId) {
@@ -252,6 +252,7 @@ public class UserServiceImpl implements IUserService {
 				existingUser.setEmail(user.getEmail());
 				existingUser.setPassword(user.getPassword());
 				existingUser.setPicture(user.getPicture());
+				existingUser.setTotalSubs(user.getTotalSubs());
 
 				// Buscar rol para establecerlo en el usuario
 				Optional<Rol> rol = rolDao.findById(rolId);

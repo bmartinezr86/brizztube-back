@@ -143,10 +143,10 @@ export class UserComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == 1) {
-        this.openSnackBar('Usuario creado', 'Exitosa');
+        this.openSnackBar('Usuario editado', 'Exitosa');
         this.getUsers();
       } else if (result == 2) {
-        this.openSnackBar('Error al guardar el usuario', 'Error');
+        this.openSnackBar('Error al editar el usuario', 'Error');
       }
     });
   }

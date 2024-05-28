@@ -149,6 +149,24 @@ public class LikeServiceImpl implements ILikeService {
 	           return new ResponseEntity<LikeResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	       }
 	   }
+	   
+	   @Transactional
+	    @Override
+	    public ResponseEntity<LikeResponseRest> deleteLikesByVideoId(Long videoId) {
+	        LikeResponseRest response = new LikeResponseRest();
+	        try {
+	            // Buscar los likes por el ID del video y eliminarlos
+	            List<Like> likes = likeDao.findByVideoId(videoId);
+	            likeDao.deleteAll(likes);
+
+	            response.setMetadata("Respuesta OK", "00", "Likes eliminados correctamente");
+	            return new ResponseEntity<LikeResponseRest>(response, HttpStatus.OK);
+	        } catch (Exception e) {
+	            response.setMetadata("Respuesta NOK", "-1", "Error al eliminar los likes");
+	            e.printStackTrace();
+	            return new ResponseEntity<LikeResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
+	    }
 
 
 }

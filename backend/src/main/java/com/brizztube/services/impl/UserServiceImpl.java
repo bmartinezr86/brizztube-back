@@ -48,6 +48,9 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	private SuscriptionServiceImpl suscriptionService;
+	
+	@Autowired
+	private VideoServiceImpl videoService;
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -251,7 +254,6 @@ public class UserServiceImpl implements IUserService {
 				existingUser.setDescription(user.getDescription());
 				existingUser.setEmail(user.getEmail());
 				existingUser.setPassword(user.getPassword());
-				existingUser.setPicture(user.getPicture());
 				existingUser.setTotalSubs(user.getTotalSubs());
 
 				// Buscar rol para establecerlo en el usuario
@@ -319,12 +321,16 @@ public class UserServiceImpl implements IUserService {
 				User user = optionalUser.get();
 
 				// Eliminar las suscripciones relacionadas con el usuario
-				suscriptionService.deleteSubscriptionsByUserId(id);
-				// Eliminar los archivos de vídeo y miniatura del sistema de archivos
-				deleteFile(user.getPicture());
+	            suscriptionService.deleteSubscriptionsByUserId(id);
 
-				// Eliminar el usuario de la base de datos
-				userDao.delete(user);
+	            // Eliminar los videos relacionados con el usuario
+	            videoService.deleteVideosByUserId(id);
+
+	            // Eliminar los archivos de la foto del usuario del sistema de archivos
+	            deleteFile(user.getPicture());
+
+	            // Eliminar el usuario de la base de datos
+	            userDao.delete(user);
 
 				response.setMetadata("Respuesta OK", "00", "Usuario eliminado correctamente");
 			} else {

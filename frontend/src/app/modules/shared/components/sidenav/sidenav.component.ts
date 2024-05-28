@@ -225,6 +225,7 @@ export class SidenavComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == 1) {
         this.openSnackBar('Vídeo subido', 'Exitosa');
+        window.location.reload();
       } else if (result == 2) {
         this.openSnackBar('Error al subir el vídeo', 'Error');
       }

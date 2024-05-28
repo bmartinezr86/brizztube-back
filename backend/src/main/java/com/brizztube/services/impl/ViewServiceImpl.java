@@ -124,5 +124,23 @@ public class ViewServiceImpl implements IViewService {
 
 		return new ResponseEntity<ViewResponseRest>(response, HttpStatus.OK);
 	}
+	
+	@Transactional
+    @Override
+    public ResponseEntity<ViewResponseRest> deleteViewsByVideoId(Long videoId) {
+        ViewResponseRest response = new ViewResponseRest();
+        try {
+            // Buscar las visitas por el ID del video y eliminarlas
+            List<View> view = viewDao.findByVideoId(videoId);
+            viewDao.deleteAll(view);
+
+            response.setMetadata("Respuesta OK", "00", "Visitas eliminadas correctamente");
+            return new ResponseEntity<ViewResponseRest>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.setMetadata("Respuesta NOK", "-1", "Error al eliminar las visitas");
+            e.printStackTrace();
+            return new ResponseEntity<ViewResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

@@ -25,7 +25,7 @@
                     Dejar de seguir
                 </button>
                 <button mat-flat-button color="primary" class="btn btn-seguir" *ngIf="element.id == currentUser.id"
-                    (click)="editProfile(currentUser.id, currentUser.name, currentUser.description, currentUser.email, currentUser.password, currentUser.rol, currentUser.status)">
+                    (click)="editProfile(currentUser.id, currentUser.name, currentUser.description, currentUser.email, currentUser.password, currentUser.rol, currentUser.status, currentUser.picture)">
                     <div class="btn-edit">
                         <mat-icon class="icon">edit</mat-icon>
                         <span>
@@ -74,7 +74,8 @@
                     </div>
                     <!-- Agregar el botón con el menú desplegable -->
                     <mat-menu #menu="matMenu">
-                        <button mat-menu-item (click)="openEditVideosForm(video.id)">Editar video</button>
+                        <button mat-menu-item (click)="openEditVideosForm(video)">Editar
+                            video</button>
                         <button mat-menu-item (click)="deleteVideo(video.id)">Eliminar video</button>
                     </mat-menu>
                 </div>

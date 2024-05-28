@@ -46,6 +46,7 @@
 .titulo-modal {
     font-weight: 600;
     font-size: 20px;
+    margin-left: 3%;
 }
 
 .icon {
@@ -163,4 +164,18 @@ mat-spinner {
     & h3 {
         margin: 0px;
     }
+}
+
+.miniatura-container img {
+    width: 140px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.select-thubmnail {
+    display: flex;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
 }

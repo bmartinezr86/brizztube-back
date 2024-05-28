@@ -114,7 +114,7 @@ public class UserRestController {
 	 */
 	@PutMapping("/users/{id}")
 	public ResponseEntity<UserResponseRest> update(@PathVariable("id") Long userId,
-			@RequestParam("picture") MultipartFile picture, @RequestParam("name") String name,
+			@RequestParam(value = "picture", required = false) MultipartFile picture, @RequestParam("name") String name,
 			@RequestParam("description") String description, @RequestParam("email") String email,
 			@RequestParam("password") String password, @RequestParam("rol") Long rolId,
 			@RequestParam("status") Long userStatusId) throws IOException {

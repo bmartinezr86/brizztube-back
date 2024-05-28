@@ -8,4 +8,5 @@ import com.brizztube.model.Like;
 
 public interface ILikeDao extends CrudRepository<Like, Long>{
 	List<Like> findByUserIdAndVideoId(Long userId, Long videoId);
+	List<Like> findByVideoId(Long videoId);
 }

@@ -59,7 +59,7 @@ public class VideoRestController {
 	                                                     @RequestParam("title") String title,
 	                                                     @RequestParam("description") String description,
 	                                                     @RequestParam("categoryId") Long categoryId,
-	                                                     @RequestParam("thumbnailFile") MultipartFile thumbnailFile) {
+	                                                     @RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile) {
 	    ResponseEntity<VideoResponseRest> response = service.saveDetails(videoId, title, description, thumbnailFile, categoryId);
 	    return response;
 	}

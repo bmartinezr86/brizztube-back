@@ -66,6 +66,8 @@ h2 {
 .img-profile {
     cursor: pointer;
     width: 55px;
+    height: 55px;
+    object-fit: cover;
     border-radius: 100%;
     -webkit-border-radius: 100%;
     -moz-border-radius: 100%;

@@ -32,5 +32,7 @@ public interface IVideoService {
 	public String saveFile(MultipartFile file, String uploadDir) throws IOException;
 
 	public String getFileUrl(Long videoId, String uploadDir);
+	
+	 public ResponseEntity<VideoResponseRest> deleteVideosByUserId(Long userId);
 
 }

@@ -186,16 +186,27 @@ export class ProfileComponent implements OnInit {
     return `http://localhost:8080${avatarLocation}`;
   }
 
-  openEditVideosForm(videoId: any) {
+  openEditVideosForm(video: any) {
     const dialogRef = this.dialog.open(EditDetailsVideoComponent, {
       width: '45%',
+      data: {
+        id: video.id,
+        title: video.title,
+        description: video.description,
+        category: video.category,
+        thubmnail: video.thumbnailLocation,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == 1) {
-        this.openSnackBar('Vídeo subido', 'Exitosa');
+        this.openSnackBar('Vídeo editado', 'Exitosa');
+        // Recargar la página después de 1 segundo
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else if (result == 2) {
-        this.openSnackBar('Error al subir el vídeo', 'Error');
+        this.openSnackBar('Error al editar el vídeo', 'Error');
       }
     });
   }
@@ -233,8 +244,8 @@ export class ProfileComponent implements OnInit {
     email: string,
     password: string,
     rol: any,
-    status: any
-    // picture: picture,
+    status: any,
+    picture: any
   ) {
     const dialogRef = this.dialog.open(EditProfileComponent, {
       width: '600px',
@@ -246,162 +257,25 @@ export class ProfileComponent implements OnInit {
         password: password,
         rol: rol,
         status: status,
-        // picture: picture,
-      },
-    });
-  }
-  onCancel() {
-    const dialogRef = this.dialog.open(ConfirmComponent, {
-      width: '20%',
-      data: {
-        id: this.selectedFile ? this.selectedFile.name : null, // Pasar el ID o nombre del archivo si es relevante
-        title: 'Cancelar subida de video',
-        message: '¿Estás seguro de cancelar la subida del video?',
-        confirmText: 'Sí',
-        cancelText: 'No',
+        picture: picture,
       },
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result === 1) {
-        // Si el usuario confirma, cierra el diálogo actual
-        this.dialogRef.close();
+        // Si result es 1, muestra un Snackbar y recarga la página
+        this.snackBar
+          .open('Usuario actualizado correctamente', 'Cerrar', {
+            duration: 3000, // Duración del Snackbar en milisegundos
+          })
+          .afterDismissed()
+          .subscribe(() => {
+            // Después de que se cierre el Snackbar, recarga la página
+            window.location.reload();
+          });
       }
     });
   }
-
-  openSnackBar(
-    message: string,
-    action: string
-  ): MatSnackBarRef<SimpleSnackBar> {
-    return this.snackBar.open(message, action, {
-      duration: 2000,
-    });
-  }
-
-  getCategories(): void {
-    this.videoService.getCategories().subscribe(
-      (data: any) => {
-        console.log('respuesta estados: ', data);
-        this.processCategoriesResponse(data);
-      },
-      (error: any) => {
-        console.log('error: ', error);
-      }
-    );
-  }
-
-  processCategoriesResponse(resp: any) {
-    const dataCategories: CategoryElement[] = [];
-
-    if (
-      resp.metadata[0].code == '00' &&
-      resp.categoryResponse &&
-      resp.categoryResponse.category
-    ) {
-      let listCategories = resp.categoryResponse.category;
-      console.log('Categories response:', listCategories); // Agregar esta línea para imprimir resp.userStatusResponse.userStatus
-      listCategories.forEach((element: CategoryElement) => {
-        dataCategories.push(element);
-      });
-
-      this.categories = dataCategories;
-      // Aquí puedes hacer lo que necesites con los estados obtenidos
-      console.log('Estados procesados:', dataCategories);
-    } else {
-      console.error(
-        'La respuesta no contiene la estructura esperada para las categorias.'
-      );
-    }
-  }
-
-  onFileChanged(event: any) {
-    this.selectedFile = event.target.files[0];
-    this.nameImg = event.target.files[0].name;
-    console.log(this.selectedFile);
-    console.log(this.nameImg);
-  }
-
-  onSave() {
-    let data = {
-      title: this.uploadForm.get('title')?.value,
-      description: this.uploadForm.get('description')?.value,
-      categoryId: this.uploadForm.get('categoryId')?.value,
-      thubmnailFile: this.selectedFile,
-    };
-
-    const thumbnailImageData = new FormData();
-
-    if (data.thubmnailFile) {
-      thumbnailImageData.append(
-        'thumbnailFile',
-        data.thubmnailFile,
-        data.thubmnailFile.name
-      );
-    }
-    thumbnailImageData.append('title', data.title);
-    thumbnailImageData.append('description', data.description);
-    thumbnailImageData.append('categoryId', data.categoryId);
-
-    if (this.data != null) {
-      // update user
-      this.videoService
-        .saveDetailsVideo(thumbnailImageData, this.uploadedVideoId)
-        .subscribe(
-          (data: any) => {
-            console.log(data);
-            this.dialogRef.close(1);
-          },
-          (error: any) => {
-            this.dialogRef.close(2);
-          }
-        );
-    } else {
-      // create user
-      this.videoService
-        .saveDetailsVideo(thumbnailImageData, this.uploadedVideoId)
-        .subscribe(
-          (data: any) => {
-            console.log(data);
-            this.dialogRef.close(1);
-          },
-          (error: any) => {
-            this.dialogRef.close(2);
-          }
-        );
-    }
-  }
-
-  // updateForm(data: any) {
-  //   this.uploadForm = this.fb.group({
-  //     name: [data.name, Validators.required],
-  //     description: [data.description],
-  //     image: [''],
-  //     category: [data.category.id, Validators.required],
-  //   });
-  // }
-
-  getVideo(videoId: number) {
-    this.videoService.searchVideoById(videoId).subscribe(
-      (response: any) => {
-        if (
-          response &&
-          response.videoResponse &&
-          response.videoResponse.video
-        ) {
-          this.video = response.videoResponse.video;
-          console.log(this.video);
-        } else {
-          console.log('No videos found');
-        }
-      },
-      (error) => {
-        // En caso de error, también redirigir a la página de "Not Found"
-        this.router.navigate(['/dashboard/not-found']);
-      }
-    );
-  }
-
   getVideoUrl(videoLocation: string): string {
     return `http://localhost:8080${videoLocation}`;
   }

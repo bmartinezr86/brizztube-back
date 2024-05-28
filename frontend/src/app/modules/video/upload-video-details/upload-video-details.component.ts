@@ -102,6 +102,7 @@ export class UploadVideoDetailsComponent {
       this.userService.updateUser(thubmnailImageData, this.data.id).subscribe(
         (data: any) => {
           console.log(data);
+
           this.dialogRef.close(1);
         },
         (error: any) => {

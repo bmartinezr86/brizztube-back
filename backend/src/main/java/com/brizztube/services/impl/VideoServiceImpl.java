@@ -50,7 +50,15 @@ public class VideoServiceImpl implements IVideoService {
 
 	@Autowired
 	private IVideoDao videoDao;
-
+	
+	@Autowired
+	private LikeServiceImpl likeService;
+	
+	@Autowired
+	private ViewServiceImpl viewService;
+	
+	
+	
 	@Value("${upload.video.path}")
 	private String videoUploadPath; // obtenemos la ruta del properties
 
@@ -141,9 +149,11 @@ public class VideoServiceImpl implements IVideoService {
 	        Category category = categoryOpt.get();
 	        video.setCategory(category);
 
-	        // Guardar el archivo de miniatura
-	        String thumbnailUri = saveFile(thumbnailFile, thumbnailUploadPath);
-	        video.setThumbnailLocation(thumbnailUri);
+	     // Guardar el archivo de miniatura solo si se proporcionó uno nuevo
+	        if (thumbnailFile != null) {
+	            String thumbnailUri = saveFile(thumbnailFile, thumbnailUploadPath);
+	            video.setThumbnailLocation(thumbnailUri);
+	        }
 
 	        // Guardar los cambios en el video
 	        Video videoSaved = videoDao.save(video);
@@ -354,6 +364,8 @@ public class VideoServiceImpl implements IVideoService {
 			if (optionalVideo.isPresent()) {
 				Video video = optionalVideo.get();
 
+				likeService.deleteLikesByVideoId(id);
+				viewService.deleteViewsByVideoId(id);
 				// Eliminar los archivos de vídeo y miniatura del sistema de archivos
 				deleteFile(video.getVideoLocation());
 				deleteFile(video.getThumbnailLocation());
@@ -373,6 +385,30 @@ public class VideoServiceImpl implements IVideoService {
 			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@Transactional
+    @Override
+    public ResponseEntity<VideoResponseRest> deleteVideosByUserId(Long userId) {
+        VideoResponseRest response = new VideoResponseRest();
+        try {
+            // Buscar los videos por el ID del usuario y eliminarlos
+            List<Video> videos = videoDao.findByUserId(userId);
+            for (Video video : videos) {
+            	likeService.deleteLikesByVideoId(video.getId());
+				viewService.deleteViewsByVideoId(video.getId());
+                deleteFile(video.getVideoLocation());
+                deleteFile(video.getThumbnailLocation());
+                videoDao.delete(video);
+            }
+
+            response.setMetadata("Respuesta OK", "00", "Videos eliminados correctamente");
+            return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.setMetadata("Respuesta NOK", "-1", "Error al eliminar los videos");
+            e.printStackTrace();
+            return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 	@Transactional
 	@Override

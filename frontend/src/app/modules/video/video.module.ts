@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { CommentsComponent } from './video/comments/comments.component';
 import { AsideVideosComponent } from './video/aside-videos/aside-videos.component';
 import { UploadVideoDetailsComponent } from './upload-video-details/upload-video-details.component';
+import { EditDetailsVideoComponent } from './edit-details-video/edit-details-video.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { UploadVideoDetailsComponent } from './upload-video-details/upload-video
     CommentsComponent,
     AsideVideosComponent,
     UploadVideoDetailsComponent,
+    EditDetailsVideoComponent,
   ],
   imports: [
     CommonModule,

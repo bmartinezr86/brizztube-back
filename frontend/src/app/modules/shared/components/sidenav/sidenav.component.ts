@@ -17,6 +17,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { NewUserComponent } from 'src/app/modules/user/components/new-user/new-user.component';
 import { UploadVideoComponent } from 'src/app/modules/video/upload-video/upload-video.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidenav',
@@ -28,7 +29,9 @@ export class SidenavComponent implements OnInit {
   public videoSrv = inject(VideoService);
   private snackBar = inject(MatSnackBar);
   public dialog = inject(MatDialog);
+  private router = inject(Router);
   currentUser: any;
+  userId: any;
   profileImage: string | undefined;
   mobileQuery: MediaQueryList;
   mostrarEnMovil = false;
@@ -36,83 +39,8 @@ export class SidenavComponent implements OnInit {
   mostrarEnDesktop = false;
   urlFrontBaseDashboard = 'http://localhost:4200/dashboard';
   urlLogin = 'http://localhost:4200/login';
-  menuNav = [
-    {
-      type: 'option', // Indica que este elemento es una opción del menú
-      name: 'Inicio',
-      route: 'home',
-      icon: 'home',
-    },
-    {
-      type: 'option',
-      name: 'Suscripciones',
-      route: 'subscriptions',
-      icon: 'subscriptions',
-    },
-    {
-      type: 'separator',
-    },
-    {
-      type: 'option',
-      name: 'Mi perfil',
-      route: 'my-profile',
-      icon: 'account_circle',
-    },
-    {
-      type: 'option',
-      name: 'Historial',
-      route: 'history',
-      icon: 'history',
-    },
-    {
-      type: 'option',
-      name: 'Listas de repro...',
-      route: 'playlist',
-      icon: 'playlist_play',
-    },
-    {
-      type: 'separator',
-    },
-    // {
-    //   type: 'option',
-    //   name: 'Configuración',
-    //   route: 'settings',
-    //   icon: 'settings',
-    // },
-    {
-      type: 'option',
-      name: 'Ayuda',
-      route: 'help',
-      icon: 'help',
-    },
-    {
-      type: 'separator',
-    },
-    {
-      type: 'option',
-      name: 'Usuarios',
-      route: 'users/list',
-      icon: 'people',
-    },
-  ];
-
-  menuUser = [
-    {
-      name: 'Mi perfil',
-      route: 'my-profile',
-      icon: 'person',
-    },
-    // {
-    //   name: 'Preferencias',
-    //   route: 'settings',
-    //   icon: 'settings',
-    // },
-    {
-      name: 'Cerrar sesión',
-      click: this.logout.bind(this),
-      icon: 'exit_to_app',
-    },
-  ];
+  menuNav: any[] = [];
+  menuUser: any[] = [];
 
   constructor(media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
@@ -124,7 +52,90 @@ export class SidenavComponent implements OnInit {
     this.currentUser = this.userService.getCurrentUser();
     if (this.currentUser) {
       this.getUserProfile();
+      this.userId = this.currentUser.id;
     }
+
+    this.menuNav = [
+      {
+        type: 'option', // Indica que este elemento es una opción del menú
+        name: 'Inicio',
+        route: 'home',
+        icon: 'home',
+      },
+      {
+        type: 'option',
+        name: 'Suscripciones',
+        route: 'subscriptions',
+        icon: 'subscriptions',
+      },
+      {
+        type: 'separator',
+      },
+      {
+        type: 'option',
+        name: 'Mi perfil',
+        route: this.generateRouteWithId('my-profile/:id', this.userId),
+        icon: 'account_circle',
+      },
+      {
+        type: 'option',
+        name: 'Historial',
+        route: 'history',
+        icon: 'history',
+      },
+      {
+        type: 'option',
+        name: 'Listas de repro...',
+        route: 'playlist',
+        icon: 'playlist_play',
+      },
+      {
+        type: 'separator',
+      },
+      // {
+      //   type: 'option',
+      //   name: 'Configuración',
+      //   route: 'settings',
+      //   icon: 'settings',
+      // },
+      {
+        type: 'option',
+        name: 'Ayuda',
+        route: 'help',
+        icon: 'help',
+      },
+      {
+        type: 'separator',
+      },
+      {
+        type: 'option',
+        name: 'Usuarios',
+        route: 'users/list',
+        icon: 'people',
+      },
+    ];
+
+    this.menuUser = [
+      {
+        name: 'Mi perfil',
+        route: this.generateRouteWithId('my-profile/:id', this.userId),
+        icon: 'person',
+      },
+      // {
+      //   name: 'Preferencias',
+      //   route: 'settings',
+      //   icon: 'settings',
+      // },
+      {
+        name: 'Cerrar sesión',
+        click: this.logout.bind(this),
+        icon: 'exit_to_app',
+      },
+    ];
+  }
+
+  generateRouteWithId(route: string, id: string): string {
+    return route.replace(':id', id);
   }
   toggleFormularioBusqueda() {
     this.mostrarFormularioBusqueda = !this.mostrarFormularioBusqueda;
@@ -203,6 +214,7 @@ export class SidenavComponent implements OnInit {
   onSubmit(filtro: any): void {
     // Evitar el comportamiento por defecto de recargar la página
     this.filterVideos(filtro);
+    this.router.navigateByUrl('/dashboard');
   }
 
   openUploadVideosForm() {
@@ -212,9 +224,9 @@ export class SidenavComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == 1) {
-        this.openSnackBar('Usuario creado', 'Exitosa');
+        this.openSnackBar('Vídeo subido', 'Exitosa');
       } else if (result == 2) {
-        this.openSnackBar('Error al guardar el usuario', 'Error');
+        this.openSnackBar('Error al subir el vídeo', 'Error');
       }
     });
   }

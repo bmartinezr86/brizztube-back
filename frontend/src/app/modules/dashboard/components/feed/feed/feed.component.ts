@@ -4,6 +4,7 @@ import { formatDistanceToNow as distanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-feed',
@@ -50,6 +51,40 @@ export class FeedComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching categories:', error);
+      }
+    );
+  }
+
+  filterCategoriesWithVideos(): void {
+    const filteredCategories: any[] = [];
+
+    // Iteramos sobre cada categoría y verificamos si tiene videos
+    const categoryObservables = this.categories.map((category) =>
+      this.videoService.searchVideoByCategoryId(category.id).pipe(
+        map((response: any) => {
+          if (
+            response &&
+            response.videoResponse &&
+            response.videoResponse.video &&
+            response.videoResponse.video.length > 0
+          ) {
+            filteredCategories.push(category);
+            this.videosByCategory.set(
+              category.name,
+              response.videoResponse.video
+            );
+          }
+        })
+      )
+    );
+
+    // Esperamos a que todas las llamadas se completen
+    forkJoin(categoryObservables).subscribe(
+      () => {
+        this.categories = filteredCategories;
+      },
+      (error: any) => {
+        console.error('Error filtering categories with videos:', error);
       }
     );
   }

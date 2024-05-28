@@ -24,6 +24,15 @@
                     *ngIf="isSubscribed">
                     Dejar de seguir
                 </button>
+                <button mat-flat-button color="primary" class="btn btn-seguir" *ngIf="element.id == currentUser.id"
+                    (click)="editProfile(currentUser.id, currentUser.name, currentUser.description, currentUser.email, currentUser.password, currentUser.rol, currentUser.status)">
+                    <div class="btn-edit">
+                        <mat-icon class="icon">edit</mat-icon>
+                        <span>
+                            Editar perfil
+                        </span>
+                    </div>
+                </button>
             </div>
         </div>
     </mat-card-header>
@@ -34,9 +43,11 @@
 
         <div class="card-container">
             <div *ngFor="let video of videos" class="card">
-                <a [routerLink]="['/dashboard/videos', video.id]">
-                    <div class="thumbnail-container">
+
+                <div class="thumbnail-container">
+                    <a [routerLink]="['/dashboard/videos', video.id]">
                         <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)" alt="{{ video.title }}">
+
                         <div class="overlay">
                             <mat-icon>
                                 <div class="icon">
@@ -44,18 +55,29 @@
                                 </div>
                             </mat-icon>
                         </div>
-                    </div>
-                    <div class="card-content">
-                        <h4>{{ video.title }}</h4>
-                        <div class="card-statistic-video">
-                            <span>{{ video.totalViews }} visualizaciones</span>
-                            ·
-                            <span>hace {{ formatDistanceToNow(video.date) }}</span>
+                    </a>
+                </div>
 
-                        </div>
+                <div class="card-content">
+                    <div class="content-superior">
+                        <a [routerLink]="['/dashboard/videos', video.id]">
+                            <h4>{{ video.title }}</h4>
+                        </a>
+                        <button mat-icon-button [matMenuTriggerFor]="menu">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
                     </div>
-                </a>
-
+                    <div class="card-statistic-video">
+                        <span>{{ video.totalViews }} visualizaciones</span>
+                        ·
+                        <span>hace {{ formatDistanceToNow(video.date) }}</span>
+                    </div>
+                    <!-- Agregar el botón con el menú desplegable -->
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="openEditVideosForm(video.id)">Editar video</button>
+                        <button mat-menu-item (click)="deleteVideo(video.id)">Eliminar video</button>
+                    </mat-menu>
+                </div>
             </div>
         </div>
     </mat-card-content>

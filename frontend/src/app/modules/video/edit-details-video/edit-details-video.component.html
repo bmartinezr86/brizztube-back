@@ -1,10 +1,10 @@
 <mat-dialog-content>
 
-    <form [formGroup]="uploadForm" class="details-superior">
+    <form [formGroup]="uploadForm">
         <div class="video-details-container">
             <mat-form-field appearance="fill">
                 <mat-label>Título</mat-label>
-                <input matInput placeholder="Título" formControlName="titulo" required>
+                <input matInput placeholder="Título" formControlName="title" required>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
@@ -15,7 +15,7 @@
 
             <mat-form-field>
                 <mat-label>Categoría</mat-label>
-                <mat-select formControlName="category">
+                <mat-select formControlName="categoryId">
                     <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name
                         }}</mat-option>
                 </mat-select>
@@ -32,21 +32,11 @@
 
                 </label>
                 <input id="file-upload" accept="image/png, image/jpeg, image/jpg" (change)="onFileChanged($event)"
-                    type="file" formControlName="thubmnail" class="input-file">
+                    type="file" formControlName="thubmnailFile" class="input-file">
                 <span>{{ nameImg }}</span>
             </div>
 
 
-        </div>
-        <div class="vista-previa">
-            <h3>Vista Previa</h3>
-            <div *ngFor="let element of video" class="video">
-                <video controls>
-
-                    <source [src]="getVideoUrl(element.videoLocation)" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
         </div>
     </form>
     <mat-dialog-actions>

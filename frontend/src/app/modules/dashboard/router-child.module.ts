@@ -20,7 +20,7 @@ const childRoutes: Routes = [
     component: HomeComponent,
   },
   { path: 'users/list', component: UserComponent },
-  { path: 'my-profile', component: MyProfileComponent },
+  { path: 'my-profile/:id', component: ProfileComponent },
   { path: 'videos/:id', component: VideoComponent },
   { path: 'profile/:id', component: ProfileComponent },
   { path: 'upload-video-details', component: UploadVideoDetailsComponent },

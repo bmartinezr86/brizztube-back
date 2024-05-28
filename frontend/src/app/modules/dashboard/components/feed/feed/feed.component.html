@@ -3,7 +3,9 @@
         <div class="card-container">
             <div *ngFor="let category of categories" class="card">
                 <h2>{{ category.name }}</h2>
+
                 <div class="container-videos">
+
                     <div *ngFor="let video of (videosByCategory?.get(category.name) ?? [])?.slice(0, loadedVideosCount)"
                         class="card">
                         <a [routerLink]="['/dashboard/videos', video.id]">

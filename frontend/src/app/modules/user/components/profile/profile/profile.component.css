@@ -19,6 +19,8 @@ mat-card {
 
 .img-profile {
     width: 160px;
+    height: 160px;
+    object-fit: cover;
     border-radius: 100%;
     -webkit-border-radius: 100%;
     -moz-border-radius: 100%;
@@ -173,4 +175,10 @@ mat-card {
 .card-stadistic-video {
     color: #333;
     font-size: 10px;
+}
+
+.content-superior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }

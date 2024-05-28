@@ -1,12 +1,20 @@
 <div class="header-modal">
-    <h2 class="titulo-modal" mat-dialog-title>Subir vídeo</h2>
-    <button mat-icon-button mat-dialog-close>
+    <h2 class="titulo-modal" mat-dialog-title *ngIf="isFirstPhase && !uploading">Subir vídeo</h2>
+    <button mat-icon-button (click)="previousPhase()" *ngIf="!isFirstPhase && !uploading">
+        <div class="btn-volver">
+            <mat-icon>keyboard_arrow_left</mat-icon>
+            <span>
+                Volver a la fase anterior
+            </span>
+        </div>
+    </button>
+    <button mat-icon-button (click)="onCancel()">
         <mat-icon>close</mat-icon>
     </button>
 </div>
 <mat-dialog-content>
     <div class="drop-area" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)"
-        (dragleave)="onDragLeave($event)" [class.drag-over]="isDragOver">
+        (dragleave)="onDragLeave($event)" [class.drag-over]="isDragOver" *ngIf="isFirstPhase && !uploading">
 
         <mat-icon class="icon">videocam</mat-icon>
         <h3>Arrastra y suelta un archivo de video aquí</h3>
@@ -22,6 +30,64 @@
         <span *ngIf="selectedFile">
             {{ selectedFile.name }} ({{ selectedFile.size / (1024 * 1024) | number:'1.0' }} MB)
         </span>
+
+
+    </div>
+    <div *ngIf="uploading" class="uploading">
+        <mat-spinner></mat-spinner>
+        <h3>Subiendo vídeo</h3>
+        <p>No salga de la ventana hasta terminar el proceso de subida</p>
+    </div>
+
+    <div *ngIf="!isFirstPhase">
+        <mat-dialog-content>
+
+            <form [formGroup]="uploadForm">
+                <div class="video-details-container">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Título</mat-label>
+                        <input matInput placeholder="Título" formControlName="title" required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Descripción</mat-label>
+                        <textarea matInput placeholder="Descripción" formControlName="description"></textarea>
+                    </mat-form-field>
+
+
+                    <mat-form-field>
+                        <mat-label>Categoría</mat-label>
+                        <mat-select formControlName="categoryId">
+                            <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name
+                                }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+
+
+                    <div class="input-file-conteiner">
+                        <label for="file-upload" class="subir">
+                            <mat-icon>image</mat-icon>
+                            <span>
+                                Subir miniatura
+                            </span>
+
+                        </label>
+                        <input id="file-upload" accept="image/png, image/jpeg, image/jpg"
+                            (change)="onFileChanged($event)" type="file" formControlName="thubmnailFile"
+                            class="input-file">
+                        <span>{{ nameImg }}</span>
+                    </div>
+
+
+                </div>
+            </form>
+            <mat-dialog-actions>
+                <button mat-flat-button color="primary" class="btn" (click)="onSave()" [disabled]="uploadForm.invalid">
+                    Publicar
+                </button>
+            </mat-dialog-actions>
+        </mat-dialog-content>
 
     </div>
 </mat-dialog-content>

@@ -96,14 +96,20 @@ export class UserComponent implements OnInit {
   delete(id: any) {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       width: '20%',
-      data: { id: id },
+      data: {
+        id: id,
+        type: 'deleteUser',
+        message: '¿Estás seguro de eliminar el usuario?',
+        confirmText: 'Sí',
+        cancelText: 'No',
+      },
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
-      if (result == 1) {
+      if (result === 1) {
         this.openSnackBar('Usuario eliminado', 'Exitosa');
         this.getUsers();
-      } else if (result == 2) {
+      } else if (result === 2) {
         this.openSnackBar(
           'Se ha producido un error al eliminar el usuario',
           'Error'

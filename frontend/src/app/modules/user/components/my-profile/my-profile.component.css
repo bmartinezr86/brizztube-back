@@ -80,6 +80,12 @@ mat-card {
     cursor: pointer;
 }
 
+.content-superior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .card a {
     color: #333;
     text-decoration: none;

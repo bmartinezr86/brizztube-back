@@ -12,6 +12,9 @@ import {
 } from '@angular/material/snack-bar';
 import { VideoService } from 'src/app/modules/shared/services/video/video.service';
 import { Subscription } from 'rxjs';
+import { EditProfileComponent } from '../../edit-profile/edit-profile.component';
+import { ConfirmComponent } from 'src/app/modules/shared/components/confirm/confirm.component';
+import { EditDetailsVideoComponent } from 'src/app/modules/video/edit-details-video/edit-details-video.component';
 
 @Component({
   selector: 'app-profile',
@@ -182,6 +185,232 @@ export class ProfileComponent implements OnInit {
   getAvatarUrl(avatarLocation: string): string {
     return `http://localhost:8080${avatarLocation}`;
   }
+
+  openEditVideosForm(videoId: any) {
+    const dialogRef = this.dialog.open(EditDetailsVideoComponent, {
+      width: '45%',
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == 1) {
+        this.openSnackBar('Vídeo subido', 'Exitosa');
+      } else if (result == 2) {
+        this.openSnackBar('Error al subir el vídeo', 'Error');
+      }
+    });
+  }
+
+  deleteVideo(id: any): void {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: '350px',
+      data: {
+        message: '¿Estás seguro de que deseas eliminar este video?',
+        confirmText: 'Sí',
+        cancelText: 'No',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.videoService.deleteVideo(id).subscribe(
+          (response: any) => {
+            console.log('Video eliminado:', response);
+            // Actualiza la lista de videos después de la eliminación
+            this.videos = this.videos.filter((video) => video.id !== id);
+          },
+          (error) => {
+            console.error('Error eliminando el video:', error);
+          }
+        );
+      }
+    });
+  }
+
+  editProfile(
+    id: number,
+    name: string,
+    description: string,
+    email: string,
+    password: string,
+    rol: any,
+    status: any
+    // picture: picture,
+  ) {
+    const dialogRef = this.dialog.open(EditProfileComponent, {
+      width: '600px',
+      data: {
+        id: id,
+        name: name,
+        description: description,
+        email: email,
+        password: password,
+        rol: rol,
+        status: status,
+        // picture: picture,
+      },
+    });
+  }
+  onCancel() {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: '20%',
+      data: {
+        id: this.selectedFile ? this.selectedFile.name : null, // Pasar el ID o nombre del archivo si es relevante
+        title: 'Cancelar subida de video',
+        message: '¿Estás seguro de cancelar la subida del video?',
+        confirmText: 'Sí',
+        cancelText: 'No',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result === 1) {
+        // Si el usuario confirma, cierra el diálogo actual
+        this.dialogRef.close();
+      }
+    });
+  }
+
+  openSnackBar(
+    message: string,
+    action: string
+  ): MatSnackBarRef<SimpleSnackBar> {
+    return this.snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
+
+  getCategories(): void {
+    this.videoService.getCategories().subscribe(
+      (data: any) => {
+        console.log('respuesta estados: ', data);
+        this.processCategoriesResponse(data);
+      },
+      (error: any) => {
+        console.log('error: ', error);
+      }
+    );
+  }
+
+  processCategoriesResponse(resp: any) {
+    const dataCategories: CategoryElement[] = [];
+
+    if (
+      resp.metadata[0].code == '00' &&
+      resp.categoryResponse &&
+      resp.categoryResponse.category
+    ) {
+      let listCategories = resp.categoryResponse.category;
+      console.log('Categories response:', listCategories); // Agregar esta línea para imprimir resp.userStatusResponse.userStatus
+      listCategories.forEach((element: CategoryElement) => {
+        dataCategories.push(element);
+      });
+
+      this.categories = dataCategories;
+      // Aquí puedes hacer lo que necesites con los estados obtenidos
+      console.log('Estados procesados:', dataCategories);
+    } else {
+      console.error(
+        'La respuesta no contiene la estructura esperada para las categorias.'
+      );
+    }
+  }
+
+  onFileChanged(event: any) {
+    this.selectedFile = event.target.files[0];
+    this.nameImg = event.target.files[0].name;
+    console.log(this.selectedFile);
+    console.log(this.nameImg);
+  }
+
+  onSave() {
+    let data = {
+      title: this.uploadForm.get('title')?.value,
+      description: this.uploadForm.get('description')?.value,
+      categoryId: this.uploadForm.get('categoryId')?.value,
+      thubmnailFile: this.selectedFile,
+    };
+
+    const thumbnailImageData = new FormData();
+
+    if (data.thubmnailFile) {
+      thumbnailImageData.append(
+        'thumbnailFile',
+        data.thubmnailFile,
+        data.thubmnailFile.name
+      );
+    }
+    thumbnailImageData.append('title', data.title);
+    thumbnailImageData.append('description', data.description);
+    thumbnailImageData.append('categoryId', data.categoryId);
+
+    if (this.data != null) {
+      // update user
+      this.videoService
+        .saveDetailsVideo(thumbnailImageData, this.uploadedVideoId)
+        .subscribe(
+          (data: any) => {
+            console.log(data);
+            this.dialogRef.close(1);
+          },
+          (error: any) => {
+            this.dialogRef.close(2);
+          }
+        );
+    } else {
+      // create user
+      this.videoService
+        .saveDetailsVideo(thumbnailImageData, this.uploadedVideoId)
+        .subscribe(
+          (data: any) => {
+            console.log(data);
+            this.dialogRef.close(1);
+          },
+          (error: any) => {
+            this.dialogRef.close(2);
+          }
+        );
+    }
+  }
+
+  // updateForm(data: any) {
+  //   this.uploadForm = this.fb.group({
+  //     name: [data.name, Validators.required],
+  //     description: [data.description],
+  //     image: [''],
+  //     category: [data.category.id, Validators.required],
+  //   });
+  // }
+
+  getVideo(videoId: number) {
+    this.videoService.searchVideoById(videoId).subscribe(
+      (response: any) => {
+        if (
+          response &&
+          response.videoResponse &&
+          response.videoResponse.video
+        ) {
+          this.video = response.videoResponse.video;
+          console.log(this.video);
+        } else {
+          console.log('No videos found');
+        }
+      },
+      (error) => {
+        // En caso de error, también redirigir a la página de "Not Found"
+        this.router.navigate(['/dashboard/not-found']);
+      }
+    );
+  }
+
+  getVideoUrl(videoLocation: string): string {
+    return `http://localhost:8080${videoLocation}`;
+  }
+}
+
+export interface CategoryElement {
+  id: number;
+  name: string;
+  description: string;
 }
 
 export interface UserElement {

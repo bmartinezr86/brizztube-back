@@ -12,6 +12,7 @@ import {
   SimpleSnackBar,
 } from '@angular/material/snack-bar';
 import { VideoService } from 'src/app/modules/shared/services/video/video.service';
+import { EditDetailsVideoComponent } from 'src/app/modules/video/edit-details-video/edit-details-video.component';
 
 @Component({
   selector: 'app-my-profile',
@@ -183,6 +184,28 @@ export class MyProfileComponent implements OnInit {
 
   getAvatarUrl(avatarLocation: string): string {
     return `http://localhost:8080${avatarLocation}`;
+  }
+
+  editVideo(id: any) {
+    // Lógica para editar el video
+  }
+
+  deleteVideo(id: any) {
+    // Lógica para eliminar el video
+  }
+
+  openEditVideosForm() {
+    const dialogRef = this.dialog.open(EditDetailsVideoComponent, {
+      width: '45%',
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == 1) {
+        this.openSnackBar('Vídeo subido', 'Exitosa');
+      } else if (result == 2) {
+        this.openSnackBar('Error al subir el vídeo', 'Error');
+      }
+    });
   }
 }
 

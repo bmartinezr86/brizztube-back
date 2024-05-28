@@ -101,6 +101,11 @@ export class VideoService {
     const endpoint = `${base_url_categories}/`;
     return this.http.get(endpoint);
   }
+
+  deleteVideo(id: any) {
+    const endpoint = `${base_url}/delete/${id}`;
+    return this.http.delete(endpoint);
+  }
 }
 
 interface LikeRequest {

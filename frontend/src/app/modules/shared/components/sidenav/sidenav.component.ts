@@ -86,7 +86,7 @@ export class SidenavComponent implements OnInit {
       {
         type: 'option',
         name: 'Listas de repro...',
-        route: 'playlist',
+        route: 'playlists',
         icon: 'playlist_play',
       },
       {

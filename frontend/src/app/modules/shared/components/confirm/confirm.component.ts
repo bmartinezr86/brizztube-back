@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { VideoService } from '../../services/video/video.service';
+import { PlaylistService } from '../../services/playlist/playlist.service';
 
 @Component({
   selector: 'app-confirm',
@@ -11,6 +12,7 @@ import { VideoService } from '../../services/video/video.service';
 export class ConfirmComponent implements OnInit {
   private userService = inject(UserService);
   private videoService = inject(VideoService);
+  private playlistService = inject(PlaylistService);
   private dialogRef = inject(MatDialogRef);
 
   public data = inject(MAT_DIALOG_DATA);
@@ -29,6 +31,9 @@ export class ConfirmComponent implements OnInit {
           break;
         case 'deleteVideo':
           this.deleteVideo(this.data.id);
+          break;
+        case 'deletePlaylist':
+          this.deletePlaylist(this.data.id);
           break;
         default:
           this.dialogRef.close(2); // Tipo no soportado
@@ -56,6 +61,17 @@ export class ConfirmComponent implements OnInit {
         this.dialogRef.close(1); // Éxito
       },
       (error: any) => {
+        this.dialogRef.close(2); // Error
+      }
+    );
+  }
+
+  deletePlaylist(id: any) {
+    this.playlistService.deletePlaylist(id).subscribe(
+      (data: any) => {
+        this.dialogRef.close(1); // Éxito
+      },
+      (error) => {
         this.dialogRef.close(2); // Error
       }
     );

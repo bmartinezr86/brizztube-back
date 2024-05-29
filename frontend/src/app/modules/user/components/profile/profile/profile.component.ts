@@ -39,6 +39,7 @@ export class ProfileComponent implements OnInit {
   video: any;
   videoId: string = '';
   isSubscribed: boolean = false;
+  videosCount = 0;
 
   ngOnInit(): void {
     // Recupera el parámetro 'id' de la URL
@@ -151,6 +152,7 @@ export class ProfileComponent implements OnInit {
           response.videoResponse.video
         ) {
           this.videos = response.videoResponse.video;
+          this.videosCount = this.videos.length;
           console.log(this.videos);
         } else {
           console.log('No videos found');

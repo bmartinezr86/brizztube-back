@@ -227,13 +227,35 @@ public class PlayListServiceImpl implements IPlayListService {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 	
+	 @Override
+	 @Transactional(readOnly = true)
+	 public ResponseEntity<PlayListResponseRest> getPlaylistsByUserId(Long userId) {
+	     PlayListResponseRest response = new PlayListResponseRest();
+	     try {
+	         // Buscar las listas de reproducción del usuario utilizando el ID del usuario
+	         List<PlayList> playlists = playlistDao.findByUser_Id(userId);
+	         if (playlists.isEmpty()) {
+	             response.setMetadata("Respuesta NOK", "-1", "El usuario no tiene listas de reproducción.");
+	             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	         }
+	         
+	         response.getPlayListResponse().setPlaylist(playlists);
+	         response.setMetadata("Respuesta OK", "00", "Listas de reproducción encontradas.");
+	         return new ResponseEntity<>(response, HttpStatus.OK);
+	     } catch (Exception e) {
+	         response.setMetadata("Respuesta NOK", "-1", "Error al obtener las listas de reproducción.");
+	         e.printStackTrace();
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	     }
+	 }
+
+	 @Override
 	public void deletePlayListsByUserId(Long userId) {
         List<PlayList> playlists = playlistDao.findByUser_Id(userId);
         playlistDao.deleteAll(playlists);
     }
-	
+	 @Override
 	public void removeVideoFromPlayLists(Long videoId) {
         List<PlayList> playlists = playlistDao.findByVideos_Id(videoId);
         for (PlayList playlist : playlists) {

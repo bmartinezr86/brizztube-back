@@ -12,6 +12,7 @@ public interface IPlayListService {
 	public ResponseEntity<PlayListResponseRest> removeVideoToPlaylist(Long playlistId, Long vídeoId);
 	public ResponseEntity<PlayListResponseRest> deletePlaylist(Long playlistId);
 	public ResponseEntity<PlayListResponseRest> listVideosByPlaylistId(Long playlistId);
+	public ResponseEntity<PlayListResponseRest> getPlaylistsByUserId(Long userId);
 	public void deletePlayListsByUserId(Long userId);
 	public void removeVideoFromPlayLists(Long videoId);
 	

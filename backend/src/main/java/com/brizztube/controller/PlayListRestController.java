@@ -62,7 +62,14 @@ public class PlayListRestController {
 	
 	@GetMapping("/{playlistId}/videos")
     public ResponseEntity<PlayListResponseRest> listVideosByPlaylistId(@PathVariable Long playlistId) {
-        return service.listVideosByPlaylistId(playlistId);
+		ResponseEntity<PlayListResponseRest> response = service.listVideosByPlaylistId(playlistId);
+        return response;
+    }
+	
+	@GetMapping("/user/{userId}")
+    public ResponseEntity<PlayListResponseRest> getPlaylistsByUserId(@PathVariable Long userId) {
+		ResponseEntity<PlayListResponseRest> response = service.getPlaylistsByUserId(userId);
+        return response;
     }
 	
 }

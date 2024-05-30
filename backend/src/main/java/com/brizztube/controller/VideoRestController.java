@@ -132,6 +132,12 @@ public class VideoRestController {
 		ResponseEntity<VideoResponseRest> response = service.searchById(videoId);
 		return response;
 	}
+	
+	@GetMapping("/following/{userId}")
+    public ResponseEntity<VideoResponseRest> getVideosFromFollowing(@PathVariable Long userId) {
+		ResponseEntity<VideoResponseRest> response = service.getVideosFromFollowing(userId);
+        return response;
+    }
 
 	/**
 	 * delete video

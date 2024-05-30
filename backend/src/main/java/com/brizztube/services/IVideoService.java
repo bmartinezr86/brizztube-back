@@ -34,5 +34,7 @@ public interface IVideoService {
 	public String getFileUrl(Long videoId, String uploadDir);
 	
 	 public ResponseEntity<VideoResponseRest> deleteVideosByUserId(Long userId);
+	 
+	 public ResponseEntity<VideoResponseRest> getVideosFromFollowing(Long userId);
 
 }

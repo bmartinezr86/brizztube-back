@@ -14,9 +14,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 import com.brizztube.dao.ICategoryDao;
+import com.brizztube.dao.ISuscriptionDao;
 import com.brizztube.dao.IUserDao;
 import com.brizztube.dao.IVideoDao;
 import com.brizztube.model.Category;
+import com.brizztube.model.Suscription;
 import com.brizztube.model.User;
 import com.brizztube.model.Video;
 import com.brizztube.response.UserResponseRest;
@@ -38,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class VideoServiceImpl implements IVideoService {
@@ -50,6 +53,9 @@ public class VideoServiceImpl implements IVideoService {
 
 	@Autowired
 	private IVideoDao videoDao;
+	
+	@Autowired
+	private ISuscriptionDao suscriptionDao;
 	
 	@Autowired
 	private LikeServiceImpl likeService;
@@ -356,6 +362,40 @@ public class VideoServiceImpl implements IVideoService {
 
 		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+    public ResponseEntity<VideoResponseRest> getVideosFromFollowing(Long userId) {
+        VideoResponseRest response = new VideoResponseRest();
+        List<Video> videos = new ArrayList<>();
+
+        try {
+            // Obtener las suscripciones del usuario dado
+            List<Suscription> suscriptions = suscriptionDao.findBySubscriberId(userId);
+
+            // Obtener los IDs de los usuarios a los que está suscrito el usuario dado
+            List<Long> subscribedToUserIds = suscriptions.stream()
+                    .map(suscription -> suscription.getSubscribedTo().getId())
+                    .collect(Collectors.toList());
+
+            // Buscar los videos de los usuarios a los que está suscrito el usuario dado
+            List<Video> videosFromFollowing = videoDao.findByUserIdIn(subscribedToUserIds);
+
+            // Procesar los videos obtenidos
+            for (Video video : videosFromFollowing) {
+                // Aquí puedes realizar cualquier procesamiento adicional necesario
+                videos.add(video);
+            }
+
+            response.getVideoResponse().setVideo(videos);
+            response.setMetadata("Respuesta OK", "00", "Videos encontrados");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMetadata("Respuesta NOK", "-1", "Error al buscar los videos de los perfiles seguidos");
+            e.printStackTrace();
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 	@Transactional
 	@Override

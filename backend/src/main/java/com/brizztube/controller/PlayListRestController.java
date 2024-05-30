@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,15 @@ public class PlayListRestController {
 		PlayList playlist = new PlayList();
 		playlist.setName(name);
 		ResponseEntity<PlayListResponseRest> response = service.createPlaylist(playlist, userId);
+		return response;
+	}
+	
+	@PutMapping("/modify/{id}")
+	public ResponseEntity<PlayListResponseRest> modifyList(@PathVariable("id") Long playlistId, @RequestParam("userId") Long userId, @RequestParam("name") String name) {
+
+		PlayList playlist = new PlayList();
+		playlist.setName(name);
+		ResponseEntity<PlayListResponseRest> response = service.modifyPlaylist(playlist, playlistId,userId);
 		return response;
 	}
 	

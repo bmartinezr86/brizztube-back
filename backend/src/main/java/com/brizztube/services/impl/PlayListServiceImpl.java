@@ -74,8 +74,49 @@ public class PlayListServiceImpl implements IPlayListService {
 	        }
 	        return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@Override
+	@Transactional
+	public ResponseEntity<PlayListResponseRest> modifyPlaylist(PlayList playlist, Long playlistId, Long userId) {
+	    PlayListResponseRest response = new PlayListResponseRest();
+	    List<PlayList> list = new ArrayList<>();
+	    try {
+	        Optional<User> userOptional = userDao.findById(userId);
+	        if (!userOptional.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "El usuario no existe.");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+
+	        Optional<PlayList> optionalPlaylist = playlistDao.findById(playlistId);
+	        if (!optionalPlaylist.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "La lista de reproducción no existe.");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+
+	        PlayList existingPlaylist = optionalPlaylist.get();
+	        existingPlaylist.setName(playlist.getName());
+	        existingPlaylist.setLastModifiedTimestamp(new Timestamp(System.currentTimeMillis()));
+
+	        PlayList savedPlaylist = playlistDao.save(existingPlaylist);
+	        if (savedPlaylist != null) {
+	            list.add(savedPlaylist);
+	            response.getPlayListResponse().setPlaylist(list);
+	            response.setMetadata("Respuesta OK", "00", "Lista de reproducción modificada.");
+	        } else {
+	            response.setMetadata("Respuesta NOK", "-1", "Fallo al modificar la lista de reproducción.");
+	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	        }
+	    } catch (Exception e) {
+	        response.setMetadata("Respuesta NOK", "-1", "Fallo al modificar la lista de reproducción.");
+	        e.printStackTrace();
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	    return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 
 	@Override
+	@Transactional
 	public ResponseEntity<PlayListResponseRest> addVideoToPlaylist(Long playlistId, Long videoId) {
 		PlayListResponseRest response = new PlayListResponseRest();
 	    try {
@@ -127,6 +168,7 @@ public class PlayListServiceImpl implements IPlayListService {
 	}
 
 	@Override
+	@Transactional
 	public ResponseEntity<PlayListResponseRest> removeVideoToPlaylist(Long playlistId, Long videoId) {
 		PlayListResponseRest response = new PlayListResponseRest();
         try {
@@ -263,4 +305,6 @@ public class PlayListServiceImpl implements IPlayListService {
             playlistDao.save(playlist);
         }
     }
+
+	
 }

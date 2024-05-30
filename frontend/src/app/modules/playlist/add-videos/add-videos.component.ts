@@ -44,7 +44,7 @@ export class AddVideosComponent implements OnInit {
         selectedPlaylists: this.fb.array([], Validators.required),
       });
 
-      this.isVideoOnList(137);
+      // this.isVideoOnList(137);
     }
   }
 
@@ -103,50 +103,74 @@ export class AddVideosComponent implements OnInit {
     });
   }
 
-  listPlaylistUser(userId: any) {
-    this.playlistService
-      .listVideosByUserId(this.currentUser.id)
-      .subscribe((data: any) => {
-        this.playlists = data.playListResponse.playlist; // Obtener todas las listas de reproducción
-        console.log(data);
-      });
-  }
-
-  isVideoOnList(videoId: any) {
-    this.playlistService
-      .listVideosByUserId(this.currentUser.id)
-      .subscribe((data: any) => {
-        this.playlists = data.playListResponse.playlist; // Obtener todas las listas de reproducción
-
-        let videoFound = false; // Flag to indicate if video is found
-
-        // Recorrer todas las listas de reproducción
-        this.playlists.forEach((playlist: any) => {
-          if (videoFound) {
-            // If video already found, skip remaining playlists
-            return;
-          }
-
-          playlist.videos.forEach((video: any) => {
-            if (videoId === video.id) {
-              console.log(
-                `El video con ID ${videoId} está en la lista ${playlist.name}`
-              );
-              videoFound = true; // Mark video as found
-            }
-          });
-        });
-
-        return videoFound; // Return the result
-      });
-  }
-
   openSnackBar(
     message: string,
     action: string
   ): MatSnackBarRef<SimpleSnackBar> {
     return this.snackBar.open(message, action, {
       duration: 2000,
+    });
+  }
+
+  // Lógica para añadir o eliminar video de la lista
+  toggleVideoInPlaylist(playlistId: number, videoId: number): void {
+    if (this.isVideoOnList(playlistId, videoId)) {
+      this.removeVideoFromList(playlistId, videoId);
+    } else {
+      this.addVideoToList(playlistId, videoId);
+    }
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  }
+
+  // Método para añadir un video a la lista
+  addVideoToList(playlistId: number, videoId: number): void {
+    this.playlistService.addVideoToPlaylist(playlistId, videoId).subscribe({
+      next: () => {
+        console.log(
+          `Añadido video con ID ${videoId} a la lista con ID ${playlistId}`
+        );
+        const playlist = this.playlists.find((pl) => pl.id === playlistId);
+        if (playlist) {
+          playlist.videos.push({ id: videoId });
+        }
+      },
+      error: (err) => console.error('Error añadiendo video a la lista', err),
+    });
+  }
+
+  // Método para eliminar un video de la lista
+  removeVideoFromList(playlistId: number, videoId: number): void {
+    this.playlistService.removeVideoToPlaylist(playlistId, videoId).subscribe({
+      next: () => {
+        console.log(
+          `Eliminado video con ID ${videoId} de la lista con ID ${playlistId}`
+        );
+        const playlist = this.playlists.find((pl) => pl.id === playlistId);
+        if (playlist) {
+          playlist.videos = playlist.videos.filter(
+            (video: any) => video.id !== videoId
+          );
+        }
+      },
+      error: (err) => console.error('Error eliminando video de la lista', err),
+    });
+  }
+
+  // Método para verificar si el video está en la lista
+  isVideoOnList(playlistId: number, videoId: number): boolean {
+    const playlist = this.playlists.find((pl) => pl.id === playlistId);
+    return playlist
+      ? playlist.videos.some((video: any) => video.id === videoId)
+      : false;
+  }
+
+  // Llama a un servicio para obtener las listas de reproducción del usuario
+  listPlaylistUser(userId: any): void {
+    this.playlistService.listVideosByUserId(userId).subscribe((data: any) => {
+      this.playlists = data.playListResponse.playlist; // Obtener todas las listas de reproducción
+      console.log(this.playlists);
     });
   }
 }

@@ -20,6 +20,7 @@ import { SuscriptionService } from '../../shared/services/suscription/suscriptio
 import { formatDistanceToNow as distanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { EditDetailsVideoComponent } from '../../video/edit-details-video/edit-details-video.component';
+import { AddVideosComponent } from '../add-videos/add-videos.component';
 
 @Component({
   selector: 'app-playlist-active',
@@ -314,12 +315,43 @@ export class PlaylistActiveComponent implements OnInit {
       if (result == 1) {
         this.openSnackBar('Vídeo editado', 'Exitosa');
         // Recargar la página después de 1 segundo
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
       } else if (result == 2) {
         this.openSnackBar('Error al editar el vídeo', 'Error');
       }
     });
+  }
+
+  openDialogAddList(videoId: any) {
+    const dialogRef = this.dialog.open(AddVideosComponent, {
+      width: '20%',
+      data: {
+        videoId: videoId,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result === 1) {
+        this.openSnackBar('El video ha sido añadido con exito', 'Exitosa');
+      } else if (result === 2) {
+        this.openSnackBar(
+          'Se ha producido un error al añadir el video a la lista de reproducción',
+          'Error'
+        );
+      }
+    });
+  }
+
+  onPlay(videoId: any): void {
+    const view = new FormData();
+    view.append('userId', this.currentUser.id);
+    view.append('videoId', videoId);
+    this.videoService.registerView(view).subscribe(
+      (response: any) => {
+        console.log('Visita registrada', response);
+      },
+      (error: any) => {
+        console.log('No se ha podido registrar la visita');
+      }
+    );
   }
 }

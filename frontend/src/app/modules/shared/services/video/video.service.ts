@@ -6,6 +6,7 @@ const base_url = 'http://localhost:8080/api/videos';
 
 const base_url_likes = 'http://localhost:8080/api/likes';
 const base_url_categories = 'http://localhost:8080/api/categories';
+const base_url_views = 'http://localhost:8080/api/views';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +47,11 @@ export class VideoService {
   unlike(videoId: any, userId: any) {
     const endpoint = `${base_url_likes}/unlike/${videoId}/${userId}`;
     return this.http.delete(endpoint);
+  }
+
+  registerView(body: any) {
+    const endpoint = `${base_url_views}/register-view`;
+    return this.http.post(endpoint, body);
   }
 
   setVideosHome(videos: any) {

@@ -309,7 +309,7 @@ export class VideoComponent implements OnInit {
     const dialogRef = this.dialog.open(AddVideosComponent, {
       width: '20%',
       data: {
-        id: videoId,
+        videoId: videoId,
       },
     });
 
@@ -323,6 +323,20 @@ export class VideoComponent implements OnInit {
         );
       }
     });
+  }
+
+  onPlay(videoId: any): void {
+    const view = new FormData();
+    view.append('userId', this.currentUser.id);
+    view.append('videoId', videoId);
+    this.videoService.registerView(view).subscribe(
+      (response: any) => {
+        console.log('Visita registrada', response);
+      },
+      (error: any) => {
+        console.log('No se ha podido registrar la visita');
+      }
+    );
   }
 }
 

@@ -5,25 +5,22 @@
             <mat-icon>close</mat-icon>
         </button>
     </div>
-    <form [formGroup]="AddVideoToPlaylistForm">
-        <div *ngFor="let list of playlists; let i = index">
-            <label for="listOption{{ i }}" class="container">
-                <input type="checkbox" formControlName="listOption{{ i }}" id="listOption{{ i }}" [value]="list.id"
-                    (change)="onCheckboxChange($event)">
-                {{ list.name }}
-            </label>
-
+    <div class="playlist-items">
+        <div *ngFor="let playlist of playlists" class="playlist-item">
+            <p>{{ playlist.name }}</p>
+            <button mat-icon-button (click)="toggleVideoInPlaylist(playlist.id, data.videoId)">
+                <mat-icon>{{ isVideoOnList(playlist.id, data.videoId) ? 'remove_circle_outline' : 'add_circle_outline'
+                    }}</mat-icon>
+            </button>
         </div>
-        <mat-dialog-actions>
-            <button mat-flat-button color="primary" class="btn" (click)="onSave()"
-                [disabled]="AddVideoToPlaylistForm.invalid">
-                <mat-icon>save</mat-icon>
-                Guardar
-            </button>
-            <button mat-flat-button color="primary" class="btn" (click)="openUserDialogCreatePlayList() ">
-                <mat-icon>playlist_add</mat-icon>
-                Añadir lista
-            </button>
-        </mat-dialog-actions>
-    </form>
+    </div>
+
+
+
+    <mat-dialog-actions>
+        <button mat-flat-button color="primary" class="btn" (click)="openUserDialogCreatePlayList()">
+            <mat-icon>playlist_add</mat-icon>
+            Añadir lista
+        </button>
+    </mat-dialog-actions>
 </div>

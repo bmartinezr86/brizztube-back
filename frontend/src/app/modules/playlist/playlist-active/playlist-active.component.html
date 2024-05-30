@@ -3,7 +3,7 @@
         <div class="general-content">
             <div class="video">
                 <video #videoPlayer [src]="currentVideoUrl" controls autoplay muted (ended)="playNextVideo()"
-                    (loadedmetadata)="unmuteVideo(videoPlayer)">
+                    (loadedmetadata)="unmuteVideo(videoPlayer)" (play)="onPlay(currentVideo.id)">
                 </video>
 
                 <h2>{{ currentVideo?.title }}</h2>
@@ -58,7 +58,7 @@
                             </div>
                         </button>
                         <!-- boton añadir a la lista -->
-                        <button class="btn-action">
+                        <button class="btn-action" (click)="openDialogAddList(currentVideo.id)">
                             <mat-icon>
                                 <div class="icon icon-add-list">
                                     playlist_add
@@ -93,7 +93,7 @@
         </div>
         <aside class="videos-playlist">
             <mat-accordion>
-                <mat-expansion-panel [class.scrollable-panel]="videos.length > 6">
+                <mat-expansion-panel [class.scrollable-panel]="videos.length > 6" [expanded]="true">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             <h3>{{shortenTitle(playlist.name, 10)}}</h3>

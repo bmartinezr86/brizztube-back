@@ -1,6 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { VideoService } from '../../services/video/video.service';
+import { PlaylistService } from '../../services/playlist/playlist.service';
 
 @Component({
   selector: 'app-confirm',
@@ -9,7 +11,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class ConfirmComponent implements OnInit {
   private userService = inject(UserService);
+  private videoService = inject(VideoService);
+  private playlistService = inject(PlaylistService);
   private dialogRef = inject(MatDialogRef);
+
   public data = inject(MAT_DIALOG_DATA);
 
   ngOnInit(): void {}
@@ -18,18 +23,57 @@ export class ConfirmComponent implements OnInit {
     this.dialogRef.close(3);
   }
 
-  delete() {
-    if (this.data != null) {
-      this.userService.deleteUser(this.data.id).subscribe(
-        (data: any) => {
-          this.dialogRef.close(1);
-        },
-        (error: any) => {
-          this.dialogRef.close(2);
-        }
-      );
+  onConfirm() {
+    if (this.data && this.data.type) {
+      switch (this.data.type) {
+        case 'deleteUser':
+          this.deleteUser(this.data.id);
+          break;
+        case 'deleteVideo':
+          this.deleteVideo(this.data.id);
+          break;
+        case 'deletePlaylist':
+          this.deletePlaylist(this.data.id);
+          break;
+        default:
+          this.dialogRef.close(2); // Tipo no soportado
+          break;
+      }
     } else {
-      this.dialogRef.close(2);
+      this.dialogRef.close(2); // Datos no válidos
     }
+  }
+
+  deleteUser(id: string) {
+    this.userService.deleteUser(id).subscribe(
+      (data: any) => {
+        this.dialogRef.close(1); // Éxito
+      },
+      (error: any) => {
+        this.dialogRef.close(2); // Error
+      }
+    );
+  }
+
+  deleteVideo(id: string) {
+    this.videoService.deleteVideo(id).subscribe(
+      (data: any) => {
+        this.dialogRef.close(1); // Éxito
+      },
+      (error: any) => {
+        this.dialogRef.close(2); // Error
+      }
+    );
+  }
+
+  deletePlaylist(id: any) {
+    this.playlistService.deletePlaylist(id).subscribe(
+      (data: any) => {
+        this.dialogRef.close(1); // Éxito
+      },
+      (error) => {
+        this.dialogRef.close(2); // Error
+      }
+    );
   }
 }

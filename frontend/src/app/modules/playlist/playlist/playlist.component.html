@@ -1,0 +1,35 @@
+<mat-card>
+    <div class="content-page">
+        <h2 class="title-page">Tus listas de reproducción</h2>
+        <div class="container-add">
+            <button class="btn" mat-raised-button color="primary" (click)="openUserDialogCreatePlayList()">
+                <mat-icon>person_add</mat-icon>
+                Crear nueva Lista
+            </button>
+        </div>
+        <div class="playlists-container">
+            <div *ngFor="let playlist of playlists" class="playlist-element">
+                <div class="container-img">
+                    <img [src]="getThumbnailUrl(playlist.videos.length > 0 ? playlist.videos[0].thumbnailLocation : null)"
+                        alt="Miniatura del primer video">
+
+                    <h3 class="title-playlist">{{ playlist.name }}</h3>
+                </div>
+                <p>{{ playlist.videos.length }} vídeos</p>
+                <div class="btn-actions">
+                    <!-- actions -->
+                    <button mat-fab class="btn btn-action" color="primary" [disabled]="playlist.videos.length === 0"
+                        (click)="navigateToPlaylist(playlist.id)">
+                        <mat-icon aria-label=" Reproducir">play_arrow</mat-icon>
+                    </button>
+                    <button mat-fab class="btn btn-action" color="primary" (click)="onEdit(playlist.id, playlist.name)">
+                        <mat-icon aria-label="Reproducir">edit</mat-icon>
+                    </button>
+                    <button mat-fab class="btn btn-action" color="warn" (click)="onDelete(playlist.id)">
+                        <mat-icon aria-label="Delete">delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</mat-card>

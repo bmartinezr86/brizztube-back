@@ -1,0 +1,184 @@
+mat-card {
+    height: auto;
+    display: flex;
+}
+
+.profile-data {
+    margin-top: 15px;
+    display: flex;
+    gap: 20px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+}
+
+.img-profile {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+.btn-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    & .icon {
+        font-size: 19px;
+    }
+}
+
+.btn-seguir {
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    -ms-border-radius: 25px;
+    -o-border-radius: 25px;
+}
+
+.title-page {
+    margin: 0px;
+}
+
+.estadisticas-user {
+    color: #333;
+    font-size: 14px;
+}
+
+
+.container-videos {
+    margin-top: 50px;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.card a {
+    color: #333;
+    text-decoration: none;
+
+    &:hover h4 {
+        color: var(--color-primario);
+    }
+}
+
+.card img {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+
+    &:hover {
+        opacity: 0.50;
+    }
+}
+
+.thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo verde semi-transparente */
+    opacity: 0;
+    /* Inicialmente oculto */
+    transition: opacity 0.3s ease;
+    /* Transición suave */
+    border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+
+
+    & .icon {
+        color: rgba(255, 255, 255, 0.8);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        /* Ajusta el tamaño según tu ícono */
+        font-size: 80px;
+        height: auto;
+    }
+}
+
+.overlay:hover {
+    opacity: 1;
+    /* Mostrar el overlay al hacer hover */
+}
+
+.container-videos {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.card-content {
+    padding-left: 3px;
+
+}
+
+.card-content h4 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 5px;
+
+
+}
+
+.card-content p {
+    line-height: 1.5;
+}
+
+
+.card-stadistic-video {
+    color: #333;
+    font-size: 10px;
+}
+
+.content-superior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

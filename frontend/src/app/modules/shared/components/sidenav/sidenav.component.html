@@ -69,10 +69,12 @@
 
         <div>
             <div *ngIf="mostrarEnDesktop || mostrarFormularioBusqueda">
-                <form class="search-form" #searchForm>
+                <form class="search-form" #searchForm (ngSubmit)="onSubmit(filtro)">
                     <div class="input-container">
-                        <input type="text" name="buscarVideo" placeholder="Buscar..." #filtro>
-                        <button type="button" title="Buscar videos" class="search-button" (click)="filterVideos(filtro)">
+                        <input type="text" name="buscarVideo" placeholder="Buscar..." #filtro
+                            (keyup.enter)="submitButton.focus(); onSubmit(filtro)">
+                        <button #submitButton type="button" title="Buscar videos" class="search-button"
+                            (click)="onSubmit(filtro)">
                             <mat-icon class="search-icon">search</mat-icon>
                         </button>
                     </div>
@@ -108,7 +110,7 @@
                     </div>
                     <div class="profile">
                         <button class="profile-image-button" [matMenuTriggerFor]="menu">
-                            <img class="img-profile" [src]="profileImage" alt="Profile Image">
+                            <img class="img-profile" [src]="getAvatarUrl(currentUser.picture)" alt="Profile Image">
                         </button>
 
                         <!-- Empieza el menu que sale al dar click en la imagen de perfil del usuario -->

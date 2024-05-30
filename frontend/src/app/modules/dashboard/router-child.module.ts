@@ -8,6 +8,10 @@ import { MyProfileComponent } from '../user/components/my-profile/my-profile.com
 import { VideoComponent } from '../video/video/video.component';
 import { ProfileComponent } from '../user/components/profile/profile/profile.component';
 import { NotFoundComponent } from './pages/not-found/not-found/not-found.component';
+import { UploadVideoDetailsComponent } from '../video/upload-video-details/upload-video-details.component';
+import { PlaylistComponent } from '../playlist/playlist/playlist.component';
+import { PlaylistActiveComponent } from '../playlist/playlist-active/playlist-active.component';
+import { SuscriptionsUserComponent } from '../video/suscriptions-user/suscriptions-user.component';
 
 const childRoutes: Routes = [
   {
@@ -19,9 +23,13 @@ const childRoutes: Routes = [
     component: HomeComponent,
   },
   { path: 'users/list', component: UserComponent },
-  { path: 'my-profile', component: MyProfileComponent },
+  { path: 'my-profile/:id', component: ProfileComponent },
   { path: 'videos/:id', component: VideoComponent },
   { path: 'profile/:id', component: ProfileComponent },
+  { path: 'upload-video-details', component: UploadVideoDetailsComponent },
+  { path: 'playlists', component: PlaylistComponent },
+  { path: 'playlist/:id', component: PlaylistActiveComponent },
+  { path: 'suscriptions/:id', component: SuscriptionsUserComponent },
   { path: 'not-found', component: NotFoundComponent },
   { path: '**', component: NotFoundComponent },
 ];

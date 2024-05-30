@@ -1,6 +1,7 @@
 package com.brizztube.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,23 +20,31 @@ import com.brizztube.services.ISuscriptionService;
 @RequestMapping("/api/suscriptions")
 public class SuscriptionRestController {
 	 @Autowired
-	    private ISuscriptionService subscriptionService;
+	    private ISuscriptionService service;
+	 @PostMapping("/subscribe")
+	 public ResponseEntity<SuscriptionResponseRest> subscribe(@RequestParam("subscriberId") Long subscriberId,
+	                                                          @RequestParam("subscribedTo") Long subscribedTo) {
+	     return service.subscribe(subscriberId, subscribedTo);
+	 }
 
-	    @PostMapping("/subscribe")
-	    public ResponseEntity<SuscriptionResponseRest> subscribe(@RequestParam("subscriberId") Long subscriberId,
-	                                                             @RequestParam("subscribedTo") Long subscribedTo) {
-	        return subscriptionService.subscribe(subscriberId, subscribedTo);
-	    }
+	 @DeleteMapping("/unsubscribe/{subscriberId}/{subscribedTo}")
+	 public ResponseEntity<SuscriptionResponseRest> unsubscribe(@PathVariable("subscriberId") Long subscriberId,
+	                                                             @PathVariable("subscribedTo") Long subscribedTo) {
+	     return service.unsubscribe(subscriberId, subscribedTo);
+	 }
+	   
 	    
-	    @DeleteMapping("/unsuscribe/{subscriberId}/{subscribedTo}")
-	    public ResponseEntity<SuscriptionResponseRest> unsubscribe(@PathVariable("subscriberId") Long subscriberId,
-                @PathVariable("subscribedTo") Long subscribedTo) {
-	        return subscriptionService.unsubscribe(subscriberId, subscribedTo);
-	    }
-	    
-	    @GetMapping("/countSubscribers/{userId}")
-	    public ResponseEntity<SuscriptionResponseRest> countSubscribers(@PathVariable("userId") Long userId) {
-	        return subscriptionService.getSuscriptionCountByUserId(userId);
+	    @GetMapping("/check/{subscriberId}/{subscribedToId}")
+	    public ResponseEntity<SuscriptionResponseRest> checkSubscription(
+	            @PathVariable Long subscriberId, @PathVariable Long subscribedToId) {
+	        boolean isSubscribed = service.checkSubscription(subscriberId, subscribedToId);
+	        SuscriptionResponseRest response = new SuscriptionResponseRest();
+	        if (isSubscribed) {
+	            response.setMetadata("Respuesta OK", "00", "El usuario está suscrito");
+	        } else {
+	            response.setMetadata("Respuesta NOK", "-1", "El usuario no está suscrito");
+	        }
+	        return new ResponseEntity<>(response, HttpStatus.OK);
 	    }
 	    
 	    

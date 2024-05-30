@@ -41,10 +41,11 @@ public class User{
 	@Column(nullable = false, length = 255)
 	private String password;
 
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "picture", columnDefinition = "longblob")
-	private byte[] picture;
+	 @Column(nullable = false, length = 255)
+	 private String picture;
+	 
+	 @Column(name = "total_subs", nullable = false)
+	 private Long totalSubs = 0L; // Inicializado a 0
 
 	@ManyToOne // Many users can have one UserStatus
 	@JoinColumn(nullable = false) // Foreign key constraint for user_status

@@ -36,7 +36,7 @@
             <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef>Nombre</th>
                 <td mat-cell *matCellDef="let element" class="user-name">
-                    <img *ngIf="element.picture" [src]="element.picture" alt="Imagen de usuario"
+                    <img *ngIf="element.picture" [src]="getAvatarUrl(element.picture)" alt="Imagen de usuario"
                         class="img-profile-user">
                     {{ element.name }}
                 </td>

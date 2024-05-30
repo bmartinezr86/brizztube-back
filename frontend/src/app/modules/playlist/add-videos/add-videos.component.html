@@ -1,0 +1,26 @@
+<div class="container-list-select">
+    <div class="cabecera-modal">
+        <h2>Listas de Reproducción</h2>
+        <button mat-icon-button (click)="onCancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div class="playlist-items">
+        <div *ngFor="let playlist of playlists" class="playlist-item">
+            <p>{{ playlist.name }}</p>
+            <button mat-icon-button (click)="toggleVideoInPlaylist(playlist.id, data.videoId)">
+                <mat-icon>{{ isVideoOnList(playlist.id, data.videoId) ? 'remove_circle_outline' : 'add_circle_outline'
+                    }}</mat-icon>
+            </button>
+        </div>
+    </div>
+
+
+
+    <mat-dialog-actions>
+        <button mat-flat-button color="primary" class="btn" (click)="openUserDialogCreatePlayList()">
+            <mat-icon>playlist_add</mat-icon>
+            Añadir lista
+        </button>
+    </mat-dialog-actions>
+</div>

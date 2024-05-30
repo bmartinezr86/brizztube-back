@@ -1,0 +1,65 @@
+<mat-card>
+    <mat-card-content class="primary-container-videos">
+        <div class="card-container">
+            <div *ngFor="let category of categories" class="card">
+                <h2>{{ category.name }}</h2>
+
+                <div class="container-videos">
+
+                    <div *ngFor="let video of (videosByCategory?.get(category.name) ?? [])?.slice(0, loadedVideosCount)"
+                        class="card">
+                        <a [routerLink]="['/dashboard/videos', video.id]">
+                            <div class="thumbnail-container">
+                                <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)" alt="{{ video.title }}"
+                                    class="thubnail">
+                                <div class="overlay">
+                                    <mat-icon>
+                                        <div class="icon">
+                                            play_circle_fill
+                                        </div>
+                                    </mat-icon>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="card-content">
+                            <a [routerLink]="['/dashboard/videos', video.id]">
+                                <h3>{{ video.title }}</h3>
+                            </a>
+                            <div class="video-user-data">
+                                <!-- datos usuarios -->
+                                <div class="profile-data">
+                                    <div>
+                                        <img [src]="getAvatarUrl(video.user.picture)" alt="{{ video.user.name }}"
+                                            class="img-profile">
+                                    </div>
+                                    <div class="column">
+                                        <a [routerLink]="['/dashboard/profile', video.user.id]">
+                                            <span class="video-user-name">
+                                                <strong>
+                                                    {{ video.user.name }}
+                                                </strong>
+                                            </span>
+                                        </a>
+                                        <div class="card-statistic-video">
+                                            <span>{{ video.totalViews }} visualizaciones</span>
+                                            ·
+                                            <span>hace {{ formatDistanceToNow(video.date) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- {{ videosByCategory.get(category.name)?.length }} -->
+                </div>
+                <!-- <button mat-button (click)="loadMoreVideos()">
+                    Cargar más
+                </button> -->
+            </div>
+
+        </div>
+    </mat-card-content>
+</mat-card>

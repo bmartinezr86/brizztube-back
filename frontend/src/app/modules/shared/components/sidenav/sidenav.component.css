@@ -37,17 +37,26 @@ mat-toolbar {
     &:hover {
         border-color: var(--color-primario);
     }
+
+    &:hover .search-button,
+    &:focus .search-button,
+    &:active .search-button {
+        background-color: var(--color-primario);
+    }
 }
 
 .input-container input[type="text"] {
     border: none;
     outline: none;
     background-color: transparent;
+    width: 580px;
 
     &::placeholder {
         font-size: 12px;
         color: #333;
     }
+
+
 }
 
 .input-container .search-button {
@@ -227,6 +236,7 @@ div ul {
     display: block;
     width: 30px;
     height: 30px;
+    object-fit: cover;
     border-radius: 100%;
     -webkit-border-radius: 100%;
     -moz-border-radius: 100%;

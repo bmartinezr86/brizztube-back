@@ -1,49 +1,48 @@
-
- <!-- Para hacer el buscador: 
-    0.5 - Debes crear un servicio que sea del estilo (VideoService)
-    1- haces la peticion a BBDD con el filtro de input 
-    2- 
-
-
--->
-
-
-
-
-<div class="videoContainer">
-    hola
-</div>
-
-
 <mat-card>
-    <mat-card-content class="container-videos">
-        <h3>Últimos vídeos</h3>
+    <ng-container *ngIf="!showSearchResults; else searchResultsTemplate">
+        <app-feed></app-feed>
+    </ng-container>
 
-        <div class="card-container">
-            <div *ngFor="let video of videos" class="card">
-                <a>
-                    <div class="thumbnail-container">
-                        <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)" alt="{{ video.title }}">
-                        <div class="overlay">
-                            <!-- <mat-icon>
-                                <div class="icon">
-                                    play_circle_fill
-                                </div>
-                            </mat-icon> -->
+    <ng-template #searchResultsTemplate>
+        <mat-card-content class="container-videos">
+            <div class="card-container">
+                <div *ngIf="noResultsFound">No hay resultados</div>
+                <div *ngFor="let video of videos" class="card">
+                    <a [routerLink]="['/dashboard/videos', video.id]">
+                        <div class="thumbnail-container">
+                            <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)" alt="{{ video.title }}"
+                                class="thumbnail">
+                            <div class="overlay">
+                                <mat-icon>
+                                    <div class="icon">play_circle_fill</div>
+                                </mat-icon>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                     <div class="card-content">
-                        <h4>{{ video.title }}</h4>
+                        <a [routerLink]="['/dashboard/videos', video.id]">
+                            <h2>{{ video.title }}</h2>
+                        </a>
+                        <div class="container-userdata">
+                            <a [routerLink]="['/dashboard/profile', video.user.id]">
+                                <div class="video-user-data">
+                                    <div>
+                                        <img [src]="getAvatarUrl(video.user.picture)" alt="{{ video.user.name }}"
+                                            class="img-profile">
+                                    </div>
+                                    <div class="video-user-name">{{ video.user.name }}</div>
+                                </div>
+                            </a>
+                        </div>
                         <div class="card-statistic-video">
                             <span>{{ video.totalViews }} visualizaciones</span>
                             ·
-                            <!-- <span>hace {{ formatDistanceToNow(video.date) }}</span> -->
-
+                            <span>hace {{ formatDistanceToNow(video.date) }}</span>
                         </div>
+                        <div> {{ getDescription(video, 343) }}</div>
                     </div>
-                </a>
-
+                </div>
             </div>
-        </div>
-    </mat-card-content>
+        </mat-card-content>
+    </ng-template>
 </mat-card>

@@ -137,8 +137,10 @@ export class EditProfileComponent {
     };
 
     const uploadImageData = new FormData();
+    if (data.picture) {
+      uploadImageData.append('picture', data.picture, data.picture.name);
+    }
 
-    uploadImageData.append('picture', data.picture, data.picture.name);
     uploadImageData.append('name', data.name);
     uploadImageData.append('description', data.description);
     uploadImageData.append('email', data.email);
@@ -150,7 +152,9 @@ export class EditProfileComponent {
     this.userService.updateUser(uploadImageData, this.data.id).subscribe(
       (updateUser: any) => {
         console.log(updateUser);
+        this.userService.setCurrentUser(updateUser.userResponse.user[0]);
         this.dialogRef.close(updateUser);
+        window.location.reload();
       },
       (error: any) => {
         this.dialogRef.close(2);

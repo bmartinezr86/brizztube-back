@@ -68,7 +68,7 @@ export class UserService {
    * update the user
    */
   updateUser(body: any, id: any) {
-    const endpoint = `${base_url}/users/ ${id}`;
+    const endpoint = `${base_url}/users/${id}`;
     return this.http.put(endpoint, body);
   }
 
@@ -76,7 +76,7 @@ export class UserService {
    * delete the users
    */
   deleteUser(id: any) {
-    const endpoint = `${base_url}/users/ ${id}`;
+    const endpoint = `${base_url}/users/${id}`;
     return this.http.delete(endpoint);
   }
 

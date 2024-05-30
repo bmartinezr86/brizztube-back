@@ -58,7 +58,6 @@ export class UserComponent implements OnInit {
       let listUser = resp.userResponse.user;
       console.log('User response:', listUser); // Agregar esta línea para imprimir resp.userResponse.user
       listUser.forEach((element: UserElement) => {
-        element.picture = 'data:image/jpeg;base64,' + element.picture;
         dataUser.push(element);
       });
 
@@ -97,14 +96,20 @@ export class UserComponent implements OnInit {
   delete(id: any) {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       width: '20%',
-      data: { id: id },
+      data: {
+        id: id,
+        type: 'deleteUser',
+        message: '¿Estás seguro de eliminar el usuario?',
+        confirmText: 'Sí',
+        cancelText: 'No',
+      },
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
-      if (result == 1) {
+      if (result === 1) {
         this.openSnackBar('Usuario eliminado', 'Exitosa');
         this.getUsers();
-      } else if (result == 2) {
+      } else if (result === 2) {
         this.openSnackBar(
           'Se ha producido un error al eliminar el usuario',
           'Error'
@@ -138,10 +143,10 @@ export class UserComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == 1) {
-        this.openSnackBar('Usuario creado', 'Exitosa');
+        this.openSnackBar('Usuario editado', 'Exitosa');
         this.getUsers();
       } else if (result == 2) {
-        this.openSnackBar('Error al guardar el usuario', 'Error');
+        this.openSnackBar('Error al editar el usuario', 'Error');
       }
     });
   }
@@ -154,6 +159,10 @@ export class UserComponent implements OnInit {
         this.processUsersResponse(resp);
       });
     }
+  }
+
+  getAvatarUrl(avatarLocation: string): string {
+    return `http://localhost:8080${avatarLocation}`;
   }
 }
 

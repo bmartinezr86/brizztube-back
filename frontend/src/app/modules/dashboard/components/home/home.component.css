@@ -1,0 +1,155 @@
+.container-videos {
+    margin-top: 10px;
+    width: 80%;
+    display: flex;
+    margin-left: 15% !important;
+}
+
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.card {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 10px;
+
+}
+
+.card a {
+    color: #333;
+    text-decoration: none;
+
+    &:hover h4 {
+        color: var(--color-primario);
+    }
+}
+
+.card img.thumbnail {
+    display: block;
+    width: 500px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+
+    &:hover {
+        opacity: 0.50;
+    }
+}
+
+.thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 500px;
+    height: 250px;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+
+
+    & .icon {
+        color: rgba(255, 255, 255, 0.8);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 80px;
+        height: auto;
+    }
+}
+
+.overlay:hover {
+    opacity: 1;
+}
+
+.container-videos {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.card-content {
+    padding-left: 3px;
+
+}
+
+.card-content h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 5px;
+
+
+}
+
+.card-content p {
+    line-height: 1.5;
+}
+
+
+/* .container-userdata {
+    display: flex;
+    gap: 10px;
+} */
+
+.card-stadistic-video span {
+    color: #333;
+    font-size: 10px;
+}
+
+.card-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+}
+
+.container-userdata {
+    display: flex;
+}
+
+.video-user-data {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.video-user-name {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+
+.video-user-name:hover {
+    color: var(--color-primario);
+}
+
+img.img-profile {
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}

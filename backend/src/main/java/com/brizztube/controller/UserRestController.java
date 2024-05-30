@@ -95,24 +95,7 @@ public class UserRestController {
 		user.setDescription(description);
 		user.setEmail(email);
 		user.setPassword(password);
-
-		 try {
-	            if (picture != null && !picture.isEmpty()) {
-	                user.setPicture(Util.compressZLib(picture.getBytes()));
-	            } else {
-	                // Si no se proporciona una imagen, cargar la imagen por defecto
-	                ClassPathResource resource = new ClassPathResource("assets/img/default-profile.png");
-	                InputStream inputStream = resource.getInputStream();
-	                byte[] defaultPicture = inputStream.readAllBytes();
-	                user.setPicture(Util.compressZLib(defaultPicture));
-	            }
-	        } catch (IOException e) {
-	            // Manejar la excepción adecuadamente
-	            e.printStackTrace(); // O cualquier otro método de manejo de errores
-	            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-	        }
-
-		ResponseEntity<UserResponseRest> response = service.save(user, rolId, userStatusId);
+		ResponseEntity<UserResponseRest> response = service.save(user,picture, rolId, userStatusId);
 		return response;
 	}
 
@@ -131,7 +114,7 @@ public class UserRestController {
 	 */
 	@PutMapping("/users/{id}")
 	public ResponseEntity<UserResponseRest> update(@PathVariable("id") Long userId,
-			@RequestParam("picture") MultipartFile picture, @RequestParam("name") String name,
+			@RequestParam(value = "picture", required = false) MultipartFile picture, @RequestParam("name") String name,
 			@RequestParam("description") String description, @RequestParam("email") String email,
 			@RequestParam("password") String password, @RequestParam("rol") Long rolId,
 			@RequestParam("status") Long userStatusId) throws IOException {
@@ -141,9 +124,8 @@ public class UserRestController {
 		user.setDescription(description);
 		user.setEmail(email);
 		user.setPassword(password);
-		user.setPicture(Util.compressZLib(picture.getBytes()));
 
-		ResponseEntity<UserResponseRest> response = service.update(user, userId, rolId, userStatusId);
+		ResponseEntity<UserResponseRest> response = service.update(user, userId, picture, rolId, userStatusId);
 		return response;
 	}
 

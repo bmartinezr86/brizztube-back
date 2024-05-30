@@ -144,7 +144,9 @@ export class NewUserComponent implements OnInit {
 
     const uploadImageData = new FormData();
 
-    uploadImageData.append('picture', data.picture, data.picture.name);
+    if (data.picture) {
+      uploadImageData.append('picture', data.picture, data.picture.name);
+    }
     uploadImageData.append('name', data.name);
     uploadImageData.append('description', data.description);
     uploadImageData.append('email', data.email);

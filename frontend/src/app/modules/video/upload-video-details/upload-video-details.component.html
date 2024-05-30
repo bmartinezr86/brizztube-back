@@ -1,0 +1,57 @@
+<mat-dialog-content>
+
+    <form [formGroup]="uploadForm" class="details-superior">
+        <div class="video-details-container">
+            <mat-form-field appearance="fill">
+                <mat-label>Título</mat-label>
+                <input matInput placeholder="Título" formControlName="titulo" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Descripción</mat-label>
+                <textarea matInput placeholder="Descripción" formControlName="description"></textarea>
+            </mat-form-field>
+
+
+            <mat-form-field>
+                <mat-label>Categoría</mat-label>
+                <mat-select formControlName="category">
+                    <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name
+                        }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+
+
+            <div class="input-file-conteiner">
+                <label for="file-upload" class="subir">
+                    <mat-icon>image</mat-icon>
+                    <span>
+                        Subir miniatura
+                    </span>
+
+                </label>
+                <input id="file-upload" accept="image/png, image/jpeg, image/jpg" (change)="onFileChanged($event)"
+                    type="file" formControlName="thubmnail" class="input-file">
+                <span>{{ nameImg }}</span>
+            </div>
+
+
+        </div>
+        <div class="vista-previa">
+            <h3>Vista Previa</h3>
+            <div *ngFor="let element of video" class="video">
+                <video controls>
+
+                    <source [src]="getVideoUrl(element.videoLocation)" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </form>
+    <mat-dialog-actions>
+        <button mat-flat-button color="primary" class="btn" (click)="onSave()" [disabled]="uploadForm.invalid">
+            Publicar
+        </button>
+    </mat-dialog-actions>
+</mat-dialog-content>

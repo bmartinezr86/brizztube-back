@@ -24,7 +24,7 @@ public class Video {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String title;
     
 
@@ -34,7 +34,7 @@ public class Video {
     @Column(nullable = false, length = 255)
     private String videoLocation;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String thumbnailLocation;
     
     @Column(name = "total_views", nullable = false)

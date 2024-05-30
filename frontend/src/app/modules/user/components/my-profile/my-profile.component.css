@@ -69,6 +69,7 @@ mat-card {
     flex-wrap: wrap;
     gap: 10px;
 
+
 }
 
 .card {
@@ -76,6 +77,13 @@ mat-card {
     flex-direction: column;
     width: 300px;
     gap: 10px;
+    cursor: pointer;
+}
+
+.content-superior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .card a {

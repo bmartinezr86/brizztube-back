@@ -7,4 +7,5 @@ import com.brizztube.response.ViewResponseRest;
 public interface IViewService {
 	public ResponseEntity<ViewResponseRest> registerView(Long videoId, Long userId);
 	public ResponseEntity<ViewResponseRest> getUserViewHistory(Long userId);
+	public ResponseEntity<ViewResponseRest> deleteViewsByVideoId(Long videoId);
 }

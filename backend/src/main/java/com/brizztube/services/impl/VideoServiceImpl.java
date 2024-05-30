@@ -14,9 +14,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 import com.brizztube.dao.ICategoryDao;
+import com.brizztube.dao.ISuscriptionDao;
 import com.brizztube.dao.IUserDao;
 import com.brizztube.dao.IVideoDao;
 import com.brizztube.model.Category;
+import com.brizztube.model.Suscription;
 import com.brizztube.model.User;
 import com.brizztube.model.Video;
 import com.brizztube.response.UserResponseRest;
@@ -38,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class VideoServiceImpl implements IVideoService {
@@ -50,7 +53,20 @@ public class VideoServiceImpl implements IVideoService {
 
 	@Autowired
 	private IVideoDao videoDao;
-
+	
+	@Autowired
+	private ISuscriptionDao suscriptionDao;
+	
+	@Autowired
+	private LikeServiceImpl likeService;
+	
+	@Autowired
+	private ViewServiceImpl viewService;
+	
+	@Autowired
+	private PlayListServiceImpl playlistService;
+	
+	
 	@Value("${upload.video.path}")
 	private String videoUploadPath; // obtenemos la ruta del properties
 
@@ -59,58 +75,115 @@ public class VideoServiceImpl implements IVideoService {
 
 	private Path rootLocation;
 
+	
 	@Transactional
 	@Override
-	public ResponseEntity<VideoResponseRest> save(Video video, MultipartFile videoFile, MultipartFile thumbnailFile,
-			Long categoryId, Long userId) {
-		VideoResponseRest response = new VideoResponseRest();
-		List<Video> list = new ArrayList<>();
+	public ResponseEntity<VideoResponseRest> uploadVideo(MultipartFile videoFile, Long userId) {
+	    VideoResponseRest response = new VideoResponseRest();
+	    List<Video> list = new ArrayList<>();
 
-		try {
-			Optional<User> user = userDao.findById(userId);
-			if (user.isPresent()) {
-				video.setUser(user.get());
-			} else {
-				response.setMetadata("Respuesta NOK", "-1", "El usuario no existe");
-				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
-			}
+	    try {
+	        // Crear instancia de Video
+	        Video video = new Video();
+	        
+	        // Configurar el ID del usuario
+	        Optional<User> userOpt = userDao.findById(userId);
+	        if (!userOpt.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "El usuario no existe");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+	        User user = userOpt.get();
+	        video.setUser(user);
 
-			Optional<Category> category = categoryDao.findById(categoryId);
-			if (category.isPresent()) {
-				video.setCategory(category.get());
-			} else {
-				response.setMetadata("Respuesta NOK", "-1", "La categoria no existe");
-				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.NOT_FOUND);
-			}
+	        // Configurar la categoría por su ID
+	        Long categoryId = 11L; // ID de la categoría
+	        Optional<Category> categoryOpt = categoryDao.findById(categoryId);
+	        if (!categoryOpt.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "La categoría no existe");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+	        Category category = categoryOpt.get();
+	        video.setCategory(category);
 
-			// Guardar archivo de video
-			String videoUri = saveFile(videoFile, videoUploadPath);
-			video.setVideoLocation(videoUri);
+	        // Guardar archivo de video
+	        String videoUri = saveFile(videoFile, videoUploadPath);
+	        video.setVideoLocation(videoUri);
 
-			// Guardar archivo de miniatura
-			String thumbnailUri = saveFile(thumbnailFile, thumbnailUploadPath);
-			video.setThumbnailLocation(thumbnailUri);
+	        // Guardar el objeto Video sin detalles adicionales
+	        Video videoSaved = videoDao.save(video);
 
-			// Guardar el objeto Video con la miniatura
-			Video videoSaved = videoDao.save(video);
+	        if (videoSaved != null) {
+	            list.add(videoSaved);
+	            response.getVideoResponse().setVideo(list);
+	            response.setMetadata("Respuesta OK", "00", "Video subido con éxito");
+	        } else {
+	            response.setMetadata("Respuesta NOK", "-1", "El video no se ha podido subir debido a un error");
+	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	        }
+	    } catch (Exception e) {
+	        response.setMetadata("Respuesta NOK", "-1", "Error al subir el video");
+	        e.printStackTrace();
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 
-			if (videoSaved != null) {
-				list.add(videoSaved);
-				response.getVideoResponse().setVideo(list);
-				response.setMetadata("Respuesta OK", "00", "Video subido con exito");
-			} else {
-				response.setMetadata("Respuesta NOK", "-1", "El video no se ha podido subir debido a un error");
-				return new ResponseEntity<VideoResponseRest>(response, HttpStatus.BAD_REQUEST);
-			}
-		} catch (Exception e) {
-			response.setMetadata("Respuesta NOK", "-1", "Error al guardar el video");
-			e.printStackTrace();
-			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	    return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@Transactional
+	@Override
+	public ResponseEntity<VideoResponseRest> saveDetails(Long videoId, String title, String description, MultipartFile thumbnailFile, Long categoryId) {
+	    VideoResponseRest response = new VideoResponseRest();
+	    List<Video> list = new ArrayList<>();
 
-		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
+	    try {
+	        // Obtener el video por su ID
+	        Optional<Video> videoOpt = videoDao.findById(videoId);
+	        if (!videoOpt.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "El video no existe");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+	        Video video = videoOpt.get();
+
+	        // Actualizar los detalles del video
+	        video.setTitle(title);
+	        video.setDescription(description);
+
+	        // Configurar la categoría del video
+	        Optional<Category> categoryOpt = categoryDao.findById(categoryId);
+	        if (!categoryOpt.isPresent()) {
+	            response.setMetadata("Respuesta NOK", "-1", "La categoría no existe");
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+	        Category category = categoryOpt.get();
+	        video.setCategory(category);
+
+	     // Guardar el archivo de miniatura solo si se proporcionó uno nuevo
+	        if (thumbnailFile != null) {
+	            String thumbnailUri = saveFile(thumbnailFile, thumbnailUploadPath);
+	            video.setThumbnailLocation(thumbnailUri);
+	        }
+
+	        // Guardar los cambios en el video
+	        Video videoSaved = videoDao.save(video);
+
+	        if (videoSaved != null) {
+	            list.add(videoSaved);
+	            response.getVideoResponse().setVideo(list);
+	            response.setMetadata("Respuesta OK", "00", "Detalles del video guardados con éxito");
+	        } else {
+	            response.setMetadata("Respuesta NOK", "-1", "No se pudieron guardar los detalles del video debido a un error");
+	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	        }
+	    } catch (Exception e) {
+	        response.setMetadata("Respuesta NOK", "-1", "Error al guardar los detalles del video");
+	        e.printStackTrace();
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+
+	    return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+    
 	@Override
 	@Transactional(readOnly = true)
 	public ResponseEntity<VideoResponseRest> search() {
@@ -289,6 +362,40 @@ public class VideoServiceImpl implements IVideoService {
 
 		return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+    public ResponseEntity<VideoResponseRest> getVideosFromFollowing(Long userId) {
+        VideoResponseRest response = new VideoResponseRest();
+        List<Video> videos = new ArrayList<>();
+
+        try {
+            // Obtener las suscripciones del usuario dado
+            List<Suscription> suscriptions = suscriptionDao.findBySubscriberId(userId);
+
+            // Obtener los IDs de los usuarios a los que está suscrito el usuario dado
+            List<Long> subscribedToUserIds = suscriptions.stream()
+                    .map(suscription -> suscription.getSubscribedTo().getId())
+                    .collect(Collectors.toList());
+
+            // Buscar los videos de los usuarios a los que está suscrito el usuario dado
+            List<Video> videosFromFollowing = videoDao.findByUserIdIn(subscribedToUserIds);
+
+            // Procesar los videos obtenidos
+            for (Video video : videosFromFollowing) {
+                // Aquí puedes realizar cualquier procesamiento adicional necesario
+                videos.add(video);
+            }
+
+            response.getVideoResponse().setVideo(videos);
+            response.setMetadata("Respuesta OK", "00", "Videos encontrados");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMetadata("Respuesta NOK", "-1", "Error al buscar los videos de los perfiles seguidos");
+            e.printStackTrace();
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 	@Transactional
 	@Override
@@ -299,9 +406,14 @@ public class VideoServiceImpl implements IVideoService {
 			if (optionalVideo.isPresent()) {
 				Video video = optionalVideo.get();
 
+				likeService.deleteLikesByVideoId(id);
+				viewService.deleteViewsByVideoId(id);
 				// Eliminar los archivos de vídeo y miniatura del sistema de archivos
 				deleteFile(video.getVideoLocation());
 				deleteFile(video.getThumbnailLocation());
+				
+				 // Eliminar el video de las listas de reproducción
+	            playlistService.removeVideoFromPlayLists(id);
 
 				// Eliminar el video de la base de datos
 				videoDao.delete(video);
@@ -318,6 +430,30 @@ public class VideoServiceImpl implements IVideoService {
 			return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@Transactional
+    @Override
+    public ResponseEntity<VideoResponseRest> deleteVideosByUserId(Long userId) {
+        VideoResponseRest response = new VideoResponseRest();
+        try {
+            // Buscar los videos por el ID del usuario y eliminarlos
+            List<Video> videos = videoDao.findByUserId(userId);
+            for (Video video : videos) {
+            	likeService.deleteLikesByVideoId(video.getId());
+				viewService.deleteViewsByVideoId(video.getId());
+                deleteFile(video.getVideoLocation());
+                deleteFile(video.getThumbnailLocation());
+                videoDao.delete(video);
+            }
+
+            response.setMetadata("Respuesta OK", "00", "Videos eliminados correctamente");
+            return new ResponseEntity<VideoResponseRest>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.setMetadata("Respuesta NOK", "-1", "Error al eliminar los videos");
+            e.printStackTrace();
+            return new ResponseEntity<VideoResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 	@Transactional
 	@Override

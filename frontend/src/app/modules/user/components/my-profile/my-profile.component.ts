@@ -5,12 +5,14 @@ import { SuscriptionService } from 'src/app/modules/shared/services/suscription/
 import { UserService } from 'src/app/modules/shared/services/user/user.service';
 import { EditProfileComponent } from '../edit-profile/edit-profile.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
   MatSnackBar,
   MatSnackBarRef,
   SimpleSnackBar,
 } from '@angular/material/snack-bar';
 import { VideoService } from 'src/app/modules/shared/services/video/video.service';
+import { EditDetailsVideoComponent } from 'src/app/modules/video/edit-details-video/edit-details-video.component';
 
 @Component({
   selector: 'app-my-profile',
@@ -28,12 +30,18 @@ export class MyProfileComponent implements OnInit {
   suscriberCount: number = 0;
   isUserSubscribed: boolean = false;
   videos: any[] = []; // Array para almacenar los videos
+  user: any;
+  router!: Router;
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
-    this.getUserProfile();
-    this.getSuscriberCount();
-    this.getMyVideos(this.currentUser.id);
+
+    if (!this.currentUser) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.getMyVideos(this.currentUser.id);
+      this.getUserProfile();
+    }
   }
 
   getUserProfile() {
@@ -65,23 +73,12 @@ export class MyProfileComponent implements OnInit {
     }
   }
 
-  getSuscriberCount() {
-    this.suscriptionService
-      .countSuscribers(this.currentUser.id)
-      .subscribe((resp: any) => {
-        if (resp.metadata[0].code == '00') {
-          this.suscriberCount = resp.suscriptionResponse.subscriberCount;
-        }
-      });
-  }
-
   subscribe(video: any) {
     const suscribed = new FormData();
     suscribed.append('subscriberId', this.currentUser.id);
     suscribed.append('subscribedTo', video.user.id);
     this.suscriptionService.suscribe(suscribed).subscribe((resp: any) => {
       if (resp.metadata[0].code == '00') {
-        this.getSuscriberCount();
       }
     });
   }
@@ -93,7 +90,6 @@ export class MyProfileComponent implements OnInit {
       .unsuscribe(subscriberId, subscribedTo)
       .subscribe((resp: any) => {
         if (resp.metadata[0].code == '00') {
-          this.getSuscriberCount();
         }
       });
   }
@@ -180,6 +176,36 @@ export class MyProfileComponent implements OnInit {
     } else {
       return '';
     }
+  }
+
+  getUserRole(): string {
+    return this.user.role;
+  }
+
+  getAvatarUrl(avatarLocation: string): string {
+    return `http://localhost:8080${avatarLocation}`;
+  }
+
+  editVideo(id: any) {
+    // Lógica para editar el video
+  }
+
+  deleteVideo(id: any) {
+    // Lógica para eliminar el video
+  }
+
+  openEditVideosForm() {
+    const dialogRef = this.dialog.open(EditDetailsVideoComponent, {
+      width: '45%',
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == 1) {
+        this.openSnackBar('Vídeo subido', 'Exitosa');
+      } else if (result == 2) {
+        this.openSnackBar('Error al subir el vídeo', 'Error');
+      }
+    });
   }
 }
 

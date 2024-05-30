@@ -1,0 +1,26 @@
+.container-list-select {
+    padding: 5px 20px;
+}
+
+.cabecera-modal {
+    display: flex;
+    justify-content: space-between;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+mat-dialog-actions {
+    padding: 0px;
+}
+
+input[type="checkbox"] {
+    accent-color: var(--color-primario);
+    transform: scale(1.5);
+    cursor: pointer;
+}
+
+.btn {
+    color: #fff;
+}

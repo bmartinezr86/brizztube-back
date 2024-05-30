@@ -1,1 +1,147 @@
-<p>playlist-active works!</p>
+<mat-card>
+    <mat-card-content class="container">
+        <div class="general-content">
+            <div class="video">
+                <video #videoPlayer [src]="currentVideoUrl" controls autoplay muted (ended)="playNextVideo()"
+                    (loadedmetadata)="unmuteVideo(videoPlayer)">
+                </video>
+
+                <h2>{{ currentVideo?.title }}</h2>
+                <div class="container-userdata">
+                    <div class="video-user-data">
+                        <!-- datos usuarios -->
+                        <div>
+                            <img class="img-profile" [src]="getAvatarUrl(currentVideo?.user.picture)"
+                                alt="Profile Image">
+
+                        </div>
+                        <div class="column">
+                            <span class="video-user-name">
+                                {{ currentVideo?.user.name }}
+                            </span>
+                            <span>
+                                {{ currentVideo?.user.totalSubs }} suscripciones
+                            </span>
+                        </div>
+                        <div class="btn-actions">
+                            <button mat-flat-button color="accent" class="btn btn-seguir"
+                                (click)="subscribe(currentVideo)" *ngIf="!isSubscribed">
+                                Seguir
+                            </button>
+                            <button mat-flat-button color="accent" class="btn btn-seguir"
+                                (click)="unsubscribe(currentVideo)" *ngIf="isSubscribed">
+                                Dejar de seguir
+                            </button>
+                            <button mat-flat-button color="primary" class="btn btn-seguir"
+                                *ngIf="belongsToCurrentUser(currentVideo)" (click)="openEditVideosForm(currentVideo)">
+                                <div class="btn-edit">
+                                    <mat-icon class="icon">edit</mat-icon>
+                                    <span>
+                                        Editar vídeo
+                                    </span>
+                                </div>
+                            </button>
+
+                        </div>
+                    </div>
+                    <div class="btn-interact">
+
+                        <!-- boton me gusta -->
+                        <button class="btn-action btn-like" (click)="toggleLike(currentVideo)">
+                            <mat-icon>
+                                <div class="icon">
+                                    favorite
+                                </div>
+                            </mat-icon>
+                            <div style="color: #fff;">
+                                {{ currentVideo?.totalLikes }}
+                            </div>
+                        </button>
+                        <!-- boton añadir a la lista -->
+                        <button class="btn-action">
+                            <mat-icon>
+                                <div class="icon icon-add-list">
+                                    playlist_add
+                                </div>
+                            </mat-icon>
+                        </button>
+                    </div>
+
+                </div>
+                <div class="video-statistics">
+                    <span>{{ currentVideo.totalViews }} visualizaciones</span>
+                    ·
+                    <span>hace {{ formatDistanceToNow(currentVideo.date) }}</span>
+                    ·
+                    <span>{{currentVideo.category.name}}</span>
+
+                </div>
+                <div class="video-description">
+                    {{ getDescription(currentVideo, 343) }}
+                    <!-- Aquí 100 es el máximo número de caracteres permitidos en la descripción -->
+                    <button class="mostrar-desc" *ngIf="currentVideo.description.length > 100"
+                        (click)="toggleDescription(currentVideo)">
+                        {{ currentVideo.showFullDescription ? 'Mostrar menos' : 'Mostrar más' }}
+                    </button>
+                </div>
+                <div>
+                    <app-comments></app-comments>
+                </div>
+
+
+            </div>
+        </div>
+        <aside class="videos-playlist">
+            <mat-accordion>
+                <mat-expansion-panel [class.scrollable-panel]="videos.length > 6">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <h3>{{shortenTitle(playlist.name, 10)}}</h3>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <div class="btns-controls">
+                                <button mat-icon-button class="prev-button" (click)="playPreviousVideo()">
+                                    <mat-icon>skip_previous</mat-icon>
+                                </button>
+                                <button mat-icon-button class="next-button" (click)="playNextVideo()">
+                                    <mat-icon>skip_next</mat-icon>
+                                </button>
+                            </div>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div class="video-list">
+                        <div class="video">
+                            <div *ngFor="let video of videos; let i = index" class="card"
+                                [ngClass]="{ 'active': i === currentVideoIndex }" (click)="selectVideo(i)">
+                                <div class="card-container">
+                                    <div class="thumbnail-container">
+                                        <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)"
+                                            alt="{{ video.title }}">
+                                        <div class="overlay">
+                                            <mat-icon>
+                                                <div class="icon">
+                                                    play_circle_fill
+                                                </div>
+                                            </mat-icon>
+                                        </div>
+                                    </div>
+                                    <div class="card-content">
+                                        <h4>{{ shortenTitle(video.title, 30) }}</h4>
+                                        <span class="video-user">{{ video.user.name }}</span>
+                                        <div class="video-stadistics">
+                                            <span>{{ video.totalViews }} visualizaciones</span>
+                                            ·
+                                            <span>hace {{ formatDistanceToNow(video.date) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+
+            <app-aside-videos></app-aside-videos>
+        </aside>
+    </mat-card-content>
+</mat-card>

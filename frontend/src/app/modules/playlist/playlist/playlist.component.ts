@@ -10,6 +10,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../shared/components/confirm/confirm.component';
 import { NewListComponent } from '../new-list/new-list.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-playlist',
@@ -22,6 +23,7 @@ export class PlaylistComponent implements OnInit {
   public playlistService = inject(PlaylistService);
   private snackBar = inject(MatSnackBar);
   public dialog = inject(MatDialog);
+  public router = inject(Router);
 
   playlists: any[] = []; // Array para almacenar los videos
   currentUser: any;
@@ -81,6 +83,28 @@ export class PlaylistComponent implements OnInit {
     });
   }
 
+  onEdit(playlistId: any, name: any) {
+    const dialogRef = this.dialog.open(NewListComponent, {
+      width: '20%',
+      data: {
+        id: playlistId,
+        name: name,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result === 1) {
+        this.openSnackBar('Lista de reproducción modificada', 'Exitosa');
+        this.getPlayListsByUserId(this.currentUser.id);
+      } else if (result === 2) {
+        this.openSnackBar(
+          'Se ha producido un error al modificar la lista de reproducción',
+          'Error'
+        );
+      }
+    });
+  }
+
   onDelete(playlistId: any) {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       width: '20%',
@@ -113,5 +137,9 @@ export class PlaylistComponent implements OnInit {
     return this.snackBar.open(message, action, {
       duration: 2000,
     });
+  }
+
+  navigateToPlaylist(playlistId: any) {
+    this.router.navigate(['/dashboard/playlist', playlistId]);
   }
 }

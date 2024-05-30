@@ -13,6 +13,9 @@ import {
   SimpleSnackBar,
 } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EditDetailsVideoComponent } from '../edit-details-video/edit-details-video.component';
+import { NewListComponent } from '../../playlist/new-list/new-list.component';
+import { AddVideosComponent } from '../../playlist/add-videos/add-videos.component';
 
 @Component({
   selector: 'app-video',
@@ -205,7 +208,30 @@ export class VideoComponent implements OnInit {
     }
   }
 
-  editVideo() {}
+  openEditVideosForm(video: any) {
+    const dialogRef = this.dialog.open(EditDetailsVideoComponent, {
+      width: '45%',
+      data: {
+        id: video.id,
+        title: video.title,
+        description: video.description,
+        category: video.category,
+        thubmnail: video.thumbnailLocation,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == 1) {
+        this.openSnackBar('Vídeo editado', 'Exitosa');
+        // Recargar la página después de 1 segundo
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else if (result == 2) {
+        this.openSnackBar('Error al editar el vídeo', 'Error');
+      }
+    });
+  }
 
   belongsToCurrentUser(video: any): boolean {
     if (
@@ -277,6 +303,26 @@ export class VideoComponent implements OnInit {
 
   getAvatarUrl(avatarLocation: string): string {
     return `http://localhost:8080${avatarLocation}`;
+  }
+
+  openDialogAddList(videoId: any) {
+    const dialogRef = this.dialog.open(AddVideosComponent, {
+      width: '20%',
+      data: {
+        id: videoId,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result === 1) {
+        this.openSnackBar('El video ha sido añadido con exito', 'Exitosa');
+      } else if (result === 2) {
+        this.openSnackBar(
+          'Se ha producido un error al añadir el video a la lista de reproducción',
+          'Error'
+        );
+      }
+    });
   }
 }
 

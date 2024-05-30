@@ -18,10 +18,11 @@
                 <p>{{ playlist.videos.length }} vídeos</p>
                 <div class="btn-actions">
                     <!-- actions -->
-                    <button mat-fab class="btn btn-action" color="primary" [disabled]="playlist.videos.length === 0">
-                        <mat-icon aria-label="Reproducir">play_arrow</mat-icon>
+                    <button mat-fab class="btn btn-action" color="primary" [disabled]="playlist.videos.length === 0"
+                        (click)="navigateToPlaylist(playlist.id)">
+                        <mat-icon aria-label=" Reproducir">play_arrow</mat-icon>
                     </button>
-                    <button mat-fab class="btn btn-action" color="primary">
+                    <button mat-fab class="btn btn-action" color="primary" (click)="onEdit(playlist.id, playlist.name)">
                         <mat-icon aria-label="Reproducir">edit</mat-icon>
                     </button>
                     <button mat-fab class="btn btn-action" color="warn" (click)="onDelete(playlist.id)">

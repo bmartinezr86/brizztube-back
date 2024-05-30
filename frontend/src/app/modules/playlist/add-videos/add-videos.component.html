@@ -1,0 +1,29 @@
+<div class="container-list-select">
+    <div class="cabecera-modal">
+        <h2>Listas de Reproducción</h2>
+        <button mat-icon-button (click)="onCancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <form [formGroup]="AddVideoToPlaylistForm">
+        <div *ngFor="let list of playlists; let i = index">
+            <label for="listOption{{ i }}" class="container">
+                <input type="checkbox" formControlName="listOption{{ i }}" id="listOption{{ i }}" [value]="list.id"
+                    (change)="onCheckboxChange($event)">
+                {{ list.name }}
+            </label>
+
+        </div>
+        <mat-dialog-actions>
+            <button mat-flat-button color="primary" class="btn" (click)="onSave()"
+                [disabled]="AddVideoToPlaylistForm.invalid">
+                <mat-icon>save</mat-icon>
+                Guardar
+            </button>
+            <button mat-flat-button color="primary" class="btn" (click)="openUserDialogCreatePlayList() ">
+                <mat-icon>playlist_add</mat-icon>
+                Añadir lista
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

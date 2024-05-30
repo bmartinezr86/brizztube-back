@@ -36,7 +36,7 @@
                                 Dejar de seguir
                             </button>
                             <button mat-flat-button color="primary" class="btn btn-seguir"
-                                *ngIf="belongsToCurrentUser(element)" (click)="editVideo()">
+                                *ngIf="belongsToCurrentUser(element)" (click)="openEditVideosForm(element)">
                                 <div class="btn-edit">
                                     <mat-icon class="icon">edit</mat-icon>
                                     <span>
@@ -62,7 +62,7 @@
                         <!-- boton añadir a la lista -->
                         <button class="btn-action">
                             <mat-icon>
-                                <div class="icon icon-add-list">
+                                <div class="icon icon-add-list" (click)="openDialogAddList(element.id)">
                                     playlist_add
                                 </div>
                             </mat-icon>

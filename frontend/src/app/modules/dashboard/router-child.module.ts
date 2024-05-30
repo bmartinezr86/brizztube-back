@@ -27,7 +27,7 @@ const childRoutes: Routes = [
   { path: 'profile/:id', component: ProfileComponent },
   { path: 'upload-video-details', component: UploadVideoDetailsComponent },
   { path: 'playlists', component: PlaylistComponent },
-  { path: 'playlist/id', component: PlaylistActiveComponent },
+  { path: 'playlist/:id', component: PlaylistActiveComponent },
   { path: 'not-found', component: NotFoundComponent },
   { path: '**', component: NotFoundComponent },
 ];

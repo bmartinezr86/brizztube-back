@@ -19,6 +19,7 @@ import { EditDetailsVideoComponent } from './edit-details-video/edit-details-vid
     UploadVideoDetailsComponent,
     EditDetailsVideoComponent,
   ],
+  exports: [AsideVideosComponent, CommentsComponent],
   imports: [
     CommonModule,
     MaterialModule,

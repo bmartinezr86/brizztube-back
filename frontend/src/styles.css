@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
     --color-primario: #1ABC9C;
+    --accent: var(--color-primario);
 }
 
 html,

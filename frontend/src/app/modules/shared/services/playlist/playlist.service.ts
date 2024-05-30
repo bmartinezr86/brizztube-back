@@ -13,6 +13,11 @@ export class PlaylistService {
     return this.http.post(endpoint, body);
   }
 
+  modifyPlaylist(body: any, playlistId: any) {
+    const endpoint = `${base_url}/modify/${playlistId}`;
+    return this.http.put(endpoint, body);
+  }
+
   addVideoToPlaylist(playlistId: any, videoId: any) {
     const endpoint = `${base_url}/${playlistId}/videos/${videoId}`;
     return this.http.post(endpoint, null);

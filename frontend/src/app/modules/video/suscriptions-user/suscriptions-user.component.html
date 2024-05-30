@@ -1,0 +1,38 @@
+<div class="container">
+    <mat-card-content class="container-videos">
+        <h2>Lo que más te gusta</h2>
+
+        <div class="card-container">
+            <div *ngFor="let video of videos" class="card">
+
+                <div class="thumbnail-container">
+                    <a [routerLink]="['/dashboard/videos', video.id]">
+                        <img [src]="getVideoThumbnailUrl(video.thumbnailLocation)" alt="{{ video.title }}">
+
+                        <div class="overlay">
+                            <mat-icon>
+                                <div class="icon">
+                                    play_circle_fill
+                                </div>
+                            </mat-icon>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="card-content">
+                    <div class="content-superior">
+                        <a [routerLink]="['/dashboard/videos', video.id]">
+                            <h4>{{ video.title }}</h4>
+                        </a>
+                    </div>
+                    <div class="card-statistic-video">
+                        <span>{{ video.totalViews }} visualizaciones</span>
+                        ·
+                        <span>hace {{ formatDistanceToNow(video.date) }}</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</div>

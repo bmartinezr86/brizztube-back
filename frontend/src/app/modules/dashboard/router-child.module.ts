@@ -11,6 +11,7 @@ import { NotFoundComponent } from './pages/not-found/not-found/not-found.compone
 import { UploadVideoDetailsComponent } from '../video/upload-video-details/upload-video-details.component';
 import { PlaylistComponent } from '../playlist/playlist/playlist.component';
 import { PlaylistActiveComponent } from '../playlist/playlist-active/playlist-active.component';
+import { SuscriptionsUserComponent } from '../video/suscriptions-user/suscriptions-user.component';
 
 const childRoutes: Routes = [
   {
@@ -28,6 +29,7 @@ const childRoutes: Routes = [
   { path: 'upload-video-details', component: UploadVideoDetailsComponent },
   { path: 'playlists', component: PlaylistComponent },
   { path: 'playlist/:id', component: PlaylistActiveComponent },
+  { path: 'suscriptions/:id', component: SuscriptionsUserComponent },
   { path: 'not-found', component: NotFoundComponent },
   { path: '**', component: NotFoundComponent },
 ];

@@ -9,6 +9,7 @@ import { CommentsComponent } from './video/comments/comments.component';
 import { AsideVideosComponent } from './video/aside-videos/aside-videos.component';
 import { UploadVideoDetailsComponent } from './upload-video-details/upload-video-details.component';
 import { EditDetailsVideoComponent } from './edit-details-video/edit-details-video.component';
+import { SuscriptionsUserComponent } from './suscriptions-user/suscriptions-user.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { EditDetailsVideoComponent } from './edit-details-video/edit-details-vid
     AsideVideosComponent,
     UploadVideoDetailsComponent,
     EditDetailsVideoComponent,
+    SuscriptionsUserComponent,
   ],
   exports: [AsideVideosComponent, CommentsComponent],
   imports: [

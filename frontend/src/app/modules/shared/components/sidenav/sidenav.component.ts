@@ -65,7 +65,7 @@ export class SidenavComponent implements OnInit {
       {
         type: 'option',
         name: 'Suscripciones',
-        route: 'subscriptions',
+        route: this.generateRouteWithId('suscriptions/:id', this.userId),
         icon: 'subscriptions',
       },
       {

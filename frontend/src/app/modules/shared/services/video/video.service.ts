@@ -112,6 +112,11 @@ export class VideoService {
     const endpoint = `${base_url}/delete/${id}`;
     return this.http.delete(endpoint);
   }
+
+  getSubsVideosUser(userId: any) {
+    const endpoint = `${base_url}/following/${userId}`;
+    return this.http.get<any[]>(endpoint);
+  }
 }
 
 interface LikeRequest {

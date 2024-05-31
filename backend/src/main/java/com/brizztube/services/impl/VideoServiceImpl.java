@@ -66,6 +66,9 @@ public class VideoServiceImpl implements IVideoService {
 	@Autowired
 	private PlayListServiceImpl playlistService;
 	
+	@Autowired
+	private CommentServiceImpl commentService;
+	
 	
 	@Value("${upload.video.path}")
 	private String videoUploadPath; // obtenemos la ruta del properties
@@ -414,6 +417,9 @@ public class VideoServiceImpl implements IVideoService {
 				
 				 // Eliminar el video de las listas de reproducción
 	            playlistService.removeVideoFromPlayLists(id);
+	            
+	            // Eliminar el video de las listas de reproducción
+	            commentService.removeCommentsFromVideo(id);
 
 				// Eliminar el video de la base de datos
 				videoDao.delete(video);

@@ -214,29 +214,16 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteVideo(id: any): void {
-    const dialogRef = this.dialog.open(ConfirmComponent, {
-      width: '350px',
-      data: {
-        message: '¿Estás seguro de que deseas eliminar este video?',
-        confirmText: 'Sí',
-        cancelText: 'No',
+    this.videoService.deleteVideo(id).subscribe(
+      (response: any) => {
+        console.log('Video eliminado:', response);
+        // Actualiza la lista de videos después de la eliminación
+        this.videos = this.videos.filter((video) => video.id !== id);
       },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.videoService.deleteVideo(id).subscribe(
-          (response: any) => {
-            console.log('Video eliminado:', response);
-            // Actualiza la lista de videos después de la eliminación
-            this.videos = this.videos.filter((video) => video.id !== id);
-          },
-          (error) => {
-            console.error('Error eliminando el video:', error);
-          }
-        );
+      (error) => {
+        console.error('Error eliminando el video:', error);
       }
-    });
+    );
   }
 
   editProfile(
@@ -280,6 +267,10 @@ export class ProfileComponent implements OnInit {
   }
   getVideoUrl(videoLocation: string): string {
     return `http://localhost:8080${videoLocation}`;
+  }
+
+  isLoggedIn(): boolean {
+    return this.userService.isLoggedIn();
   }
 }
 

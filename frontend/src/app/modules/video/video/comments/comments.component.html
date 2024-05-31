@@ -1,1 +1,99 @@
-<p>comments works!</p>
+<mat-dialog-content>
+    <div class="comentarios-container" *ngIf="currentUser">
+        <h3>{{ countComments }} Comentarios</h3>
+        <form [formGroup]="commentForm">
+            <div class="input-container">
+                <img [src]="getAvatarUrl(currentUser.picture)" class="img-profile-user" *ngIf="currentUser">
+                <mat-form-field appearance="fill" class="comment-input">
+                    <mat-label>Comentario</mat-label>
+                    <input matInput placeholder="Añade un comentario" formControlName="comentario" required>
+                </mat-form-field>
+            </div>
+        </form>
+        <mat-dialog-actions class="btns-actions">
+            <button mat-flat-button color="primary" class="btn" (click)="onSave()" [disabled]="commentForm.invalid">
+                Comentar
+            </button>
+            <button mat-flat-button color="warn" class="btn" (click)="onCancel()">
+                Cancelar
+            </button>
+        </mat-dialog-actions>
+    </div>
+
+
+    <div *ngIf="currentUser && comments && comments.length > 0">
+        <ul>
+            <li *ngFor="let comment of comments; let i = index"
+                [ngClass]="{'visible-comment': i < commentsToShow, 'hidden-comment': i >= commentsToShow}">
+                <div class="comment-info">
+                    <div>
+                        <img [src]="getAvatarUrl(comment.user.picture)" class="img-profile-user">
+                    </div>
+                    <div class="column">
+                        <div>
+                            <span><strong>{{ comment.user.name }}</strong></span> · <span>hace {{
+                                formatDistanceToNow(comment.date) }}</span>
+                        </div>
+                        <div *ngIf="editedCommentId === comment.id; else viewMode">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Editar comentario</mat-label>
+                                <input matInput [(ngModel)]="editedCommentText" class="comment-input" required>
+                            </mat-form-field>
+                            <div class="btns-actions">
+                                <button mat-flat-button color="primary" (click)="saveEditedComment(comment.id)"
+                                    class="btn">
+                                    Guardar
+                                </button>
+                                <button mat-flat-button color="warn" (click)="cancelEdit()">
+                                    Cancelar
+                                </button>
+                            </div>
+
+                        </div>
+                        <ng-template #viewMode>
+                            <p>{{ comment.text }}</p>
+                            <div class="btns-actions-comments">
+                                <!-- <button mat-flat-button color="accent" class="btn btn-seguir">
+                                    Responder
+                                </button> -->
+
+
+                            </div>
+                        </ng-template>
+
+                    </div>
+                    <div>
+                        <button mat-icon-button [matMenuTriggerFor]="commentMenu"
+                            *ngIf="comment.user.id === currentUser.id || currentUser.id === videoOwnerId">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #commentMenu="matMenu">
+                            <button mat-menu-item (click)="editComment(comment)"
+                                *ngIf="comment.user.id === currentUser.id">
+                                <mat-icon>edit</mat-icon>
+                                <span>Editar</span>
+                            </button>
+                            <button mat-menu-item (click)="deleteComment(comment.id)">
+                                <mat-icon>delete</mat-icon>
+                                <span>Eliminar</span>
+                            </button>
+                        </mat-menu>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div *ngIf="comments.length === 0">
+            <p>No hay comentarios disponibles para este video.</p>
+        </div>
+        <button mat-flat-button color="accent" class="btn btn-seguir" (click)="showMoreComments()"
+            *ngIf="commentsToShow < comments.length">
+            Mostrar más
+        </button>
+        <button mat-flat-button color="accent" class="btn btn-seguir" (click)="showLessComments()"
+            *ngIf="commentsToShow > 10">
+            Mostrar menos
+        </button>
+    </div>
+
+
+</mat-dialog-content>

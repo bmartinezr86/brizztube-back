@@ -77,12 +77,12 @@ export class SidenavComponent implements OnInit {
         route: this.generateRouteWithId('my-profile/:id', this.userId),
         icon: 'account_circle',
       },
-      {
-        type: 'option',
-        name: 'Historial',
-        route: 'history',
-        icon: 'history',
-      },
+      // {
+      //   type: 'option',
+      //   name: 'Historial',
+      //   route: 'history',
+      //   icon: 'history',
+      // },
       {
         type: 'option',
         name: 'Listas de repro...',
@@ -98,15 +98,15 @@ export class SidenavComponent implements OnInit {
       //   route: 'settings',
       //   icon: 'settings',
       // },
-      {
-        type: 'option',
-        name: 'Ayuda',
-        route: 'help',
-        icon: 'help',
-      },
-      {
-        type: 'separator',
-      },
+      // {
+      //   type: 'option',
+      //   name: 'Ayuda',
+      //   route: 'help',
+      //   icon: 'help',
+      // },
+      // {
+      //   type: 'separator',
+      // },
       {
         type: 'option',
         name: 'Usuarios',
@@ -132,6 +132,17 @@ export class SidenavComponent implements OnInit {
         icon: 'exit_to_app',
       },
     ];
+  }
+
+  isLoggedIn(): boolean {
+    return this.userService.isLoggedIn();
+  }
+
+  isAdmin(): boolean {
+    if (this.currentUser.rol.name !== 'Administrator') {
+      return false;
+    }
+    return true;
   }
 
   generateRouteWithId(route: string, id: string): string {

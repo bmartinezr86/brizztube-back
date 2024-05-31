@@ -16,6 +16,7 @@ import com.brizztube.dao.ICommentDao;
 import com.brizztube.dao.IUserDao;
 import com.brizztube.dao.IVideoDao;
 import com.brizztube.model.Comment;
+import com.brizztube.model.PlayList;
 import com.brizztube.model.User;
 import com.brizztube.model.Video;
 import com.brizztube.response.CommentResponseRest;
@@ -182,5 +183,13 @@ public class CommentServiceImpl implements ICommentService {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+	
+	
+		public void removeCommentsFromVideo(Long videoId) {
+	        List<Comment> comments = commentDao.findByVideoId(videoId);
+	        for (Comment comment : comments) {
+	        	commentDao.deleteByVideoId(videoId);
+	        }
+	    }
 
 }

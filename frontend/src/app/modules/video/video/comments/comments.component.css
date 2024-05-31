@@ -1,0 +1,102 @@
+.comentarios-container {
+    width: 100%;
+
+}
+
+.comment-input {
+    width: 100%;
+}
+
+.btns-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    & .btn {
+        color: #fff;
+    }
+}
+
+.img-profile-user {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+.input-container {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-seguir {
+    font-family: 'Poppins';
+    font-size: 12px;
+    padding: 0px 10px;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    -ms-border-radius: 25px;
+    -o-border-radius: 25px;
+
+
+    &:hover {
+        cursor: pointer;
+        background-color: var(--color-primario);
+    }
+}
+
+ul {
+    padding: 0px;
+    margin: none;
+
+}
+
+li {
+    list-style: none;
+    margin: none;
+    margin-bottom: 30px;
+    padding: 0px;
+
+    & p {
+        margin: 0px;
+    }
+}
+
+.comment-info {
+    display: flex;
+    gap: 10px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.comment-item {
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    overflow: hidden;
+}
+
+.hidden-comment {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.visible-comment {
+    max-height: 500px;
+    /* Ajusta esto según la altura máxima esperada del comentario */
+    opacity: 1;
+    pointer-events: all;
+}
+
+.invalid-comment-input {
+    border-color: red;
+    /* Cambia el borde del input a color rojo */
+}

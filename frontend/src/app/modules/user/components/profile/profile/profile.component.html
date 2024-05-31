@@ -17,15 +17,16 @@
             </div>
             <div class="btn-actions">
                 <button mat-flat-button color="accent" class="btn btn-seguir" (click)="subscribe(element)"
-                    *ngIf="!isSubscribed">
+                    *ngIf="isLoggedIn() && !isSubscribed && currentUser.id !== element.id">
                     Seguir
                 </button>
                 <button mat-flat-button color="accent" class="btn btn-seguir" (click)="unsubscribe(element)"
-                    *ngIf="isSubscribed">
+                    *ngIf="isLoggedIn() && isSubscribed && currentUser.id !== element.id">
                     Dejar de seguir
                 </button>
-                <button mat-flat-button color="primary" class="btn btn-seguir" *ngIf="element.id == currentUser.id"
-                    (click)="editProfile(currentUser.id, currentUser.name, currentUser.description, currentUser.email, currentUser.password, currentUser.rol, currentUser.status, currentUser.picture)">
+                <button mat-flat-button color="primary" class="btn btn-seguir"
+                    *ngIf="isLoggedIn() && currentUser.id !== element.id"
+                    (click)="editProfile(element.id, element.name, element.description, element.email, element.password, element.rol, element.status, element.picture)">
                     <div class="btn-edit">
                         <mat-icon class="icon">edit</mat-icon>
                         <span>
@@ -63,7 +64,8 @@
                         <a [routerLink]="['/dashboard/videos', video.id]">
                             <h4>{{ video.title }}</h4>
                         </a>
-                        <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <button mat-icon-button [matMenuTriggerFor]="menu"
+                            *ngIf="(currentUser && video.user.id == currentUser.id) || (currentUser && (currentUser.rol.name === 'Moderator' || currentUser.rol.name === 'Administrator'))">
                             <mat-icon>more_vert</mat-icon>
                         </button>
                     </div>

@@ -11,6 +11,7 @@ import {
 } from '@angular/material/snack-bar';
 import { ConfirmComponent } from 'src/app/modules/shared/components/confirm/confirm.component';
 import { MatPaginator } from '@angular/material/paginator';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user',
@@ -21,8 +22,12 @@ export class UserComponent implements OnInit {
   private userService = inject(UserService);
   private snackBar = inject(MatSnackBar);
   public dialog = inject(MatDialog);
+  private router = inject(Router);
+  currentUser: any;
 
   ngOnInit(): void {
+    this.currentUser = this.userService.getCurrentUser();
+    this.isLoggedIn();
     this.getUsers();
   }
 
@@ -49,6 +54,19 @@ export class UserComponent implements OnInit {
         console.log('error: ', error);
       }
     );
+  }
+
+  isLoggedIn(): boolean {
+    if (this.userService.isLoggedIn()) {
+      this.isAdmin();
+    }
+    return this.userService.isLoggedIn();
+  }
+
+  isAdmin(): void {
+    if (this.currentUser.rol.name !== 'Administrator') {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   processUsersResponse(resp: any) {

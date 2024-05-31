@@ -106,6 +106,9 @@ export class VideoComponent implements OnInit {
   }
 
   subscribe(video: any) {
+    if (!this.currentUser) {
+      this.router.navigate(['/login']);
+    }
     const suscribed = new FormData();
     suscribed.append('subscriberId', this.currentUser.id);
     suscribed.append('subscribedTo', video.user.id);
@@ -125,6 +128,9 @@ export class VideoComponent implements OnInit {
   }
 
   unsubscribe(video: any) {
+    if (!this.currentUser) {
+      this.router.navigate(['/login']);
+    }
     const suscribed = new FormData();
     suscribed.append('subscriberId', this.currentUser.id);
     suscribed.append('subscribedTo', video.user.id);
@@ -246,6 +252,9 @@ export class VideoComponent implements OnInit {
   }
 
   toggleLike(video: any) {
+    if (!this.currentUser) {
+      this.router.navigate(['/login']);
+    }
     if (this.likedVideos.has(video.id)) {
       this.unlikeVideo(video);
     } else {
@@ -306,6 +315,9 @@ export class VideoComponent implements OnInit {
   }
 
   openDialogAddList(videoId: any) {
+    if (!this.currentUser) {
+      this.router.navigate(['/login']);
+    }
     const dialogRef = this.dialog.open(AddVideosComponent, {
       width: '20%',
       data: {

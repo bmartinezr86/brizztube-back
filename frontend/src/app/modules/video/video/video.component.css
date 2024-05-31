@@ -197,3 +197,9 @@ h2 {
         color: var(--color-primario);
     }
 }
+
+.comments {
+    margin-top: 20px;
+    width: 100%;
+
+}

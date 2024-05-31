@@ -48,6 +48,7 @@ export class PlaylistActiveComponent implements OnInit {
   likedVideos: Set<number> = new Set(); // Set to store liked video IDs
   video: any;
   videoId: string = '';
+  videoIdComments: string = '';
   isSubscribed: boolean = false;
   @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
 
@@ -79,6 +80,7 @@ export class PlaylistActiveComponent implements OnInit {
             this.videos[this.currentVideoIndex].videoLocation
           );
           this.updateCurrentVideo();
+          this.videoIdComments = this.currentVideo.id;
 
           console.log(this.currentVideoUrl);
         }
